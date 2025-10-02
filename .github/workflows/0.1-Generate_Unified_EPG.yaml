@@ -1,0 +1,132 @@
+name: 0.1 Generate Unified EPG
+
+on:
+  schedule:
+    # 每天UTC时间2点22分运行 (北京时间10点22分)
+    - cron: '22 2 * * *'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  process-epg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    # 添加权限设置
+    permissions:
+      contents: write  # 允许工作流写入内容（推送更改）
+    
+    steps:
+    - name: Checkout repository (main branch)
+      uses: actions/checkout@v3
+      with:
+        ref: main
+        fetch-depth: 1
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout epg_scripts branch
+      uses: actions/checkout@v3
+      with:
+        ref: epg_scripts
+        path: scripts
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4
+
+    - name: Copy all EPG scripts from scripts branch
+      run: |
+        # 复制所有EPG相关脚本
+        cp scripts/get_*_epg.py ./
+        cp scripts/unified_epg_generator.py ./
+        ls -la *.py
+
+    - name: Run Unified EPG Generator
+      env:
+        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      run: |
+        # 即使统一脚本中有错误，也继续执行后续步骤
+        python unified_epg_generator.py || echo "统一EPG生成器执行过程中出现错误，但继续执行后续步骤"
+
+    - name: Check if unified file was generated
+      id: file_check
+      run: |
+        if [ -f person.xml ]; then
+          echo "person.xml 文件已生成"
+          echo "file_exists=true" >> $GITHUB_OUTPUT
+          
+          # 统计文件信息
+          file_size=$(stat -c%s person.xml)
+          echo "文件大小: $file_size 字节"
+          
+          # 统计节目数量（粗略统计）
+          programme_count=$(grep -c "<programme" person.xml || true)
+          channel_count=$(grep -c "<channel" person.xml || true)
+          echo "频道数量: $channel_count"
+          echo "节目数量: $programme_count"
+        else
+          echo "警告：person.xml 文件未生成，但继续执行后续步骤"
+          echo "file_exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Configure Git
+      if: steps.file_check.outputs.file_exists == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Check for changes
+      id: check_changes
+      if: steps.file_check.outputs.file_exists == 'true'
+      run: |
+        # 检查person.xml是否有变更
+        git status --porcelain
+        if git status --porcelain | grep -q "person.xml"; then
+          echo "检测到 person.xml 变更"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "没有检测到 person.xml 的变更"
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Add and commit changes
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        git add person.xml
+        git commit -m "Update unified EPG: $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M')"
+        echo "已提交变更"
+
+    - name: Push changes
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        for i in {1..3}; do
+          if git push; then
+            echo "推送成功"
+            break
+          else
+            echo "推送失败，尝试 $i/3"
+            if [ $i -eq 3 ]; then
+              echo "推送失败，达到最大重试次数"
+              exit 1
+            fi
+            sleep 5
+          fi
+        done
+
+    - name: No changes message
+      if: steps.file_check.outputs.file_exists == 'true' && steps.check_changes.outputs.has_changes == 'false'
+      run: |
+        echo "没有检测到文件变更，跳过提交和推送"
+
+    - name: Cleanup temporary files
+      if: always()
+      run: |
+        # 清理临时Python文件
+        rm -f get_*.py unified_epg_generator.py
+        echo "已清理临时文件"

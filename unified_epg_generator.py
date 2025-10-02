@@ -22,8 +22,8 @@
 依赖包：
 - requests, beautifulsoup4
 
-作者：yufeilai666
-版本：1.3
+作者：GitHub Action
+版本：1.5
 """
 
 import os
@@ -34,7 +34,7 @@ import tempfile
 import subprocess
 from xml.etree.ElementTree import Element, SubElement, tostring, fromstring
 from xml.dom import minidom
-# from datetime import datetime
+from datetime import datetime
 
 
 def run_epg_script_in_temp_dir(script_path, temp_dir):
@@ -64,8 +64,8 @@ def run_epg_script_in_temp_dir(script_path, temp_dir):
             stderr=subprocess.PIPE
         )
         
-        # 设置超时时间为30分钟
-        stdout, stderr = process.communicate(timeout=1800)
+        # 设置超时时间为5分钟
+        stdout, stderr = process.communicate(timeout=300)
         
         if process.returncode != 0:
             print(f"脚本 {script_name} 执行失败，返回码: {process.returncode}")
@@ -129,12 +129,64 @@ def read_xml_content(xml_file):
         return None
 
 
-def merge_xml_contents(xml_contents):
+def analyze_xml_content(xml_content, script_name):
+    """
+    分析XML内容，统计频道和节目数量
+    
+    参数:
+        xml_content (str): XML内容
+        script_name (str): 脚本名称
+        
+    返回:
+        dict: 包含频道和节目统计信息的字典
+    """
+    try:
+        root = fromstring(xml_content)
+        
+        # 统计频道和节目
+        channels = root.findall('channel')
+        programmes = root.findall('programme')
+        
+        # 打印频道详情
+        print(f"\n{script_name} 生成的XML内容分析:")
+        print(f"  频道数量: {len(channels)}")
+        for channel in channels:
+            channel_id = channel.get('id', '未知ID')
+            display_name_elem = channel.find('display-name')
+            display_name = display_name_elem.text if display_name_elem is not None else '未知名称'
+            print(f"    - 频道ID: {channel_id}, 名称: {display_name}")
+        
+        print(f"  节目数量: {len(programmes)}")
+        
+        # 打印节目中的频道引用
+        programme_channels = set()
+        for programme in programmes:
+            channel_ref = programme.get('channel', '未知频道')
+            programme_channels.add(channel_ref)
+            if len(programme_channels) > 5:  # 限制输出数量
+                break
+        
+        print(f"  节目中引用的频道: {list(programme_channels)[:5]}...")
+        
+        return {
+            'channels': channels,
+            'programmes': programmes,
+            'channel_count': len(channels),
+            'programme_count': len(programmes),
+            'root': root
+        }
+    except Exception as e:
+        print(f"分析 {script_name} 的XML内容失败: {e}")
+        return None
+
+
+def merge_xml_contents(xml_contents, script_names):
     """
     合并多个XML内容到一个统一的XML结构中
     
     参数:
         xml_contents (list): XML内容字符串列表
+        script_names (list): 对应的脚本名称列表
         
     返回:
         Element: 合并后的XML根元素
@@ -144,21 +196,34 @@ def merge_xml_contents(xml_contents):
     new_root.set('generator-info-name', 'unified-epg-generator')
     new_root.set('generator-info-url', 'https://github.com/yufeilai666/tvepg')
     new_root.set('source-info-name', 'multiple-sources')
+    new_root.set('created', datetime.now().strftime("%Y%m%d%H%M%S"))
     
     # 合并所有XML内容
-    for i, xml_content in enumerate(xml_contents):
+    total_channels = 0
+    total_programmes = 0
+    
+    for i, (xml_content, script_name) in enumerate(zip(xml_contents, script_names)):
         if xml_content:
             try:
-                # 使用fromstring从字符串解析XML，而不是parse从文件解析
-                root = fromstring(xml_content)
-                
-                # 添加所有子元素到新的根元素
-                for child in root:
-                    new_root.append(child)
+                # 分析XML内容
+                analysis = analyze_xml_content(xml_content, script_name)
+                if analysis:
+                    total_channels += analysis['channel_count']
+                    total_programmes += analysis['programme_count']
+                    
+                    # 添加所有子元素到新的根元素
+                    for child in analysis['root']:
+                        new_root.append(child)
+                else:
+                    print(f"警告: 无法分析 {script_name} 的XML内容")
                     
             except Exception as e:
                 print(f"解析第 {i+1} 个XML内容失败: {e}")
                 continue
+    
+    print(f"\n合并统计:")
+    print(f"  总频道数量: {total_channels}")
+    print(f"  总节目数量: {total_programmes}")
     
     return new_root
 
@@ -231,6 +296,22 @@ def discover_epg_scripts():
     return epg_scripts
 
 
+def save_debug_xml(xml_content, filename):
+    """
+    保存XML内容到调试文件
+    
+    参数:
+        xml_content (str): XML内容
+        filename (str): 文件名
+    """
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(xml_content)
+        print(f"已保存调试文件: {filename}")
+    except Exception as e:
+        print(f"保存调试文件失败: {e}")
+
+
 def main():
     """
     主函数 - 协调整个EPG生成流程
@@ -265,6 +346,7 @@ def main():
         print("部分脚本可能无法获取电影描述信息")
     
     all_xml_contents = []
+    all_script_names = []
     
     # 为所有脚本创建一个临时目录
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -288,7 +370,12 @@ def main():
                     xml_content = read_xml_content(xml_files[0])
                     if xml_content:
                         all_xml_contents.append(xml_content)
+                        all_script_names.append(script)
                         print(f"✓ 成功从 {script} 获取XML内容")
+                        
+                        # 保存原始XML文件用于调试
+                        debug_filename = f"debug_{script.replace('.py', '')}.xml"
+                        save_debug_xml(xml_content, debug_filename)
                     else:
                         print(f"✗ 读取 {script} 生成的XML文件失败")
                 else:
@@ -303,8 +390,8 @@ def main():
             return
         
         # 合并所有XML内容
-        print(f"\n\n正在合并 {len(all_xml_contents)} 个XML内容...")
-        merged_xml = merge_xml_contents(all_xml_contents)
+        print(f"\n正在合并 {len(all_xml_contents)} 个XML内容...")
+        merged_xml = merge_xml_contents(all_xml_contents, all_script_names)
         
         # 保存到统一的XML文件
         pretty_xml = prettify_xml(merged_xml)
@@ -313,15 +400,37 @@ def main():
         with open(output_file, 'wb') as f:
             f.write(pretty_xml)
         
-        print(f"✓ 统一EPG文件已生成: {output_file}")
+        print(f"\n✓ 统一EPG文件已生成: {output_file}")
         
-        # 统计节目数量
+        # 统计最终合并后的节目数量
         programme_count = len(merged_xml.findall('programme'))
         channel_count = len(merged_xml.findall('channel'))
-        print(f"   频道数量: {channel_count}")
-        print(f"   节目数量: {programme_count}")
+        print(f"   最终频道数量: {channel_count}")
+        print(f"   最终节目数量: {programme_count}")
         
-        print("处理完成！")
+        # 打印最终合并后的频道详情
+        print("\n最终合并后的频道详情:")
+        for channel in merged_xml.findall('channel'):
+            channel_id = channel.get('id', '未知ID')
+            display_name_elem = channel.find('display-name')
+            display_name = display_name_elem.text if display_name_elem is not None else '未知名称'
+            print(f"  - 频道ID: {channel_id}, 名称: {display_name}")
+        
+        # 检查节目中的频道引用
+        programme_channels = set()
+        for programme in merged_xml.findall('programme'):
+            channel_ref = programme.get('channel', '未知频道')
+            programme_channels.add(channel_ref)
+        
+        print(f"\n节目中引用的所有频道ID: {list(programme_channels)}")
+        
+        # 检查是否有节目引用了不存在的频道
+        defined_channels = {channel.get('id') for channel in merged_xml.findall('channel')}
+        undefined_channels = programme_channels - defined_channels
+        if undefined_channels:
+            print(f"警告: 以下频道在节目中被引用但未定义: {list(undefined_channels)}")
+        
+        print("\n处理完成！")
 
 
 if __name__ == "__main__":

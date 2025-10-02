@@ -1,0 +1,66 @@
+name: Sync TVEPG Repository
+
+on:
+  workflow_dispatch:
+  # schedule:
+    #- cron: '0 0 * * *'
+
+jobs:
+  sync-repo:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Set up Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Download and copy all files from source repo
+      run: |
+        # 下载源仓库的完整zip文件
+        wget https://github.com/yufeilai666/tvepg/archive/refs/heads/main.zip -O source.zip
+        unzip -q source.zip
+        
+        # 查看解压后的目录结构
+        echo "解压后的目录内容:"
+        ls -la
+        
+        # 找到正确的目录名（通常以仓库名开头）
+        SOURCE_DIR=$(find . -maxdepth 1 -type d -name "tvepg*" | head -1)
+        echo "找到源目录: $SOURCE_DIR"
+        
+        if [ -z "$SOURCE_DIR" ]; then
+          echo "错误: 未找到源目录"
+          exit 1
+        fi
+
+        # 删除当前目录的所有文件（除了.git）
+        find . -maxdepth 1 ! -name '.git' ! -name '.' ! -name "$SOURCE_DIR" ! -name 'source.zip' -exec rm -rf {} +
+        
+        # 复制源仓库的所有文件到当前目录
+        cp -r "$SOURCE_DIR"/* ./
+        
+        # 复制隐藏文件（除了 . 和 ..）
+        find "$SOURCE_DIR" -maxdepth 1 -name ".*" ! -name "." ! -name ".." -exec cp -r {} ./ \; 2>/dev/null || true
+
+        # 清理临时文件
+        rm -rf "$SOURCE_DIR" source.zip
+        
+        echo "文件同步完成，当前目录内容:"
+        ls -la
+
+    - name: Commit and push changes
+      run: |
+        git add .
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "chore: sync all files from TVEPG repository $(date +'%Y-%m-%d %H:%M:%S')"
+          git push origin main
+        fi

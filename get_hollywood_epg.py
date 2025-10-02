@@ -143,53 +143,74 @@ def search_tmdb_movie_direct(original_title):
 
 def parse_hollywood_schedule_html(html_content):
     """
-    从Hollywood频道HTML内容中解析节目信息 - 处理结构差异
+    从Hollywood频道HTML内容中解析节目信息
     """
     soup = BeautifulSoup(html_content, 'html.parser')
+    schedule_data = []
     
     # 查找所有包含日期的div
     date_divs = soup.find_all('div', class_='wixui-rich-text')
     
-    schedule_data = []
+    # 收集所有日期和对应的节目列表
+    date_program_map = {}
+    all_dates = []
     current_date = None
     
+    # 第一步：收集所有日期
     for div in date_divs:
         h6_tag = div.find('h6', class_='font_6')
         if not h6_tag:
             continue
             
-        # 检查是否是日期行
-        date_match = re.search(r'(\d{1,2}/\d{1,2})\s+星期[一二三四五六日]', str(h6_tag))
-        if date_match:
-            current_date = date_match.group(1)
-            print(f"找到日期: {current_date}")
-            continue
+        text_content = h6_tag.get_text(strip=True)
         
-        # 检查是否是节目列表
-        if re.search(r'\d{1,2}:\d{2}', str(h6_tag)) and current_date:
-            print(f"找到节目列表，属于日期 {current_date}")
+        # 检查是否为日期行 (格式: MM/DD 星期X)
+        date_match = re.search(r'(\d{1,2}/\d{1,2})\s+(星期[一二三四五六日])', text_content)
+        if date_match:
+            date_str = date_match.group(1)
+            if date_str not in all_dates:
+                all_dates.append(date_str)
+                print(f"找到日期: {date_str}")
+    
+    # 第二步：收集所有节目列表
+    program_lists = []
+    for div in date_divs:
+        h6_tag = div.find('h6', class_='font_6')
+        if not h6_tag:
+            continue
             
-            # 创建一个通用的文本提取方法，处理所有情况
-            full_text = extract_program_text(h6_tag)
+        text_content = h6_tag.get_text(strip=True)
+        
+        # 检查是否为节目列表 (包含时间格式 XX:XX)
+        if re.search(r'\d{1,2}:\d{2}', text_content) and not re.search(r'\d{1,2}/\d{1,2}\s+星期', text_content):
+            # 获取所有文本内容，包括<br>分隔的节目
+            full_text = h6_tag.get_text()
             
-            # 按行分割
+            # 特别处理：如果文本包含特殊字符，进行清理
+            full_text = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', full_text)
+            
+            # 按行分割节目
             lines = full_text.split('\n')
             
-            # 解析每一行
+            # 解析节目列表
             programs = []
             for line in lines:
                 line = line.strip()
                 if not line:
                     continue
                     
-                # 匹配节目格式
-                match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
+                # 匹配时间、标题和分级
+                match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
+                if not match:
+                    # 尝试其他可能的时间格式
+                    match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
+                
                 if match:
                     time_str = match.group(1)
                     title = match.group(2).strip()
                     rating = match.group(3) if match.group(3) else ''
                     
-                    # 构建完整的原始标题
+                    # 构建完整的原始标题（包含分级信息）
                     original_title = f"{title}({rating})" if rating else title
                     
                     programs.append({
@@ -198,44 +219,51 @@ def parse_hollywood_schedule_html(html_content):
                         'rating': rating,
                         'link': None
                     })
-                    print(f"  解析到节目: {time_str} - {original_title}")
             
             if programs:
-                # 创建日期对象
-                month, day = current_date.split('/')
-                current_year = datetime.now().year
-                date_obj = datetime(current_year, int(month), int(day))
+                program_lists.append(programs)
+                print(f"找到节目列表，包含 {len(programs)} 个节目")
+    
+    # 第三步：将日期和节目列表配对
+    for i, date_str in enumerate(all_dates):
+        if i < len(program_lists):
+            # 创建日期对象
+            month, day = date_str.split('/')
+            current_year = datetime.now().year
+            date_obj = datetime(current_year, int(month), int(day))
+            
+            # 处理节目列表，处理跨天情况
+            programs_with_dates = []
+            current_program_date = date_obj
+            has_crossed_midnight = False
+            
+            for j, program in enumerate(program_lists[i]):
+                time_str = program['time']
                 
-                # 处理跨天情况
-                programs_with_dates = []
-                current_program_date = date_obj
-                has_crossed_midnight = False
-                
-                for j, program in enumerate(programs):
-                    time_str = program['time']
+                # 确定节目日期
+                if j > 0 and not has_crossed_midnight:
+                    prev_time = program_lists[i][j-1]['time']
+                    prev_hour = int(prev_time.split(':')[0])
+                    current_hour = int(time_str.split(':')[0])
                     
-                    # 确定节目日期
-                    if j > 0 and not has_crossed_midnight:
-                        prev_time = programs[j-1]['time']
-                        prev_hour = int(prev_time.split(':')[0])
-                        current_hour = int(time_str.split(':')[0])
-                        
-                        # 如果当前时间小于前一个时间，说明跨天了
-                        if current_hour < prev_hour:
-                            has_crossed_midnight = True
-                            current_program_date = date_obj + timedelta(days=1)
-                    
-                    program_with_date = program.copy()
-                    program_with_date['date_obj'] = current_program_date
-                    programs_with_dates.append(program_with_date)
-                    print(f"  确定节目日期: {current_program_date.strftime('%m/%d')} {time_str} - {program['title']}")
+                    # 如果当前时间小于前一个时间，说明跨天了
+                    if current_hour < prev_hour:
+                        has_crossed_midnight = True
+                        current_program_date = date_obj + timedelta(days=1)
                 
-                schedule_data.append({
-                    'date': current_date,
-                    'date_obj': date_obj,
-                    'programs': programs_with_dates
-                })
-                print(f"日期 {current_date}: {len(programs_with_dates)} 个节目")
+                program_with_date = program.copy()
+                program_with_date['date_obj'] = current_program_date
+                programs_with_dates.append(program_with_date)
+                print(f"  找到节目: {current_program_date.strftime('%m/%d')} {time_str} - {program['title']}")
+            
+            date_program_map[date_str] = {
+                'date': date_str,
+                'date_obj': date_obj,
+                'programs': programs_with_dates
+            }
+    
+    # 转换为需要的格式
+    schedule_data = list(date_program_map.values())
     
     print(f"成功解析 {len(schedule_data)} 天的节目数据")
     
@@ -243,45 +271,6 @@ def parse_hollywood_schedule_html(html_content):
     reorganized_data = reorganize_schedule_by_date(schedule_data)
     
     return reorganized_data
-
-def extract_program_text(h6_tag):
-    """
-    从h6标签中提取节目文本，处理各种HTML结构差异
-    """
-    # 方法1: 直接获取文本，但先移除所有隐藏元素
-    h6_copy = BeautifulSoup(str(h6_tag), 'html.parser')
-    
-    # 移除所有display:none的元素
-    for hidden in h6_copy.find_all(style=re.compile(r'display:\s*none')):
-        hidden.decompose()
-    
-    # 获取清理后的文本
-    text = h6_copy.get_text()
-    
-    # 清理特殊字符
-    text = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', text)
-    text = re.sub(r'&nbsp;', ' ', text)
-    text = re.sub(r'\s+', ' ', text)
-    
-    # 如果清理后的文本为空或太短，尝试方法2
-    if len(text.strip()) < 10:
-        # 方法2: 遍历所有span元素，跳过隐藏的
-        text = ""
-        spans = h6_tag.find_all('span')
-        for span in spans:
-            # 检查是否隐藏
-            style = span.get('style', '')
-            if 'display:none' in style:
-                continue
-            
-            span_text = span.get_text()
-            # 检查是否有br标签
-            if span.find('br'):
-                text += span_text + '\n'
-            else:
-                text += span_text
-    
-    return text
 
 def reorganize_schedule_by_date(schedule_data):
     """

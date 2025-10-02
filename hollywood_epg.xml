@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tv generator-info-name="yufeilai666" generator-info-url="https://github.com/yufeilai666/tvepg" source-info-name="hollywood.com.tw" source-info-url="https://www.hollywood.com.tw">
+  <channel id="好莱坞电影台">
+    <display-name lang="zh">好莱坞电影台</display-name>
+  </channel>
+  <programme start="20251004050000 +0800" stop="20251004050000 +0800" channel="好莱坞电影台">
+    <title lang="zh">變形金剛(護)</title>
+    <desc lang="zh">　　講述柯博文與密卡登那段鮮為人知的起源故事。 這兩位曾經是情同手足的朋友，最終卻成為改變賽博坦星命運的宿敵。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251004050000 +0800" stop="20251004050000 +0800" channel="好莱坞电影台">
+    <title lang="zh">鯊魚沒有假期(護)</title>
+    <desc lang="zh">　　三個原本興致高昂，搭乘遊艇出海遊玩的旅客意外被困在離岸三里之外的淺礁上，而一條無情的大白鯊潛伏於附近的海中，伺機而動。隨著海潮的上升，三人所剩的時間越來越少，迫使他們重回危機四伏的海水之中，並在回到岸上之前，與嗜血的鯊魚決一勝負…</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251004050000 +0800" stop="20251004050000 +0800" channel="好莱坞电影台">
+    <title lang="zh">毀滅者(護)</title>
+    <desc lang="zh">　　凡妮莎威廉絲飾演某高科技公司的主管，由於她並不知道公司的高級主管與國安局串通計畫發展強大的武器，因此當她向國安局揭發自己公司私下生產非法的危險武器時，反而遭到公司與國安局雙方人馬追殺她的厄運，國安局將凡妮莎過去的資料在電腦中一筆勾消，使得她頓時成為不存在的幽靈人口。阿諾是國安局的保安官，他也在不知情的狀況下保護向他求助的凡妮莎，阿諾能憑他的智慧洞悉這一切的陰謀，並且讓凡妮莎回復她的身份嗎？</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251004050000 +0800" stop="20251005050000 +0800" channel="好莱坞电影台">
+    <title lang="zh">屍控水族館(護)</title>
+    <desc lang="zh">　　一場不幸的科學意外，導致水族館內的所有海洋生物全都成了半死不活的活屍生物。受困於水族館內的倖存者一邊對抗這群飢腸轆轆的嗜血生物，一邊想辦法逃出生天……</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251005050000 +0800" stop="20251008050000 +0800" channel="好莱坞电影台">
+    <title lang="zh">鯊魚困鬥(護)</title>
+    <desc lang="zh"/>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008050000 +0800" stop="20251008050000 +0800" channel="好莱坞电影台">
+    <title lang="zh">六天七夜(護)</title>
+    <desc lang="zh">　　安海契是一名紐約雜誌的編輯，忙裡偷閑地到大溪地的離島渡假的時候，居然又被主管派到大溪地工作。為了達成任務安海契雇用了當時也正在渡假的貨機駕駛哈里遜福特，要他載她前往工作現場。
+　　途中，飛機發生事故，只能迫降於一個叫天天不應、叫地地不靈的孤島，男女主角雖然只受了皮肉之傷，但也無計可施只能等待救援。這個看似沒有人煙的小島，出乎意料的居然是海盜的大本營，他們除了得努力求生外，還得努力「逃生」--躲避海盜的追逐。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008050000 +0800" stop="20251009000000 +0800" channel="好莱坞电影台">
+    <title lang="zh">絕命帶原者(護)</title>
+    <desc lang="zh">　　致命變種病毒席捲全球，感染者無一倖免，除了病發死亡的大量人口外，還有一群看不出症狀的病毒帶原者，隨時威脅著倖存的人類…！  四個美國青年包括丹尼（盧泰勒普奇飾）、他的哥哥布萊恩（克里斯潘　飾）、丹尼的女友芭比（琵琶佩拉玻飾）、以及他性感美麗的同學凱特（艾蜜莉凡康　飾），決定駕車橫跨西部沙漠公路，前往傳說中的淨土～墨西哥的邊陲海灘，在那裡等待重生的奇蹟發生…。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+</tv>

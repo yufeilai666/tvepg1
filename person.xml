@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tv generator-info-name="unified-epg-generator" generator-info-url="https://github.com/yufeilai666/tvepg" source-info-name="multiple-sources">
+<tv generator-info-name="unified-epg-generator" generator-info-url="https://github.com/yufeilai666/tvepg" source-info-name="multiple-sources" created="20251002201936">
   <channel id="LS TIME 龙祥时代">
     <display-name lang="zh">龙祥时代</display-name>
   </channel>

@@ -143,7 +143,7 @@ def search_tmdb_movie_direct(original_title):
 
 def parse_hollywood_schedule_html(html_content):
     """
-    从『好莱坞电影台』频道HTML内容中解析节目信息
+    从Hollywood频道HTML内容中解析节目信息
     """
     soup = BeautifulSoup(html_content, 'html.parser')
     schedule_data = []
@@ -152,6 +152,7 @@ def parse_hollywood_schedule_html(html_content):
     date_divs = soup.find_all('div', class_='wixui-rich-text')
     
     current_date = None
+    current_date_obj = None
     current_programs = []
     
     for div in date_divs:
@@ -168,25 +169,39 @@ def parse_hollywood_schedule_html(html_content):
             if current_date and current_programs:
                 schedule_data.append({
                     'date': current_date,
+                    'date_obj': current_date_obj,
                     'programs': current_programs.copy()
                 })
                 current_programs = []
             
             current_date = date_match.group(1)  # 获取 MM/DD 格式的日期
+            # 创建日期对象
+            month, day = current_date.split('/')
+            current_year = datetime.now().year
+            current_date_obj = datetime(current_year, int(month), int(day))
+            
             print(f"找到日期: {current_date}")
             continue
         
         # 检查是否为节目列表 (包含时间格式 XX:XX)
         if re.search(r'\d{2}:\d{2}', text_content) and current_date:
+            # 获取所有文本内容，包括<br>分隔的节目
+            full_text = h6_tag.get_text()
+            
             # 按行分割节目
-            lines = text_content.split('\n')
-            for line in lines:
+            lines = full_text.split('\n')
+            
+            # 用于跟踪当前日期
+            current_program_date = current_date_obj
+            has_crossed_midnight = False  # 标记是否已经跨天
+            
+            # 遍历所有节目行
+            for i, line in enumerate(lines):
                 line = line.strip()
                 if not line:
                     continue
                     
                 # 匹配时间、标题和分级
-                # 格式: "05:00      變形金剛(護)"
                 match = re.match(r'(\d{2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
                 if match:
                     time_str = match.group(1)
@@ -196,24 +211,75 @@ def parse_hollywood_schedule_html(html_content):
                     # 构建完整的原始标题（包含分级信息）
                     original_title = f"{title}({rating})" if rating else title
                     
+                    # 检测是否跨天
+                    if i > 0 and not has_crossed_midnight:
+                        prev_time = lines[i-1].strip().split()[0]  # 前一个节目的时间
+                        prev_hour = int(prev_time.split(':')[0])
+                        current_hour = int(time_str.split(':')[0])
+                        
+                        # 如果当前时间小于前一个时间，说明跨天了
+                        if current_hour < prev_hour:
+                            has_crossed_midnight = True
+                            current_program_date = current_date_obj + timedelta(days=1)
+                    
                     program_info = {
                         'time': time_str,
-                        'title': original_title,  # 使用包含分级的完整标题
+                        'title': original_title,
                         'rating': rating,
-                        'link': None  # Hollywood频道没有详情链接
+                        'link': None,
+                        'date_obj': current_program_date
                     }
                     current_programs.append(program_info)
-                    print(f"  找到节目: {time_str} - {original_title}")
+                    print(f"  找到节目: {current_program_date.strftime('%m/%d')} {time_str} - {original_title}")
     
     # 添加最后一天的节目
     if current_date and current_programs:
         schedule_data.append({
             'date': current_date,
+            'date_obj': current_date_obj,
             'programs': current_programs.copy()
         })
     
     print(f"成功解析 {len(schedule_data)} 天的节目数据")
-    return schedule_data
+    
+    # 重新组织数据，按实际日期分组
+    reorganized_data = reorganize_schedule_by_date(schedule_data)
+    
+    return reorganized_data
+
+def reorganize_schedule_by_date(schedule_data):
+    """
+    重新组织节目数据，按实际日期分组
+    """
+    date_dict = {}
+    
+    for day_info in schedule_data:
+        for program in day_info['programs']:
+            date_key = program['date_obj'].strftime('%m/%d')
+            
+            if date_key not in date_dict:
+                date_dict[date_key] = {
+                    'date': date_key,
+                    'date_obj': program['date_obj'],
+                    'programs': []
+                }
+            
+            # 复制节目信息，但移除date_obj字段
+            program_copy = program.copy()
+            program_copy.pop('date_obj', None)
+            date_dict[date_key]['programs'].append(program_copy)
+    
+    # 按日期排序
+    sorted_dates = sorted(date_dict.keys(), key=lambda x: datetime.strptime(x, '%m/%d'))
+    reorganized_data = [date_dict[date] for date in sorted_dates]
+    
+    # 打印重新组织后的数据
+    for day in reorganized_data:
+        print(f"日期: {day['date']}, 节目数量: {len(day['programs'])}")
+        for program in day['programs']:
+            print(f"  - {program['time']} {program['title']}")
+    
+    return reorganized_data
 
 def generate_xmltv_epg(schedule_data):
     """
@@ -227,13 +293,10 @@ def generate_xmltv_epg(schedule_data):
     root.set('source-info-url', 'https://www.hollywood.com.tw')
     
     # 添加频道信息
-    channel_elem = SubElement(root, 'channel', id='好莱坞电影台')
+    channel_elem = SubElement(root, 'channel', id='HOLLYWOOD')
     display_name = SubElement(channel_elem, 'display-name')
     display_name.text = '好莱坞电影台'
     display_name.set('lang', 'zh')
-    
-    # 获取当前年份
-    current_year = datetime.now().year
     
     # 缓存电影信息，避免重复查询
     movie_cache = {}
@@ -263,6 +326,7 @@ def generate_xmltv_epg(schedule_data):
             start_hour, start_minute = start_time_parts
             
             # 创建开始时间
+            current_year = datetime.now().year
             start_dt = datetime(current_year, int(month), int(day), int(start_hour), int(start_minute))
             start_time = start_dt.strftime("%Y%m%d%H%M00")
             
@@ -272,8 +336,8 @@ def generate_xmltv_epg(schedule_data):
                 next_program = programs[i + 1]
                 next_time_parts = next_program['time'].split(':')
                 if len(next_time_parts) == 2:
-                    end_hour, end_minute = next_time_parts
-                    end_dt = datetime(current_year, int(month), int(day), int(end_hour), int(end_minute))
+                    next_hour, next_minute = next_time_parts
+                    end_dt = datetime(current_year, int(month), int(day), int(next_hour), int(next_minute))
                 else:
                     # 如果无法解析下一个节目时间，使用默认2小时
                     end_dt = start_dt + timedelta(hours=2)
@@ -289,20 +353,20 @@ def generate_xmltv_epg(schedule_data):
                             next_day_date_parts = next_day_info['date'].split('/')
                             if len(next_day_date_parts) == 2:
                                 next_month, next_day = next_day_date_parts
-                                end_hour, end_minute = next_time_parts
-                                end_dt = datetime(current_year, int(next_month), int(next_day), int(end_hour), int(end_minute))
+                                next_hour, next_minute = next_time_parts
+                                end_dt = datetime(current_year, int(next_month), int(next_day), int(next_hour), int(next_minute))
                             else:
                                 # 使用第二天的0点
-                                end_dt = datetime(current_year, int(month), int(day)) + timedelta(days=1)
+                                end_dt = start_dt + timedelta(days=1)
                         else:
                             # 使用第二天的0点
-                            end_dt = datetime(current_year, int(month), int(day)) + timedelta(days=1)
+                            end_dt = start_dt + timedelta(days=1)
                     else:
                         # 使用第二天的0点
-                        end_dt = datetime(current_year, int(month), int(day)) + timedelta(days=1)
+                        end_dt = start_dt + timedelta(days=1)
                 else:
                     # 最后一天，使用第二天的0点
-                    end_dt = datetime(current_year, int(month), int(day)) + timedelta(days=1)
+                    end_dt = start_dt + timedelta(days=1)
             
             end_time = end_dt.strftime("%Y%m%d%H%M00")
             
@@ -310,7 +374,7 @@ def generate_xmltv_epg(schedule_data):
             programme_elem = SubElement(root, 'programme')
             programme_elem.set('start', start_time + ' +0800')  # 台北时区
             programme_elem.set('stop', end_time + ' +0800')
-            programme_elem.set('channel', '好莱坞电影台')
+            programme_elem.set('channel', 'HOLLYWOOD')
             
             # 添加标题 - 使用原始标题（包含分级信息）
             title_elem = SubElement(programme_elem, 'title')
@@ -369,7 +433,7 @@ def prettify_xml(elem):
 
 def main():
     """
-    主函数 - 从『好莱坞电影台』网站获取数据并生成XMLTV EPG
+    主函数 - 从Hollywood网站获取数据并生成XMLTV EPG
     """
     try:
         # 获取TMDB API Key
@@ -382,14 +446,13 @@ def main():
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
-        print("正在获取『好莱坞电影台』节目表数据...")
+        print("正在获取Hollywood节目表数据...")
         response = requests.get(url, headers=headers, timeout=10)
         response.encoding = 'utf-8'
         
         if response.status_code == 200:
             # 解析HTML
             schedule_data = parse_hollywood_schedule_html(response.text)
-            print(f"成功解析 {len(schedule_data)} 天的节目数据")
             
             if schedule_data:
                 # 生成XMLTV EPG
@@ -402,7 +465,7 @@ def main():
                 with open('hollywood_epg.xml', 'wb') as f:
                     f.write(pretty_xml)
                 
-                print("『好莱坞电影台』EPG文件已生成: hollywood_epg.xml")
+                print("Hollywood EPG文件已生成: hollywood_epg.xml")
             else:
                 print("未解析到节目数据")
         else:

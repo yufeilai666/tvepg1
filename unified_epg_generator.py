@@ -23,7 +23,7 @@
 - requests, beautifulsoup4
 
 作者：yufeilai666
-版本：1.2
+版本：1.3
 """
 
 import os
@@ -163,6 +163,44 @@ def merge_xml_contents(xml_contents):
     return new_root
 
 
+def custom_prettify_xml(elem):
+    """
+    自定义美化XML输出，避免minidom添加额外空行
+    
+    参数:
+        elem (Element): XML元素
+        
+    返回:
+        bytes: 格式化后的XML字节内容
+    """
+    # 使用tostring获取XML内容，不添加额外格式
+    rough_string = tostring(elem, encoding='utf-8')
+    
+    # 使用minidom解析
+    reparsed = minidom.parseString(rough_string)
+    
+    # 获取美化后的XML，但minidom会添加额外空行
+    pretty_xml = reparsed.toprettyxml(indent="  ", encoding='utf-8')
+    
+    # 解码为字符串，处理多余空行
+    xml_str = pretty_xml.decode('utf-8')
+    
+    # 移除多余空行 - 保留标签间的缩进但移除空行
+    lines = xml_str.split('\n')
+    cleaned_lines = []
+    
+    for line in lines:
+        # 保留非空行，或者只包含空格但有关键内容的行
+        stripped = line.strip()
+        if stripped or line.endswith('>') or line.lstrip().startswith('<'):
+            cleaned_lines.append(line)
+    
+    # 重新组合
+    cleaned_xml = '\n'.join(cleaned_lines)
+    
+    return cleaned_xml.encode('utf-8')
+
+
 def prettify_xml(elem):
     """
     美化XML输出，添加缩进和格式化
@@ -173,9 +211,7 @@ def prettify_xml(elem):
     返回:
         bytes: 格式化后的XML字节内容
     """
-    rough_string = tostring(elem, encoding='utf-8')
-    reparsed = minidom.parseString(rough_string)
-    return reparsed.toprettyxml(indent="  ", encoding='utf-8')
+    return custom_prettify_xml(elem)
 
 
 def discover_epg_scripts():

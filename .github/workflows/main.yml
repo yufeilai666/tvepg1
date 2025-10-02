@@ -2,7 +2,7 @@ name: Sync TVEPG Repository
 
 on:
   workflow_dispatch:
-  schedule:
+  #schedule:
     #- cron: '0 0 * * *'
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
     - name: Download and copy all files from source repo
       run: |
         # 下载源仓库的完整zip文件
-        wget https://github.com/yufeilai666/tvepg1/archive/refs/heads/main.zip -O source.zip
+        wget https://github.com/yufeilai666/tvepg/archive/refs/heads/main.zip -O source.zip
         unzip -q source.zip
         
         # 删除当前目录的所有文件（除了.git）

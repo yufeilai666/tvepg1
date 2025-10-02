@@ -1,3 +1,5 @@
+[file name]: epg-generator.php
+[file content begin]
 <?php
 /**
  * EPG 源处理器
@@ -58,16 +60,6 @@ $sources = [
         "url" => "https://raw.githubusercontent.com/dbghelp/Singtel-TV-EPG/refs/heads/main/singtel.xml"
     ]
 ];
-
-// 添加环境变量中定义的其他源
-foreach ($envConfig as $filename => $url) {
-    if (!isset($sources[$filename])) {
-        $sources[$filename] = [
-            "url" => $url,
-            "from_env" => true
-        ];
-    }
-}
 
 // 环境配置
 error_reporting(E_ALL);
@@ -212,10 +204,21 @@ function process_xml($xmlContent, $idSuffix) {
 }
 
 /**
+ * 从URL提取文件名
+ */
+function get_filename_from_url($url) {
+    $path = parse_url($url, PHP_URL_PATH);
+    if ($path) {
+        return basename($path);
+    }
+    return '未知文件';
+}
+
+/**
  * 下载文件内容
  */
-function download_file($url, $filename) {
-    log_message("开始下载: $filename");
+function download_file($url, $remoteFilename) {
+    log_message("开始下载: $remoteFilename");
     
     $ch = curl_init();
     curl_setopt_array($ch, [
@@ -234,60 +237,57 @@ function download_file($url, $filename) {
     curl_close($ch);
     
     if ($error) {
-        log_message("下载失败 [$filename]: $error", true);
+        log_message("下载失败 [$remoteFilename]: $error", true);
         return false;
     }
     
     if ($httpCode !== 200) {
-        log_message("下载失败 [$filename]: HTTP $httpCode", true);
+        log_message("下载失败 [$remoteFilename]: HTTP $httpCode", true);
         return false;
     }
     
     if (empty($response)) {
-        log_message("下载内容为空 [$filename]", true);
+        log_message("下载内容为空 [$remoteFilename]", true);
         return false;
     }
     
-    log_message("下载成功 [$filename]: " . strlen($response) . " 字节");
+    log_message("下载成功 [$remoteFilename]: " . strlen($response) . " 字节");
     return $response;
 }
 
 /**
  * 处理单个EPG源
  */
-function process_source($filename, $source) {
+function process_source($outputFilename, $source) {
     $url = $source['url'] ?? null;
     $idSuffix = $source['id_suffix'] ?? '';
     $requiredEnv = $source['required_env'] ?? false;
-    $fromEnv = $source['from_env'] ?? false;
+    
+    // 获取远程文件名
+    $remoteFilename = get_filename_from_url($url);
     
     // 检查必须从环境变量获取的源
     if ($requiredEnv && empty($url)) {
-        log_message("处理失败 [$filename]: 必须从环境变量获取URL但未配置", true);
+        log_message("处理失败 [$remoteFilename => $outputFilename]: 必须从环境变量获取URL但未配置", true);
         return false;
     }
     
     // 检查URL是否有效
     if (empty($url)) {
-        log_message("处理失败 [$filename]: URL未配置", true);
+        log_message("处理失败 [$remoteFilename => $outputFilename]: URL未配置", true);
         return false;
     }
     
-    // 构造源标识（不暴露URL）
-    $sourceInfo = $filename;
-    if ($fromEnv) {
-        $sourceInfo .= " [环境变量]";
-    } elseif ($requiredEnv) {
-        $sourceInfo .= " [必需环境变量]";
-    }
+    // 构造处理标识
+    $processInfo = $remoteFilename . " => " . $outputFilename;
     if ($idSuffix) {
-        $sourceInfo .= " (后缀:$idSuffix)";
+        $processInfo .= " (后缀:$idSuffix)";
     }
     
-    log_message("开始处理: $sourceInfo");
+    log_message("开始处理: $processInfo");
     
     // 下载文件
-    $response = download_file($url, $filename);
+    $response = download_file($url, $remoteFilename);
     if ($response === false) {
         return false;
     }
@@ -295,18 +295,18 @@ function process_source($filename, $source) {
     // 处理gzip压缩
     $xmlContent = $response;
     if (substr($response, 0, 2) === "\x1f\x8b") {
-        log_message("检测到gzip压缩内容 [$filename]");
+        log_message("检测到gzip压缩内容 [$remoteFilename]");
         if (!function_exists('gzdecode')) {
-            log_message("zlib扩展未加载，无法解压 [$filename]", true);
+            log_message("zlib扩展未加载，无法解压 [$remoteFilename]", true);
             return false;
         }
         
         $xmlContent = gzdecode($response);
         if ($xmlContent === false) {
-            log_message("gzip解压失败 [$filename]", true);
+            log_message("gzip解压失败 [$remoteFilename]", true);
             return false;
         }
-        log_message("解压成功 [$filename]: " . strlen($xmlContent) . " 字节");
+        log_message("解压成功 [$remoteFilename]: " . strlen($xmlContent) . " 字节");
     }
     
     // 验证XML格式
@@ -315,7 +315,7 @@ function process_source($filename, $source) {
     if (!$dom->loadXML($xmlContent)) {
         $errors = libxml_get_errors();
         foreach ($errors as $error) {
-            log_message("XML格式错误 [$filename]: " . $error->message, true);
+            log_message("XML格式错误 [$remoteFilename]: " . $error->message, true);
         }
         libxml_clear_errors();
         return false;
@@ -323,22 +323,22 @@ function process_source($filename, $source) {
     libxml_clear_errors();
     
     // 处理XML内容
-    log_message("开始XML处理 [$filename]");
+    log_message("开始XML处理 [$remoteFilename => $outputFilename]");
     $processedXml = process_xml($xmlContent, $idSuffix);
     if ($processedXml === null) {
-        log_message("XML处理失败 [$filename]", true);
+        log_message("XML处理失败 [$remoteFilename => $outputFilename]", true);
         return false;
     }
     
     // 保存文件
-    $outputPath = __DIR__ . '/' . $filename;
+    $outputPath = __DIR__ . '/' . $outputFilename;
     $bytesWritten = file_put_contents($outputPath, $processedXml);
     if ($bytesWritten === false) {
-        log_message("文件保存失败 [$filename]", true);
+        log_message("文件保存失败 [$remoteFilename => $outputFilename]", true);
         return false;
     }
     
-    log_message("保存成功 [$filename]: " . number_format($bytesWritten) . " 字节");
+    log_message("保存成功 [$remoteFilename => $outputFilename]: " . number_format($bytesWritten) . " 字节");
     return true;
 }
 
@@ -361,18 +361,20 @@ function main() {
     log_message("开始处理 " . count($sources) . " 个EPG源");
     
     // 逐个处理EPG源
-    foreach ($sources as $filename => $source) {
+    foreach ($sources as $outputFilename => $source) {
         log_message("----------------------------------------");
         
-        $result = process_source($filename, $source);
-        $results[$filename] = $result;
+        $result = process_source($outputFilename, $source);
+        $results[$outputFilename] = $result;
         
         if ($result) {
-            $successFiles[] = $filename;
-            log_message("✓ 处理成功: $filename");
+            $successFiles[] = $outputFilename;
+            $remoteFilename = get_filename_from_url($source['url']);
+            log_message("✓ 处理成功: $remoteFilename => $outputFilename");
         } else {
-            $failedFiles[] = $filename;
-            log_message("✗ 处理失败: $filename", true);
+            $failedFiles[] = $outputFilename;
+            $remoteFilename = get_filename_from_url($source['url']);
+            log_message("✗ 处理失败: $remoteFilename => $outputFilename", true);
         }
         
         log_message("----------------------------------------");
@@ -392,14 +394,16 @@ function main() {
         log_message("成功文件列表:");
         foreach ($successFiles as $file) {
             $size = file_exists($file) ? number_format(filesize($file)) . " 字节" : "文件丢失";
-            log_message("  ✓ $file ($size)");
+            $remoteFile = get_filename_from_url($sources[$file]['url']);
+            log_message("  ✓ $remoteFile => $file ($size)");
         }
     }
     
     if (!empty($failedFiles)) {
         log_message("失败文件列表:");
         foreach ($failedFiles as $file) {
-            log_message("  ✗ $file", true);
+            $remoteFile = get_filename_from_url($sources[$file]['url']);
+            log_message("  ✗ $remoteFile => $file", true);
         }
     }
     
@@ -416,3 +420,4 @@ try {
     log_message("未处理的异常: " . $e->getMessage(), true);
     exit(1);
 }
+[file content end]

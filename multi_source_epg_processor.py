@@ -8,6 +8,9 @@ import sys
 import gzip
 import shutil
 
+# 从配置文件获取目标EPG文件的列表
+target_epg = ["epgmytvsuper.xml", "epganywhere.xml", "epg4gtv2.xml", "epgastro.xml", "epgindonesia.xml", "epgsooka.xml"]
+
 def process_epg_file(input_file, output_file):
     """
     处理EPG(电子节目指南)XML文件，解决重复channel id问题并更新programme引用
@@ -136,14 +139,9 @@ def process_epg_file(input_file, output_file):
     except Exception as e:
         return False, f"处理XML文件时出错: {e}"
 
-def download_file(url, local_path):
+def download_file(url, local_path, source_name):
     """从URL下载文件到本地路径，支持gzip压缩文件和普通XML文件"""
     try:
-        # 从URL中提取文件名
-        from urllib.parse import urlparse
-        parsed_url = urlparse(url)
-        url_filename = os.path.basename(parsed_url.path) or "unknown_file"
-        
         response = requests.get(url, stream=True, timeout=30)
         response.raise_for_status()  # 检查请求是否成功
         
@@ -179,10 +177,10 @@ def download_file(url, local_path):
                 with gzip.open(gzip_path, 'rb') as f_in:
                     with open(local_path, 'wb') as f_out:
                         shutil.copyfileobj(f_in, f_out)
-                print(f"下载并解压: {url_filename}")
+                print(f"  下载并解压: {source_name}")
             except Exception as e:
                 # 如果解压失败，尝试直接使用文件内容
-                print(f"解压失败，尝试直接使用文件: {e}")
+                print(f"  解压失败，尝试直接使用文件: {e}")
                 shutil.move(gzip_path, local_path)
             finally:
                 # 删除临时压缩文件（如果存在）
@@ -194,7 +192,7 @@ def download_file(url, local_path):
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
                         f.write(chunk)
-            print(f"下载: {url_filename}")
+            print(f"  下载: {source_name}")
         
         return True, "下载成功"
     except requests.exceptions.RequestException as e:
@@ -204,53 +202,66 @@ def download_file(url, local_path):
 
 def get_config_from_env():
     """
-    从环境变量中获取配置信息
+    从环境变量中获取配置信息，并根据target_epg过滤
     
     支持两种方式：
     1. 从 JSON_FILE 环境变量中读取配置文件路径
     2. 从 EPG_CONFIG 环境变量中直接读取JSON配置字符串
     
-    :return: 配置字典
+    :return: 过滤后的配置字典，只包含target_epg中指定的文件
     """
     # 方式1：从环境变量中读取配置文件路径
     config_file_path = os.environ.get('JSON_FILE')
     if config_file_path and os.path.exists(config_file_path):
         try:
             with open(config_file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                config = json.load(f)
         except json.JSONDecodeError as e:
             print(f"配置文件格式错误: {e}")
             return None
     
     # 方式2：从环境变量中直接读取JSON配置字符串
-    config_json = os.environ.get('EPG_CONFIG')
-    if config_json:
+    elif os.environ.get('EPG_CONFIG'):
+        config_json = os.environ.get('EPG_CONFIG')
         try:
-            return json.loads(config_json)
+            config = json.loads(config_json)
         except json.JSONDecodeError as e:
             print(f"环境变量中的JSON配置格式错误: {e}")
             return None
     
     # 方式3：默认配置文件
-    default_config_file = "epg_config.json"
-    if os.path.exists(default_config_file):
-        try:
-            with open(default_config_file, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except json.JSONDecodeError as e:
-            print(f"默认配置文件格式错误: {e}")
+    else:
+        default_config_file = "epg_config.json"
+        if os.path.exists(default_config_file):
+            try:
+                with open(default_config_file, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+            except json.JSONDecodeError as e:
+                print(f"默认配置文件格式错误: {e}")
+                return None
+        else:
+            print("错误：未找到有效的配置文件或配置环境变量")
+            print("请设置 JSON_FILE 环境变量指定配置文件路径")
+            print("或设置 EPG_CONFIG 环境变量包含JSON配置字符串")
             return None
     
-    print("错误：未找到有效的配置文件或配置环境变量")
-    print("请设置 JSON_FILE 环境变量指定配置文件路径")
-    print("或设置 EPG_CONFIG 环境变量包含JSON配置字符串")
-    return None
+    # 根据target_epg过滤配置
+    filtered_config = {}
+    for output_file in target_epg:
+        if output_file in config:
+            filtered_config[output_file] = config[output_file]
+        else:
+            print(f"警告: 配置中未找到目标文件 {output_file}")
+    
+    return filtered_config
 
 def process_multiple_files():
     """
-    从环境变量或配置文件中读取多个XML文件配置，并处理每个文件
+    从环境变量或配置文件中读取多个XML文件配置，根据target_epg过滤，
+    并处理每个文件
     
     每个文件的处理都是独立的，一个文件的错误不会影响其他文件的处理
+    会详细打印成功和失败的源信息
     """
     # 获取配置
     config = get_config_from_env()
@@ -263,39 +274,41 @@ def process_multiple_files():
     
     success_count = 0
     total_count = len(config)
+    success_sources = []
+    failed_sources = []
     
     # 处理每个XML文件
     for output_file, url in config.items():
-        # 从URL中提取输入文件名
-        from urllib.parse import urlparse
-        parsed_url = urlparse(url)
-        input_filename = os.path.basename(parsed_url.path) or "unknown_file.xml"
-        
-        print(f"\n开始处理: {input_filename} -> {output_file}")
+        print(f"\n开始处理: {output_file}")
         
         # 为每个文件创建独立的临时文件
-        temp_file = os.path.join(temp_dir, f"temp_{os.path.basename(url).replace('.gz', '')}")
+        temp_file = os.path.join(temp_dir, f"temp_{output_file}")
         
         # 下载XML文件
-        download_success, download_message = download_file(url, temp_file)
+        download_success, download_message = download_file(url, temp_file, output_file)
         if not download_success:
-            print(f"下载失败: {download_message}")
+            error_msg = f"下载失败: {download_message}"
+            print(f"  {error_msg}")
+            failed_sources.append((output_file, "下载阶段", error_msg))
             continue
         
         # 处理XML文件
         process_success, process_message = process_epg_file(temp_file, output_file)
         if process_success:
-            print(f"成功处理: {output_file}")
+            print(f"  成功处理: {output_file}")
             success_count += 1
+            success_sources.append(output_file)
         else:
-            print(f"处理失败: {process_message}")
+            error_msg = f"处理失败: {process_message}"
+            print(f"  {error_msg}")
+            failed_sources.append((output_file, "处理阶段", error_msg))
         
         # 清理当前文件的临时文件
         try:
             if os.path.exists(temp_file):
                 os.remove(temp_file)
         except Exception as e:
-            print(f"清理临时文件失败: {e}")
+            print(f"  清理临时文件失败: {e}")
     
     # 清理临时目录
     try:
@@ -303,6 +316,21 @@ def process_multiple_files():
         print(f"\n已清理临时目录: {temp_dir}")
     except Exception as e:
         print(f"清理临时目录失败: {e}")
+    
+    # 打印处理结果汇总
+    print("\n" + "="*50)
+    print("处理结果汇总:")
+    print("="*50)
+    
+    if success_sources:
+        print(f"\n成功处理的源 ({len(success_sources)}/{total_count}):")
+        for source in success_sources:
+            print(f"  ✓ {source}")
+    
+    if failed_sources:
+        print(f"\n失败的源 ({len(failed_sources)}/{total_count}):")
+        for source, stage, error in failed_sources:
+            print(f"  ✗ {source} - {stage}: {error}")
     
     print(f"\n处理完成: {success_count}/{total_count} 个文件成功")
     return success_count > 0
@@ -312,8 +340,8 @@ if __name__ == "__main__":
     success = process_multiple_files()
     
     if success:
-        print("所有文件处理完成！")
+        print("\n所有文件处理完成！")
         sys.exit(0)
     else:
-        print("处理过程中出现错误！")
+        print("\n处理过程中出现错误！")
         sys.exit(1)

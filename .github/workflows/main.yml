@@ -31,8 +31,8 @@ jobs:
         find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} +
         
         # 复制源仓库的所有文件到当前目录
-        cp -r tvepg1-main/* ./
-        cp -r tvepg1-main/.* ./ 2>/dev/null || true  # 复制隐藏文件，忽略错误
+        cp -r tvepg-main/* ./
+        cp -r tvepg-main/.* ./ 2>/dev/null || true  # 复制隐藏文件，忽略错误
         
         # 清理临时文件
         rm -rf tvepg1-main source.zip

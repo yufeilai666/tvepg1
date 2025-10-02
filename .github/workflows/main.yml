@@ -35,7 +35,7 @@ jobs:
         cp -r tvepg-main/.* ./ 2>/dev/null || true  # 复制隐藏文件，忽略错误
         
         # 清理临时文件
-        rm -rf tvepg1-main source.zip
+        rm -rf tvepg-main source.zip
 
     - name: Commit and push changes
       run: |

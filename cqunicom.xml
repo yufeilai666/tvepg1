@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tv info-name="by Zsz520 2025-10-02 08:00:11" source-info-name="Chongqing Unicom Iptv Spider">
+<tv info-name="by Zsz520 2025-10-02 16:00:11" source-info-name="Chongqing Unicom Iptv Spider">
   <channel id="重庆卫视">
     <display-name lang="zh">重庆卫视</display-name>
   </channel>
@@ -654,9 +654,6 @@
   <programme channel="重庆卫视" start="20250930233900 +0800" stop="20250930234600 +0800">
     <title lang="zh">风景区气象服务</title>
   </programme>
-  <programme channel="重庆卫视" start="20251001000000 +0800" stop="20251001002700 +0800">
-    <title lang="zh">追风者(11)</title>
-  </programme>
   <programme channel="重庆卫视" start="20251001002700 +0800" stop="20251001013400 +0800">
     <title lang="zh">中国故事</title>
   </programme>
@@ -668,12 +665,6 @@
   </programme>
   <programme channel="重庆卫视" start="20251001035400 +0800" stop="20251001051600 +0800">
     <title lang="zh">谢谢你来了</title>
-  </programme>
-  <programme channel="重庆卫视" start="20251001051600 +0800" stop="20251001060000 +0800">
-    <title lang="zh">亮剑(6)</title>
-  </programme>
-  <programme channel="重庆卫视" start="20251001060000 +0800" stop="20251001064400 +0800">
-    <title lang="zh">亮剑(7)</title>
   </programme>
   <programme channel="重庆卫视" start="20251001064400 +0800" stop="20251001070000 +0800">
     <title lang="zh">财经壹资讯</title>
@@ -705,9 +696,6 @@
   <programme channel="重庆卫视" start="20251001090200 +0800" stop="20251001093900 +0800">
     <title lang="zh">诗行长江(下)</title>
   </programme>
-  <programme channel="重庆卫视" start="20251001093900 +0800" stop="20251001100700 +0800">
-    <title lang="zh">匠心致远(1)</title>
-  </programme>
   <programme channel="重庆卫视" start="20251001120000 +0800" stop="20251001121700 +0800">
     <title lang="zh">第1眼新闻</title>
   </programme>
@@ -732,12 +720,6 @@
   <programme channel="重庆卫视" start="20251001190000 +0800" stop="20251001193300 +0800">
     <title lang="zh">转播中央台新闻联播</title>
   </programme>
-  <programme channel="重庆卫视" start="20251001193300 +0800" stop="20251001202700 +0800">
-    <title lang="zh">我们的河山(21)</title>
-  </programme>
-  <programme channel="重庆卫视" start="20251001202700 +0800" stop="20251001212000 +0800">
-    <title lang="zh">我们的河山(22)</title>
-  </programme>
   <programme channel="重庆卫视" start="20251001212000 +0800" stop="20251001213500 +0800">
     <title lang="zh">重庆第1眼</title>
   </programme>
@@ -747,14 +729,8 @@
   <programme channel="重庆卫视" start="20251001223200 +0800" stop="20251001232900 +0800">
     <title lang="zh">中国</title>
   </programme>
-  <programme channel="重庆卫视" start="20251001232900 +0800" stop="20251002001100 +0800">
-    <title lang="zh">追风者(12)</title>
-  </programme>
   <programme channel="重庆卫视" start="20251002001100 +0800" stop="20251002001900 +0800">
     <title lang="zh">风景区气象服务</title>
-  </programme>
-  <programme channel="重庆卫视" start="20251002001900 +0800" stop="20251002014000 +0800">
-    <title lang="zh">追风者(13)</title>
   </programme>
   <programme channel="重庆卫视" start="20251002014000 +0800" stop="20251002024700 +0800">
     <title lang="zh">加油!好少年</title>
@@ -764,12 +740,6 @@
   </programme>
   <programme channel="重庆卫视" start="20251002040200 +0800" stop="20251002051400 +0800">
     <title lang="zh">中国故事</title>
-  </programme>
-  <programme channel="重庆卫视" start="20251002051400 +0800" stop="20251002060000 +0800">
-    <title lang="zh">亮剑(8)</title>
-  </programme>
-  <programme channel="重庆卫视" start="20251002060000 +0800" stop="20251002064400 +0800">
-    <title lang="zh">亮剑(9)</title>
   </programme>
   <programme channel="重庆卫视" start="20251002064400 +0800" stop="20251002070000 +0800">
     <title lang="zh">Let’s meet渝见</title>
@@ -828,12 +798,6 @@
   <programme channel="重庆卫视" start="20251002190000 +0800" stop="20251002193300 +0800">
     <title lang="zh">转播中央台新闻联播</title>
   </programme>
-  <programme channel="重庆卫视" start="20251002193300 +0800" stop="20251002202700 +0800">
-    <title lang="zh">我们的河山(23)</title>
-  </programme>
-  <programme channel="重庆卫视" start="20251002202700 +0800" stop="20251002212000 +0800">
-    <title lang="zh">我们的河山(24)</title>
-  </programme>
   <programme channel="重庆卫视" start="20251002212000 +0800" stop="20251002213500 +0800">
     <title lang="zh">重庆第1眼</title>
   </programme>
@@ -842,9 +806,6 @@
   </programme>
   <programme channel="重庆卫视" start="20251002222700 +0800" stop="20251002232400 +0800">
     <title lang="zh">中国</title>
-  </programme>
-  <programme channel="重庆卫视" start="20251002232400 +0800" stop="20251003000000 +0800">
-    <title lang="zh">追风者(14)</title>
   </programme>
   <programme channel="重庆新闻" start="20250929000000 +0800" stop="20250929003400 +0800">
     <title lang="zh">网罗天下周日晚间版</title>

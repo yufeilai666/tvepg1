@@ -151,63 +151,44 @@ def parse_hollywood_schedule_html(html_content):
     # 查找所有包含日期的div
     date_divs = soup.find_all('div', class_='wixui-rich-text')
     
-    print(f"找到 {len(date_divs)} 个可能的日期/节目div")
-    
+    # 收集所有日期和对应的节目列表
+    date_program_map = {}
     current_date = None
-    current_date_obj = None
-    current_programs = []
     
-    for i, div in enumerate(date_divs):
+    for div in date_divs:
         h6_tag = div.find('h6', class_='font_6')
         if not h6_tag:
             continue
             
         text_content = h6_tag.get_text(strip=True)
-        print(f"检查第 {i} 个div: {text_content[:50]}...")
         
         # 检查是否为日期行 (格式: MM/DD 星期X)
         date_match = re.search(r'(\d{1,2}/\d{1,2})\s+(星期[一二三四五六日])', text_content)
         if date_match:
-            # 如果之前有收集的节目，先保存
-            if current_date and current_programs:
-                schedule_data.append({
-                    'date': current_date,
-                    'date_obj': current_date_obj,
-                    'programs': current_programs.copy()
-                })
-                current_programs = []
-            
             current_date = date_match.group(1)  # 获取 MM/DD 格式的日期
-            # 创建日期对象
-            month, day = current_date.split('/')
-            current_year = datetime.now().year
-            current_date_obj = datetime(current_year, int(month), int(day))
-            
             print(f"找到日期: {current_date}")
             continue
         
         # 检查是否为节目列表 (包含时间格式 XX:XX)
-        # 使用更宽松的匹配，允许特殊字符
         if re.search(r'\d{1,2}:\d{2}', text_content) and current_date:
-            print(f"找到节目列表，属于日期 {current_date}")
             # 获取所有文本内容，包括<br>分隔的节目
             full_text = h6_tag.get_text()
             
             # 按行分割节目
             lines = full_text.split('\n')
             
-            # 用于跟踪当前日期
-            current_program_date = current_date_obj
-            has_crossed_midnight = False  # 标记是否已经跨天
+            # 解析节目列表
+            programs = []
+            current_program_date = None
+            has_crossed_midnight = False
             
-            # 遍历所有节目行
             for i, line in enumerate(lines):
                 # 清理行，移除特殊字符
                 line = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', line.strip())
                 if not line:
                     continue
                     
-                # 匹配时间、标题和分级 - 使用更宽松的正则表达式
+                # 匹配时间、标题和分级
                 match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
                 if not match:
                     # 尝试其他可能的时间格式
@@ -221,13 +202,16 @@ def parse_hollywood_schedule_html(html_content):
                     # 构建完整的原始标题（包含分级信息）
                     original_title = f"{title}({rating})" if rating else title
                     
-                    # 检测是否跨天
-                    if i > 0 and not has_crossed_midnight:
-                        # 找到前一个有效节目的时间
-                        for j in range(i-1, -1, -1):
-                            prev_line = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', lines[j].strip())
-                            if not prev_line:
-                                continue
+                    # 确定节目日期
+                    if i == 0:
+                        # 第一个节目属于当前日期
+                        month, day = current_date.split('/')
+                        current_year = datetime.now().year
+                        current_program_date = datetime(current_year, int(month), int(day))
+                    else:
+                        # 检测是否跨天
+                        prev_line = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', lines[i-1].strip())
+                        if prev_line:
                             prev_match = re.match(r'(\d{1,2}:\d{2})', prev_line)
                             if prev_match:
                                 prev_time_str = prev_match.group(1)
@@ -236,13 +220,12 @@ def parse_hollywood_schedule_html(html_content):
                                     current_hour = int(time_str.split(':')[0])
                                     
                                     # 如果当前时间小于前一个时间，说明跨天了
-                                    if current_hour < prev_hour:
+                                    if current_hour < prev_hour and not has_crossed_midnight:
                                         has_crossed_midnight = True
-                                        current_program_date = current_date_obj + timedelta(days=1)
+                                        current_program_date = current_program_date + timedelta(days=1)
                                 except ValueError:
                                     # 如果时间解析失败，跳过跨天检测
                                     pass
-                                break
                     
                     program_info = {
                         'time': time_str,
@@ -251,15 +234,26 @@ def parse_hollywood_schedule_html(html_content):
                         'link': None,
                         'date_obj': current_program_date
                     }
-                    current_programs.append(program_info)
+                    programs.append(program_info)
                     print(f"  找到节目: {current_program_date.strftime('%m/%d')} {time_str} - {original_title}")
+            
+            # 将节目列表添加到对应的日期
+            if current_date not in date_program_map:
+                date_program_map[current_date] = []
+            
+            date_program_map[current_date].extend(programs)
     
-    # 添加最后一天的节目
-    if current_date and current_programs:
+    # 将节目数据转换为需要的格式
+    for date_str, programs in date_program_map.items():
+        # 创建日期对象
+        month, day = date_str.split('/')
+        current_year = datetime.now().year
+        date_obj = datetime(current_year, int(month), int(day))
+        
         schedule_data.append({
-            'date': current_date,
-            'date_obj': current_date_obj,
-            'programs': current_programs.copy()
+            'date': date_str,
+            'date_obj': date_obj,
+            'programs': programs
         })
     
     print(f"成功解析 {len(schedule_data)} 天的节目数据")

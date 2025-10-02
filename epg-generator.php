@@ -1,49 +1,90 @@
 <?php
 /**
-从数组sources获取链接，下载xml文件并编辑，如果channel id的值不等于display-name的属性，则把display-name的属性赋值给channel id，然后把channel id的值用“ ()”拼接sources[id_suffix]得到新的channel id，例如：龍華電影 (51zmt)，最后把对应的programme节点的channel的值修改为相对应的新channel id的值。处理完了，使用数组中的key作为文件名保存为标准的xml文件。
-*/
+ * EPG 源处理器
+ * 
+ * 功能概述：
+ * 1. 从多个EPG源下载XML文件，部分敏感源URL从环境变量获取
+ * 2. 处理频道ID和显示名称的映射关系
+ * 3. 根据配置添加频道ID后缀
+ * 4. 更新节目单中的频道引用
+ * 5. 保存处理后的标准XML文件
+ * 
+ * 安全特性：
+ * - 敏感源URL完全从环境变量 EPG_CONFIG 获取，代码中不保留
+ * - 日志中不记录任何URL信息
+ * - 自动处理gzip压缩内容
+ * - 完善的错误处理和日志记录
+ * - 一个源失败不影响其他源处理
+ */
 
-// 待处理的EPG源
+// 从环境变量获取所有配置
+$envConfig = [];
+if (getenv('EPG_CONFIG')) {
+    $envConfig = json_decode(getenv('EPG_CONFIG'), true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        log_message("环境变量EPG_CONFIG格式错误", true);
+        $envConfig = [];
+    }
+}
+
+/**
+ * EPG源配置说明：
+ * - url: EPG源地址（敏感源从环境变量获取）
+ * - id_suffix: 频道ID后缀（可选），用于区分不同源的相同频道
+ * - required_env: 标记URL是否必须从环境变量获取
+ */
 $sources = [
     "epgshanghai.xml" => [
-        "url" => "https://epg.deny.vip/sh/tel-epg.xml",
-        "id_suffix" => "shanghai"  // 用于拼接channel ID的后缀
+        "url" => $envConfig['epgshanghai.xml'] ?? null,
+        "id_suffix" => "shanghai",
+        "required_env" => true  // 必须从环境变量获取
     ],
     "epgdifang.xml" => [
         "url" => "https://epg.51zmt.top:8001/difang.xml.gz",
-        "id_suffix" => "51zmt"     // 用于拼接channel ID的后缀
+        "id_suffix" => "51zmt"
     ],
     "epgerw.xml" => [
         "url" => "https://raw.githubusercontent.com/kuke31/xmlgz/main/e.xml.gz",
-        # "url" => "http://e.erw.cc/e.xml.gz",
-        "id_suffix" => "erw"     // 用于拼接channel ID的后缀
+        "id_suffix" => "erw"
     ],
-    "epgunifi.xml" => [         // 没有后缀的情况
-        "url" => "https://raw.githubusercontent.com/AqFad2811/epg/refs/heads/main/unifitv.xml",
-        // 没有 id_suffix 字段
+    "epgunifi.xml" => [
+        "url" => "https://raw.githubusercontent.com/AqFad2811/epg/refs/heads/main/unifitv.xml"
     ],
-    "epghebei.xml" => [         // 没有后缀的情况
-        "url" => "https://epg.mb6.top/heiptv.xml",
-        // 没有 id_suffix 字段
+    "epghebei.xml" => [
+        "url" => $envConfig['epghebei.xml'] ?? null,
+        "required_env" => true  // 必须从环境变量获取
     ],
-    "singtel.xml" => [         // 没有后缀的情况
-        "url" => "https://raw.githubusercontent.com/dbghelp/Singtel-TV-EPG/refs/heads/main/singtel.xml",
-        // 没有 id_suffix 字段
+    "singtel.xml" => [
+        "url" => "https://raw.githubusercontent.com/dbghelp/Singtel-TV-EPG/refs/heads/main/singtel.xml"
     ]
 ];
 
-// 设置错误报告级别
+// 添加环境变量中定义的其他源
+foreach ($envConfig as $filename => $url) {
+    if (!isset($sources[$filename])) {
+        $sources[$filename] = [
+            "url" => $url,
+            "from_env" => true
+        ];
+    }
+}
+
+// 环境配置
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
+ini_set('memory_limit', '512M');
+set_time_limit(300);
 
-// 创建日志文件
+// 日志文件配置
 $logFile = __DIR__ . '/epg_generator.log';
 
 // 初始化日志
-file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] 开始处理EPG源\n", FILE_APPEND);
+file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] EPG处理任务开始\n", FILE_APPEND);
 
-// 简单的日志函数
+/**
+ * 日志记录函数
+ */
 function log_message($message, $isError = false) {
     global $logFile;
     $prefix = $isError ? "错误: " : "信息: ";
@@ -52,41 +93,45 @@ function log_message($message, $isError = false) {
     echo $isError ? "错误: $message\n" : "$message\n";
 }
 
-// 检查环境
-log_message("检查PHP环境...");
+// 立即检查环境
+log_message("开始环境检查...");
 log_message("PHP版本: " . PHP_VERSION);
 log_message("运行模式: " . PHP_SAPI);
 log_message("内存限制: " . ini_get('memory_limit'));
 
-// 检查必要扩展
-$required_extensions = ['curl', 'dom', 'libxml'];
-foreach ($required_extensions as $ext) {
-    if (extension_loaded($ext)) {
+/**
+ * 环境检查函数
+ */
+function check_environment() {
+    $required_extensions = ['curl', 'dom', 'libxml'];
+    foreach ($required_extensions as $ext) {
+        if (!extension_loaded($ext)) {
+            log_message("必需扩展 $ext 未加载", true);
+            return false;
+        }
         log_message("扩展 $ext: 已加载");
-    } else {
-        log_message("扩展 $ext: 未加载", true);
-        exit(1);
     }
-}
-
-// 检查当前目录是否可写
-if (!is_writable('.')) {
-    log_message("当前目录不可写", true);
-    exit(1);
+    
+    if (!is_writable('.')) {
+        log_message("当前目录不可写，无法保存文件", true);
+        return false;
+    }
+    
+    log_message("环境检查通过");
+    return true;
 }
 
 /**
- * 获取频道显示名称（优先中文）
+ * 获取频道显示名称
  */
 function get_display_name($channel) {
-    // 查找中文名称
     $xpath = new DOMXPath($channel->ownerDocument);
+    
     $zhName = $xpath->query(".//display-name[@lang='zh']", $channel);
     if ($zhName->length > 0 && trim($zhName->item(0)->nodeValue) !== '') {
         return trim($zhName->item(0)->nodeValue);
     }
     
-    // 查找任意语言名称
     $allNames = $xpath->query(".//display-name", $channel);
     foreach ($allNames as $node) {
         if (trim($node->nodeValue) !== '') {
@@ -94,7 +139,6 @@ function get_display_name($channel) {
         }
     }
     
-    // 尝试从channel id获取
     if ($channel->hasAttribute('id') && $channel->getAttribute('id') !== '') {
         return $channel->getAttribute('id');
     }
@@ -116,30 +160,27 @@ function process_xml($xmlContent, $idSuffix) {
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
         
-        // 尝试加载XML内容
         $loaded = @$dom->loadXML($xmlContent, LIBXML_NOERROR | LIBXML_NOWARNING);
         if (!$loaded) {
-            log_message("无法加载XML内容", true);
+            log_message("XML内容格式错误，无法解析", true);
             return null;
         }
         
         $channelMap = [];
         $xpath = new DOMXPath($dom);
         
-        // 处理所有channel节点
         $channels = $xpath->query('//channel');
+        log_message("找到 " . $channels->length . " 个频道节点");
+        
         foreach ($channels as $channel) {
             $oldId = $channel->getAttribute('id');
             $displayName = get_display_name($channel);
             
-            // 检查是否需要添加后缀
             if (!empty($idSuffix)) {
-                // 使用id_suffix拼接新的channel ID
                 $newId = ($oldId !== $displayName) 
                     ? "{$displayName} ({$idSuffix})"
                     : "{$oldId} ({$idSuffix})";
             } else {
-                // 不添加后缀
                 $newId = ($oldId !== $displayName) 
                     ? $displayName
                     : $oldId;
@@ -149,27 +190,32 @@ function process_xml($xmlContent, $idSuffix) {
             $channelMap[$oldId] = $newId;
         }
         
-        // 处理所有programme节点
         $programmes = $xpath->query('//programme');
+        log_message("找到 " . $programmes->length . " 个节目单节点");
+        
+        $updatedCount = 0;
         foreach ($programmes as $programme) {
             $oldChannel = $programme->getAttribute('channel');
             if (isset($channelMap[$oldChannel])) {
                 $programme->setAttribute('channel', $channelMap[$oldChannel]);
+                $updatedCount++;
             }
         }
         
+        log_message("更新了 " . $updatedCount . " 个节目单的频道引用");
         return $dom->saveXML();
+        
     } catch (Exception $e) {
-        log_message("处理XML时出错: " . $e->getMessage(), true);
+        log_message("XML处理异常: " . $e->getMessage(), true);
         return null;
     }
 }
 
 /**
- * 下载文件
+ * 下载文件内容
  */
-function download_file($url) {
-    log_message("下载URL: $url");
+function download_file($url, $filename) {
+    log_message("开始下载: $filename");
     
     $ch = curl_init();
     curl_setopt_array($ch, [
@@ -188,94 +234,111 @@ function download_file($url) {
     curl_close($ch);
     
     if ($error) {
-        log_message("cURL错误: $error", true);
+        log_message("下载失败 [$filename]: $error", true);
         return false;
     }
     
-    if ($httpCode !== 200 || empty($response)) {
-        log_message("下载失败: HTTP $httpCode", true);
+    if ($httpCode !== 200) {
+        log_message("下载失败 [$filename]: HTTP $httpCode", true);
         return false;
     }
     
-    log_message("下载成功: " . strlen($response) . " 字节");
+    if (empty($response)) {
+        log_message("下载内容为空 [$filename]", true);
+        return false;
+    }
+    
+    log_message("下载成功 [$filename]: " . strlen($response) . " 字节");
     return $response;
 }
 
 /**
- * 处理单个源
+ * 处理单个EPG源
  */
 function process_source($filename, $source) {
-    $url = $source['url'];
-    $idSuffix = isset($source['id_suffix']) ? $source['id_suffix'] : '';
+    $url = $source['url'] ?? null;
+    $idSuffix = $source['id_suffix'] ?? '';
+    $requiredEnv = $source['required_env'] ?? false;
+    $fromEnv = $source['from_env'] ?? false;
     
-    log_message("开始处理源: $filename" . ($idSuffix ? " (ID后缀: $idSuffix)" : " (无ID后缀)"));
+    // 检查必须从环境变量获取的源
+    if ($requiredEnv && empty($url)) {
+        log_message("处理失败 [$filename]: 必须从环境变量获取URL但未配置", true);
+        return false;
+    }
     
-    // 下载XML内容
-    $response = download_file($url);
+    // 检查URL是否有效
+    if (empty($url)) {
+        log_message("处理失败 [$filename]: URL未配置", true);
+        return false;
+    }
+    
+    // 构造源标识（不暴露URL）
+    $sourceInfo = $filename;
+    if ($fromEnv) {
+        $sourceInfo .= " [环境变量]";
+    } elseif ($requiredEnv) {
+        $sourceInfo .= " [必需环境变量]";
+    }
+    if ($idSuffix) {
+        $sourceInfo .= " (后缀:$idSuffix)";
+    }
+    
+    log_message("开始处理: $sourceInfo");
+    
+    // 下载文件
+    $response = download_file($url, $filename);
     if ($response === false) {
-        log_message("下载失败: $url", true);
         return false;
     }
     
-    // 检查响应是否有效
-    if (empty($response)) {
-        log_message("下载内容为空", true);
-        return false;
-    }
-    
-    // 检查是否是gzip压缩内容
+    // 处理gzip压缩
     $xmlContent = $response;
-    if (substr($response, 0, 2) === "\x1f\x8b") { // gzip魔数
-        log_message("检测到gzip压缩内容，正在解压...");
-        if (function_exists('gzdecode')) {
-            $xmlContent = gzdecode($response);
-            if ($xmlContent === false) {
-                log_message("解压失败", true);
-                return false;
-            }
-            log_message("解压成功: " . strlen($xmlContent) . " 字节");
-        } else {
-            log_message("zlib扩展未加载，无法解压gzip内容", true);
+    if (substr($response, 0, 2) === "\x1f\x8b") {
+        log_message("检测到gzip压缩内容 [$filename]");
+        if (!function_exists('gzdecode')) {
+            log_message("zlib扩展未加载，无法解压 [$filename]", true);
             return false;
         }
+        
+        $xmlContent = gzdecode($response);
+        if ($xmlContent === false) {
+            log_message("gzip解压失败 [$filename]", true);
+            return false;
+        }
+        log_message("解压成功 [$filename]: " . strlen($xmlContent) . " 字节");
     }
     
-    // 检查XML内容是否有效
-    if (empty($xmlContent)) {
-        log_message("XML内容为空", true);
-        return false;
-    }
-    
-    // 尝试解析XML
+    // 验证XML格式
     libxml_use_internal_errors(true);
     $dom = new DOMDocument();
     if (!$dom->loadXML($xmlContent)) {
         $errors = libxml_get_errors();
         foreach ($errors as $error) {
-            log_message("XML解析错误: " . $error->message, true);
+            log_message("XML格式错误 [$filename]: " . $error->message, true);
         }
         libxml_clear_errors();
         return false;
     }
+    libxml_clear_errors();
     
-    // 处理XML
-    log_message("开始处理XML内容...");
+    // 处理XML内容
+    log_message("开始XML处理 [$filename]");
     $processedXml = process_xml($xmlContent, $idSuffix);
-    if (!$processedXml) {
-        log_message("处理失败", true);
+    if ($processedXml === null) {
+        log_message("XML处理失败 [$filename]", true);
         return false;
     }
     
     // 保存文件
-    log_message("保存文件: $filename");
-    // 在保存文件时使用当前工作目录
-$bytesWritten = file_put_contents(__DIR__ . '/' . $filename, $processedXml);
+    $outputPath = __DIR__ . '/' . $filename;
+    $bytesWritten = file_put_contents($outputPath, $processedXml);
     if ($bytesWritten === false) {
-        log_message("保存失败", true);
+        log_message("文件保存失败 [$filename]", true);
         return false;
     }
     
-    log_message("成功保存: " . number_format($bytesWritten) . " 字节");
+    log_message("保存成功 [$filename]: " . number_format($bytesWritten) . " 字节");
     return true;
 }
 
@@ -285,47 +348,71 @@ $bytesWritten = file_put_contents(__DIR__ . '/' . $filename, $processedXml);
 function main() {
     global $sources;
     
-    $results = [];
+    // 环境检查
+    if (!check_environment()) {
+        log_message("环境检查失败，程序终止", true);
+        return false;
+    }
     
-    // 逐个处理源
+    $results = [];
+    $successFiles = [];
+    $failedFiles = [];
+    
+    log_message("开始处理 " . count($sources) . " 个EPG源");
+    
+    // 逐个处理EPG源
     foreach ($sources as $filename => $source) {
-        log_message("========================================");
+        log_message("----------------------------------------");
+        
         $result = process_source($filename, $source);
         $results[$filename] = $result;
-        log_message("========================================");
         
-        // 每次处理完后休息一下，避免请求过于频繁
+        if ($result) {
+            $successFiles[] = $filename;
+            log_message("✓ 处理成功: $filename");
+        } else {
+            $failedFiles[] = $filename;
+            log_message("✗ 处理失败: $filename", true);
+        }
+        
+        log_message("----------------------------------------");
+        
         sleep(1);
     }
     
-    // 输出结果
-    $successCount = count(array_filter($results));
+    // 生成处理报告
+    $successCount = count($successFiles);
+    $failedCount = count($failedFiles);
     $total = count($sources);
-    log_message("处理完成! 成功: $successCount/$total");
     
-    // 列出所有生成的文件
-    log_message("生成的文件:");
-    foreach (array_keys($sources) as $filename) {
-        $status = isset($results[$filename]) && $results[$filename] ? "✓" : "✗";
-        $size = file_exists($filename) ? number_format(filesize($filename)) . " 字节" : "不存在";
-        log_message(" - {$status} {$filename} ({$size})");
+    log_message("EPG处理任务完成");
+    log_message("总体结果: 成功 $successCount/$total, 失败 $failedCount/$total");
+    
+    if (!empty($successFiles)) {
+        log_message("成功文件列表:");
+        foreach ($successFiles as $file) {
+            $size = file_exists($file) ? number_format(filesize($file)) . " 字节" : "文件丢失";
+            log_message("  ✓ $file ($size)");
+        }
     }
     
-    return $successCount === $total;
+    if (!empty($failedFiles)) {
+        log_message("失败文件列表:");
+        foreach ($failedFiles as $file) {
+            log_message("  ✗ $file", true);
+        }
+    }
+    
+    return $failedCount === 0;
 }
 
-// 执行主程序
+// 程序入口点
 try {
-    // 增加内存限制
-    ini_set('memory_limit', '512M');
-    
-    // 设置超时时间
-    set_time_limit(300);
-    
-    // 运行主程序
     $success = main();
-    exit($success ? 0 : 1);
+    $exitCode = $success ? 0 : 1;
+    log_message("程序退出，代码: $exitCode");
+    exit($exitCode);
 } catch (Exception $e) {
-    log_message("未捕获的异常: " . $e->getMessage(), true);
+    log_message("未处理的异常: " . $e->getMessage(), true);
     exit(1);
 }

@@ -34,7 +34,7 @@ import tempfile
 import subprocess
 from xml.etree.ElementTree import Element, SubElement, tostring, fromstring
 from xml.dom import minidom
-from datetime import datetime
+# from datetime import datetime
 
 
 def run_epg_script_in_temp_dir(script_path, temp_dir):
@@ -144,7 +144,6 @@ def merge_xml_contents(xml_contents):
     new_root.set('generator-info-name', 'unified-epg-generator')
     new_root.set('generator-info-url', 'https://github.com/yufeilai666/tvepg')
     new_root.set('source-info-name', 'multiple-sources')
-    new_root.set('created', datetime.now().strftime("%Y%m%d%H%M%S"))
     
     # 合并所有XML内容
     for i, xml_content in enumerate(xml_contents):
@@ -268,7 +267,7 @@ def main():
             return
         
         # 合并所有XML内容
-        print(f"\n正在合并 {len(all_xml_contents)} 个XML内容...")
+        print(f"\n\n正在合并 {len(all_xml_contents)} 个XML内容...")
         merged_xml = merge_xml_contents(all_xml_contents)
         
         # 保存到统一的XML文件
@@ -278,7 +277,7 @@ def main():
         with open(output_file, 'wb') as f:
             f.write(pretty_xml)
         
-        print(f"\n✓ 统一EPG文件已生成: {output_file}")
+        print(f"✓ 统一EPG文件已生成: {output_file}")
         
         # 统计节目数量
         programme_count = len(merged_xml.findall('programme'))
@@ -286,7 +285,7 @@ def main():
         print(f"   频道数量: {channel_count}")
         print(f"   节目数量: {programme_count}")
         
-        print("\n处理完成！")
+        print("处理完成！")
 
 
 if __name__ == "__main__":

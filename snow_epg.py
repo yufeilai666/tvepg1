@@ -49,7 +49,7 @@ import urllib.parse
 # 定义要合并的XML文件列表（支持.gz压缩文件和URL）
 xml_files = [
     'epgpw.xml',
-    'lstime_epg.xml',
+    'person.xml',
     'epgmytvsuper_new_cst.xml',
     'epganywhere.xml',
     'epgkai.xml',

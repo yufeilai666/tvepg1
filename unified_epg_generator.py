@@ -23,7 +23,7 @@
 - requests, beautifulsoup4
 
 作者：GitHub Action
-版本：1.5
+版本：1.6
 """
 
 import os
@@ -211,7 +211,7 @@ def merge_xml_contents(xml_contents, script_names):
                     total_channels += analysis['channel_count']
                     total_programmes += analysis['programme_count']
                     
-                    # 添加所有子元素到新的根元素
+                    # 直接使用分析结果中的根元素进行合并
                     for child in analysis['root']:
                         new_root.append(child)
                 else:

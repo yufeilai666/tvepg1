@@ -16,18 +16,53 @@
  * - 完善的错误处理和重试机制
  * 
  * 使用说明：
- * 1. 配置$sources数组定义要处理的EPG源
- * 2. 脚本会自动下载、修复并保存EPG文件
- * 3. 开启调试模式($debug=true)可查看详细处理过程
- * 4. 处理结果会显示在控制台或网页中
+ * 1. 支持从环境变量EPG_CONFIG读取EPG源配置
+ * 2. 支持直接在$sources中配置其他EPG源
+ * 3. 一个源失败不会影响其他源的运行
+ * 4. 脚本会自动下载、修复并保存EPG文件
+ * 5. 开启调试模式($debug=true)可查看详细处理过程
+ * 6. 处理结果会显示在控制台或网页中
  */
 
-// 要处理的EPG源配置
-$sources = [
-    "chuanliu.xml" => "https://raw.githubusercontent.com/zsz520/epg/refs/heads/main/chuanliu.xml.gz",
-    "cqunicom.xml" => "https://raw.githubusercontent.com/zsz520/epg/refs/heads/main/cqcu.xml.gz",
+// 直接配置的EPG源（除了从环境变量读取的源外，还可以在这里添加其他源）
+$directSources = [
     "epgmytvsuper_new.xml" => "https://raw.githubusercontent.com/yufeilai666/tvepg/main/epgmytvsuper.xml"
+    // 可以在这里添加更多直接配置的源
 ];
+
+// 从环境变量读取EPG源配置
+$epgConfigJson = getenv('EPG_CONFIG');
+$envSources = [];
+$envConfigErrors = [];
+
+if ($epgConfigJson) {
+    $epgConfig = json_decode($epgConfigJson, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        $envConfigErrors[] = "无法解析EPG_CONFIG环境变量中的JSON数据";
+    } else {
+        // 只选择需要的源：chuanliu.xml 和 cqunicom.xml
+        if (isset($epgConfig["chuanliu.xml"])) {
+            $envSources["chuanliu.xml"] = $epgConfig["chuanliu.xml"];
+        } else {
+            $envConfigErrors[] = "EPG_CONFIG中未找到chuanliu.xml配置";
+        }
+        
+        if (isset($epgConfig["cqunicom.xml"])) {
+            $envSources["cqunicom.xml"] = $epgConfig["cqunicom.xml"];
+        } else {
+            $envConfigErrors[] = "EPG_CONFIG中未找到cqunicom.xml配置";
+        }
+    }
+} else {
+    $envConfigErrors[] = "EPG_CONFIG环境变量未找到需要的配置";
+}
+
+// 合并所有源：环境变量源 + 直接配置源
+$sources = array_merge($envSources, $directSources);
+
+if (empty($sources)) {
+    die("错误：未找到任何有效的EPG源配置");
+}
 
 // 错误报告设置
 error_reporting(E_ALL);
@@ -49,6 +84,12 @@ class EnhancedDebugEPGProcessor {
      * @var array
      */
     private $sources;
+    
+    /**
+     * 环境变量配置错误
+     * @var array
+     */
+    private $envConfigErrors;
     
     /**
      * 总文件数
@@ -79,6 +120,12 @@ class EnhancedDebugEPGProcessor {
      * @var array
      */
     private $successfulDownloads = [];
+    
+    /**
+     * 下载失败的文件列表
+     * @var array
+     */
+    private $failedDownloads = [];
     
     /**
      * 是否开启调试模式
@@ -119,10 +166,12 @@ class EnhancedDebugEPGProcessor {
     /**
      * 构造函数
      * @param array $sources EPG源配置
+     * @param array $envConfigErrors 环境变量配置错误
      * @param bool $isCli 是否命令行模式
      */
-    public function __construct($sources, $isCli = false) {
+    public function __construct($sources, $envConfigErrors = [], $isCli = false) {
         $this->sources = $sources;
+        $this->envConfigErrors = $envConfigErrors;
         $this->totalFiles = count($sources);
         $this->startTime = microtime(true);
         $this->isCli = $isCli;
@@ -137,11 +186,27 @@ class EnhancedDebugEPGProcessor {
     }
     
     /**
+     * 获取失败下载的文件列表
+     * @return array
+     */
+    public function getFailedDownloads() {
+        return $this->failedDownloads;
+    }
+    
+    /**
+     * 获取环境变量配置错误
+     * @return array
+     */
+    public function getEnvConfigErrors() {
+        return $this->envConfigErrors;
+    }
+    
+    /**
      * 检查是否有错误发生
      * @return bool
      */
     public function hasErrors() {
-        return $this->hasErrors;
+        return $this->hasErrors || !empty($this->envConfigErrors) || !empty($this->failedDownloads);
     }
     
     /**
@@ -159,10 +224,32 @@ class EnhancedDebugEPGProcessor {
     public function processAll() {
         if ($this->isCli) {
             echo "开始处理 {$this->totalFiles} 个EPG源...\n";
+            
+            // 显示环境变量配置错误
+            if (!empty($this->envConfigErrors)) {
+                echo "环境变量配置警告:\n";
+                foreach ($this->envConfigErrors as $error) {
+                    echo "  ⚠️  $error\n";
+                }
+                echo "\n";
+            }
+            
             echo str_repeat("=", 50) . "\n";
         } else {
             echo "<div style='font-family: Consolas, monospace; background: #1e1e1e; color: #dcdcdc; padding: 20px; border-radius: 8px;'>";
-            echo "<h2 style='color: #4ec9b0; border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;'>EPG修复系统 (完整注释版)</h2>";
+            echo "<h2 style='color: #4ec9b0; border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;'>EPG修复系统</h2>";
+            
+            // 显示环境变量配置错误
+            if (!empty($this->envConfigErrors)) {
+                echo "<div style='margin: 10px 0; padding: 10px; background: #4b3e1e; border-radius: 5px; color: #ffd79d;'>";
+                echo "<h3 style='color: #ffd79d;'>环境变量配置警告:</h3>";
+                echo "<ul>";
+                foreach ($this->envConfigErrors as $error) {
+                    echo "<li>⚠️ $error</li>";
+                }
+                echo "</ul>";
+                echo "</div>";
+            }
         }
         
         foreach ($this->sources as $filename => $url) {
@@ -198,15 +285,19 @@ class EnhancedDebugEPGProcessor {
             echo "处理完成! 耗时: {$totalTime}秒\n";
             
             $successCount = count($this->successfulDownloads);
-            $failedCount = $this->totalFiles - $successCount;
+            $failedCount = count($this->failedDownloads);
             echo "下载统计: 成功 {$successCount} 个, 失败 {$failedCount} 个\n";
             
             if ($successCount > 0) {
                 echo "成功处理: " . implode(', ', $this->successfulDownloads) . "\n";
             }
+            
+            if ($failedCount > 0) {
+                echo "处理失败: " . implode(', ', $this->failedDownloads) . "\n";
+            }
         }
         
-        return !$this->hasErrors;
+        return !$this->hasErrors && empty($this->failedDownloads);
     }
     
     /**
@@ -230,13 +321,14 @@ class EnhancedDebugEPGProcessor {
         $content = $this->downloadWithRetry($url, 3);
         
         if ($content === false) {
-            $this->logError("下载失败: {$url}");
+            $this->logError("下载失败");
+            $this->failedDownloads[] = $filename;
             $this->currentFilename = '';
             return;
         }
         
         // 下载成功，记录调试信息
-        $this->logDebug("下载成功: {$url}");
+        $this->logDebug("下载成功");
         
         // 记录解压情况
         if ($this->currentFileUnzipped) {
@@ -305,10 +397,9 @@ class EnhancedDebugEPGProcessor {
         curl_close($ch);
         
         if ($httpCode !== 200 || $content === false) {
-            $errorMsg = "下载失败: {$url} - HTTP代码: {$httpCode}";
+            $errorMsg = "下载失败 - HTTP代码: {$httpCode}";
             if ($error) $errorMsg .= " - 错误: {$error}";
             $this->logError($errorMsg);
-            $this->hasErrors = true;
             return false;
         }
         
@@ -321,8 +412,7 @@ class EnhancedDebugEPGProcessor {
                 $this->currentFileUnzipped = true;
                 $unzipped = true;
             } else {
-                $this->logError("解压失败: {$url}");
-                $this->hasErrors = true;
+                $this->logError("解压失败");
                 return false;
             }
         }
@@ -417,16 +507,16 @@ class EnhancedDebugEPGProcessor {
         // 保存处理后的XML
         if ($programCount > 0) {
             if ($dom->save(__DIR__ . '/' . $filename)) {
-                $this->logSuccess("保存成功: {$filename}");
+                $this->logSuccess("保存成功");
                 $this->logDebug("  节目数: {$programCount}");
                 $this->logDebug("  午夜日期修复数: {$midnightFixCount}");
                 $this->logDebug("  合并数: {$mergesCount}");
             } else {
-                $this->logError("保存失败: {$filename}");
+                $this->logError("保存失败");
                 $this->hasErrors = true;
             }
         } else {
-            $this->logError("无有效节目: {$filename}");
+            $this->logError("无有效节目");
             $this->hasErrors = true;
         }
     }
@@ -755,7 +845,7 @@ class EnhancedDebugEPGProcessor {
         if ($this->isCli) {
             echo "SUCCESS: {$fullMessage}\n";
         } else {
-            echo "<div style'color: #4ec9b0; font-weight: bold;'>{$fullMessage}</div>";
+            echo "<div style='color: #4ec9b0; font-weight: bold;'>{$fullMessage}</div>";
         }
     }
     
@@ -778,7 +868,7 @@ class EnhancedDebugEPGProcessor {
 }
 
 // 创建并运行处理器
-$processor = new EnhancedDebugEPGProcessor($sources, $isCli);
+$processor = new EnhancedDebugEPGProcessor($sources, $envConfigErrors, $isCli);
 $success = $processor->processAll();
 
 // 显示处理结果
@@ -787,12 +877,23 @@ if (!$isCli) {
     echo "<h3 style='color: #d7ba7d;'>处理结果:</h3>";
     echo "<ul style='list-style-type: none; padding-left: 0;'>";
 
+    $successCount = count($processor->getSuccessfulDownloads());
+    $failedCount = count($processor->getFailedDownloads());
+    
     foreach ($sources as $filename => $url) {
+        if (in_array($filename, $processor->getSuccessfulDownloads())) {
+            $status = "✅ 成功";
+            $color = "#4ec9b0";
+        } else {
+            $status = "❌ 失败";
+            $color = "#ff6b6b";
+        }
+        
         if (file_exists($filename)) {
             $size = filesize($filename);
             $formattedSize = round($size / 1024, 2) . " KB";
             echo "<li style='padding: 5px 0; border-bottom: 1px dashed #3c3c3c;'>";
-            echo "<span style='color: #9cdcfe;'>$filename</span> - $formattedSize";
+            echo "<span style='color: #9cdcfe;'>$filename</span> - $formattedSize - <span style='color: $color;'>$status</span>";
             
             // 显示基本文件信息
             if ($xml = simplexml_load_file($filename)) {
@@ -806,24 +907,45 @@ if (!$isCli) {
             echo "</li>";
         } else {
             echo "<li style='padding: 5px 0; border-bottom: 1px dashed #3c3c3c; color: #ff6b6b;'>";
-            echo "<span style='color: #ff6b6b;'>$filename</span> - 文件未生成";
+            echo "<span style='color: #ff6b6b;'>$filename</span> - 文件未生成 - <span style='color: #ff6b6b;'>❌ 失败</span>";
             echo "</li>";
         }
     }
 
-    echo "</ul></div>";
+    echo "</ul>";
+    echo "<div style='margin-top: 10px;'>";
+    echo "统计: 成功 {$successCount} 个, 失败 {$failedCount} 个, 总计 " . count($sources) . " 个";
+    echo "</div>";
+    echo "</div>";
 
     // 显示总体状态
-    if ($processor->hasErrors() && !$processor->hasSuccessfulDownloads()) {
+    $envErrors = $processor->getEnvConfigErrors();
+    $hasEnvErrors = !empty($envErrors);
+    $hasDownloadErrors = $failedCount > 0;
+    $hasProcessingErrors = $processor->hasErrors();
+    
+    if (($hasEnvErrors || $hasDownloadErrors || $hasProcessingErrors) && $successCount === 0) {
         echo "<div style='margin-top: 20px; padding: 15px; background: #4b1e1e; border-radius: 5px; color: #ff9d9d;'>";
         echo "<h3 style='color: #ff9d9d;'>处理状态: <span style='color: #ff6b6b;'>完全失败</span></h3>";
         echo "<p>所有源处理失败，无有效EPG生成</p>";
+        if ($hasEnvErrors) {
+            echo "<p>环境变量配置错误: " . count($envErrors) . " 个</p>";
+        }
+        if ($hasDownloadErrors) {
+            echo "<p>下载失败: {$failedCount} 个</p>";
+        }
         echo "</div>";
         $exitCode = 1;
-    } elseif ($processor->hasErrors()) {
+    } elseif ($hasEnvErrors || $hasDownloadErrors || $hasProcessingErrors) {
         echo "<div style='margin-top: 20px; padding: 15px; background: #4b3e1e; border-radius: 5px; color: #ffd79d;'>";
         echo "<h3 style='color: #ffd79d;'>处理状态: <span style='color: #ffb86c;'>部分成功</span></h3>";
-        echo "<p>部分源处理失败，但成功生成了部分EPG文件</p>";
+        echo "<p>部分源处理失败，但成功生成了 {$successCount} 个EPG文件</p>";
+        if ($hasEnvErrors) {
+            echo "<p>环境变量配置错误: " . count($envErrors) . " 个</p>";
+        }
+        if ($hasDownloadErrors) {
+            echo "<p>下载失败: {$failedCount} 个</p>";
+        }
         echo "</div>";
         $exitCode = 0;
     } else {
@@ -838,18 +960,21 @@ if (!$isCli) {
 } else {
     // 命令行模式下输出简洁结果
     $successCount = count($processor->getSuccessfulDownloads());
+    $failedCount = count($processor->getFailedDownloads());
     $totalFiles = $processor->getTotalFiles();
-    $failedCount = $totalFiles - $successCount;
     
-    if ($processor->hasErrors() && !$processor->hasSuccessfulDownloads()) {
+    if (($processor->hasErrors() || $failedCount > 0) && $successCount === 0) {
         echo "处理状态: 完全失败\n";
         echo "所有源处理失败，无有效EPG生成\n";
         $exitCode = 1;
-    } elseif ($processor->hasErrors()) {
+    } elseif ($processor->hasErrors() || $failedCount > 0) {
         echo "处理状态: 部分成功\n";
         echo "下载统计: 成功 {$successCount} 个, 失败 {$failedCount} 个\n";
         if ($successCount > 0) {
             echo "成功处理: " . implode(', ', $processor->getSuccessfulDownloads()) . "\n";
+        }
+        if ($failedCount > 0) {
+            echo "处理失败: " . implode(', ', $processor->getFailedDownloads()) . "\n";
         }
         $exitCode = 0;
     } else {

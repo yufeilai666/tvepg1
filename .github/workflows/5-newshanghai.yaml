@@ -1,0 +1,80 @@
+name: 5 output epgnewshanghai.xml
+
+on:
+  schedule:
+    # 每天UTC时间1点35分、5点35分、9点35分、13点35分、17点35分、21点35分执行一次(北京时间1点35分、5点35分、9点35分、13点35分、17点35分、21点35分)
+    - cron: '35 1,5,9,13,17,21 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate_and_upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 第一步：检出当前仓库（主分支）
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+
+      # 第二步：设置 PHP 环境
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      # 第三步：检出 epg_scripts 分支到临时目录
+      - name: Checkout epg_scripts branch
+        uses: actions/checkout@v4
+        with:
+          ref: epg_scripts
+          path: epg_scripts_temp
+
+      # 第四步：复制并运行 PHP 脚本
+      - name: Copy and run epgnewshanghai.php
+        run: |
+          # 复制脚本到工作目录
+          cp epg_scripts_temp/epgnewshanghai.php ./
+          # 运行脚本
+          php epgnewshanghai.php
+
+      # 第五步：检出目标仓库
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: yufeilai666/tvepg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: tvepg
+
+      # 第六步：强制覆盖文件（关键修复）
+      - name: Overwrite target file
+        run: |
+          # 确保覆盖前文件存在
+          ls -l epgnewshanghai.xml
+          # 强制复制并保留权限
+          cp -f epgnewshanghai.xml tvepg/epgnewshanghai.xml
+          # 验证覆盖结果
+          ls -l tvepg/epgnewshanghai.xml
+
+      # 第七步：提交变更（优化路径处理）
+      - name: Commit and push
+        working-directory: tvepg  # 使用官方推荐方式指定路径
+        run: |
+          # 显式检查文件状态
+          git status
+          git diff --stat
+
+          # 配置 Git 身份
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 添加所有变化（适应文件名大小写变化）
+          git add --all
+
+          # 检测是否有可提交内容
+          if [ -n "$(git status --porcelain)" ]; then
+            now_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+            git commit -m "epgnewshanghai.xml自动更新时间：$now_time"
+            git push origin main
+          else
+            echo "无实际文件变更，跳过提交"
+          fi

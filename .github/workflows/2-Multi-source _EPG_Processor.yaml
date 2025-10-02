@@ -1,0 +1,140 @@
+name: 2 Multi-source EPG Processor
+
+on:
+  schedule:
+    # 每天UTC时间1点、5点、9点、13点、17点、21点执行一次(北京时间1点、5点、9点、13点、17点、21点)
+    - cron: '0 1,5,9,13,17,21 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate_and_upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 第一步：创建临时工作目录
+      - name: Create temp directory
+        run: mkdir -p temp_workspace
+
+      # 第二步：检出脚本仓库的epg_scripts分支到临时目录
+      - name: Checkout scripts from epg_scripts branch
+        uses: actions/checkout@v4
+        with:
+          ref: epg_scripts
+          path: temp_workspace/scripts
+
+      # 第三步：设置 Python 环境
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 第四步：安装 Python 依赖
+      - name: Install dependencies
+        run: |
+          pip install lxml requests
+          pip list
+
+      # 第五步：设置 EPG 配置
+      - name: Setup EPG configuration
+        run: |
+          # 创建配置文件
+          mkdir -p temp_workspace/config
+          echo '${{ secrets.EPG_CONFIG }}' > temp_workspace/config/epg_config.json
+          
+          # 检查配置是否正确（不显示具体URL）
+          cd temp_workspace
+          python -c "
+          import json
+          with open('config/epg_config.json', 'r') as f:
+            config = json.load(f)
+          print(f'配置加载成功，共 {len(config)} 个EPG源')
+          print('输出文件列表:')
+          for output_file in config.keys():
+            print(f'  {output_file}')
+          "
+
+      # 第六步：运行多源 EPG 处理器
+      - name: Run Multi-source EPG Processor
+        run: |
+          # 复制脚本到临时工作目录
+          cp temp_workspace/scripts/multi_source_epg_processor.py temp_workspace/
+          
+          # 切换到临时工作目录运行脚本
+          cd temp_workspace
+          EPG_CONFIG="$(cat config/epg_config.json)" python multi_source_epg_processor.py
+          
+          # 检查文件是否生成（简化输出，不暴露URL信息）
+          generated_files=$(ls *.xml 2>/dev/null | wc -l)
+          if [ $generated_files -eq 0 ]; then
+            echo "错误: 没有生成任何XML文件"
+            exit 1
+          fi
+          
+          echo "成功生成 $generated_files 个XML文件"
+          for file in *.xml; do
+            echo "  - $file ($(du -h "$file" | cut -f1))"
+          done
+
+      # 第七步：检出目标仓库
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: yufeilai666/tvepg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: tvepg
+          ref: main
+
+      # 第八步：更新所有目标文件（保留列出文件名的功能）
+      - name: Update all target files
+        run: |
+          # 复制所有生成的XML文件到目标仓库
+          cp -f temp_workspace/*.xml tvepg/
+          
+          # 检查文件是否成功复制
+          for file in temp_workspace/*.xml; do
+            filename=$(basename "$file")
+            if [ -f "tvepg/$filename" ]; then
+              echo "成功复制: $filename"
+            else
+              echo "错误: 未能复制 $filename"
+              exit 1
+            fi
+          done
+
+      # 第九步：提交变更
+      - name: Commit and push changes
+        working-directory: tvepg
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 添加所有XML文件
+          git add *.xml
+          
+          # 检查是否有变更
+          if git diff-index --quiet HEAD --; then
+            echo "所有XML文件内容未变化，跳过提交"
+          else
+            # 获取变更统计
+            changes=$(git diff --shortstat HEAD)
+            now_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+            commit_msg="EPG文件自动更新: $now_time"
+            
+            [ -n "$changes" ] && commit_msg="$commit_msg ($changes)"
+            
+            git commit -m "$commit_msg"
+            git push origin main
+            echo "变更已提交: $commit_msg"
+            
+            # 列出更新的文件（仅文件名，不涉及URL）
+            updated_files=$(git diff --name-only HEAD^ HEAD)
+            echo "更新的文件:"
+            echo "$updated_files"
+          fi
+
+      # 第十步：清理工作空间
+      - name: Cleanup workspace
+        run: |
+          rm -rf temp_workspace
+          echo "临时工作空间已清理"

@@ -1,0 +1,108 @@
+name: ouput tvchannel
+
+on:
+  #schedule:
+    #- cron: '40 */12 * * *'  # 每12小时第40分钟执行
+  workflow_dispatch:
+
+jobs:
+  generate_and_upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      # 第一步：检出主分支（获取输入文件）
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main  # 明确指定主分支
+          path: main-branch
+
+      # 第二步：检出epg_scripts分支（获取脚本）
+      - name: Checkout epg_scripts branch
+        uses: actions/checkout@v4
+        with:
+          ref: epg_scripts  # 指定epg_scripts分支
+          path: scripts-branch
+
+      # 第三步：创建临时工作目录并复制必要文件
+      - name: Setup workspace
+        run: |
+          # 创建临时工作目录
+          mkdir temp_workspace
+          # 从主分支复制输入文件
+          cp main-branch/SmartTV_id.txt temp_workspace/
+          # 从epg_scripts分支复制脚本
+          cp scripts-branch/capture_referer.py temp_workspace/
+          echo "工作目录设置完成"
+
+      # 第四步：设置 Python 环境
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 第五步：安装 Python 依赖
+      - name: Install dependencies
+        run: |
+          pip install requests
+          pip list
+
+      # 第六步：在临时目录中生成 SmartTV_channel.txt 文件
+      - name: Generate tvchannel with Python
+        run: |
+          cd temp_workspace
+          python capture_referer.py
+          
+          if [ ! -f SmartTV_channel.txt ]; then
+            echo "错误: SmartTV_channel.txt 文件未生成"
+            exit 1
+          fi
+          
+          echo "生成文件大小: $(du -h SmartTV_channel.txt | cut -f1)"
+          # 将生成的文件复制回工作目录根目录
+          cp SmartTV_channel.txt ../
+
+      # 第七步：检出目标仓库
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: yufeilai666/tvepg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: tvepg
+          ref: main
+
+      # 第八步：更新目标文件
+      - name: Update target file
+        run: |
+          cp -f SmartTV_channel.txt tvepg/SmartTV_channel.txt
+          
+          if diff SmartTV_channel.txt tvepg/SmartTV_channel.txt >/dev/null; then
+            echo "文件成功更新"
+          else
+            echo "错误: 文件复制失败"
+            exit 1
+          fi
+
+      # 第九步：提交变更
+      - name: Commit and push
+        working-directory: tvepg
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add SmartTV_channel.txt
+          
+          if git diff-index --quiet HEAD -- SmartTV_channel.txt; then
+            echo "文件内容未变化，跳过提交"
+          else
+            changes=$(git diff --shortstat HEAD -- SmartTV_channel.txt)
+            now_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+            commit_msg="SmartTV_channel.txt自动更新: $now_time"
+            
+            [ -n "$changes" ] && commit_msg="$commit_msg ($changes)"
+            
+            git commit -m "$commit_msg"
+            git push origin main
+            echo "变更已提交: $commit_msg"
+          fi

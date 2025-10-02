@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tv SYSTEM "http://api.torrent-tv.ru/xmltv.dtd">
+<tv generator-info-name="秋哥綜合" generator-info-url="https://www.tdm.com.mo/c_tv/?ch=Satellite">
+<channel id="龍華電影"><display-name lang="zh">龍華電影</display-name></channel>
+<channel id="靖天映畫"><display-name lang="zh">靖天映畫</display-name></channel>
+<channel id="靖天電影台"><display-name lang="zh">靖天電影台</display-name></channel>
+<programme start="20250813005500 +0800" stop="20250813025500 +0800" channel="龍華電影">
+<title lang="zh">現代應召女郎</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813025500 +0800" stop="20250813051000 +0800" channel="龍華電影">
+<title lang="zh">縱橫四海</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813051000 +0800" stop="20250813080000 +0800" channel="龍華電影">
+<title lang="zh">第一爐香</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813080000 +0800" stop="20250813100000 +0800" channel="龍華電影">
+<title lang="zh">神醫喜來樂(25,26)(首)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813100000 +0800" stop="20250813123500 +0800" channel="龍華電影">
+<title lang="zh">悟空傳</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813123500 +0800" stop="20250813144500 +0800" channel="龍華電影">
+<title lang="zh">A計劃</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813144500 +0800" stop="20250813165000 +0800" channel="龍華電影">
+<title lang="zh">逃學威龍</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813165000 +0800" stop="20250813190500 +0800" channel="龍華電影">
+<title lang="zh">從你的全世界路過</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813190500 +0800" stop="20250813210000 +0800" channel="龍華電影">
+<title lang="zh">賭霸</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813210000 +0800" stop="20250813232000 +0800" channel="龍華電影">
+<title lang="zh">我的婆婆怎麼把OO搞丟了</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813232000 +0800" stop="20250814012500 +0800" channel="龍華電影">
+<title lang="zh">東京攻略</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814012500 +0800" stop="20250814041000 +0800" channel="龍華電影">
+<title lang="zh">神機箭</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814041000 +0800" stop="20250814060500 +0800" channel="龍華電影">
+<title lang="zh">大顯神威</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814060500 +0800" stop="20250814080000 +0800" channel="龍華電影">
+<title lang="zh">飛龍猛將</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814080000 +0800" stop="20250814100000 +0800" channel="龍華電影">
+<title lang="zh">神醫喜來樂(27,28)(首)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814100000 +0800" stop="20250814124500 +0800" channel="龍華電影">
+<title lang="zh">邪不壓正</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814124500 +0800" stop="20250814145500 +0800" channel="龍華電影">
+<title lang="zh">師弟出馬</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814145500 +0800" stop="20250814171000 +0800" channel="龍華電影">
+<title lang="zh">你在我心上</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814171000 +0800" stop="20250814192500 +0800" channel="龍華電影">
+<title lang="zh">與龍共舞</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814192500 +0800" stop="20250814210000 +0800" channel="龍華電影">
+<title lang="zh">畫皮：情滅</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814210000 +0800" stop="20250814231000 +0800" channel="龍華電影">
+<title lang="zh">本日公休</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814231000 +0800" stop="20250815012000 +0800" channel="龍華電影">
+<title lang="zh">龍虎風雲</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813011000 +0800" stop="20250813032500 +0800" channel="靖天映畫">
+<title lang="zh">狼嚎</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813032500 +0800" stop="20250813051000 +0800" channel="靖天映畫">
+<title lang="zh">擊惡聯盟</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813051000 +0800" stop="20250813070000 +0800" channel="靖天映畫">
+<title lang="zh">假冒女團</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813070000 +0800" stop="20250813084500 +0800" channel="靖天映畫">
+<title lang="zh">女人街，再見了</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813084500 +0800" stop="20250813105000 +0800" channel="靖天映畫">
+<title lang="zh">我的超人男友</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813105000 +0800" stop="20250813125500 +0800" channel="靖天映畫">
+<title lang="zh">青葉家的食光</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813125500 +0800" stop="20250813152500 +0800" channel="靖天映畫">
+<title lang="zh">國際市場：半世紀的諾言</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813152500 +0800" stop="20250813174000 +0800" channel="靖天映畫">
+<title lang="zh">總統的理髮師</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813174000 +0800" stop="20250813200000 +0800" channel="靖天映畫">
+<title lang="zh">我吃了那男孩一整年的早餐</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813200000 +0800" stop="20250813210000 +0800" channel="靖天映畫">
+<title lang="zh">順其自然的日子</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813210000 +0800" stop="20250813231500 +0800" channel="靖天映畫">
+<title lang="zh">戀愛好好說</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813231500 +0800" stop="20250814012500 +0800" channel="靖天映畫">
+<title lang="zh">風暴</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814012500 +0800" stop="20250814034500 +0800" channel="靖天映畫">
+<title lang="zh">雷巡者：剛達拉</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814034500 +0800" stop="20250814053500 +0800" channel="靖天映畫">
+<title lang="zh">梨泰院之花</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814053500 +0800" stop="20250814070000 +0800" channel="靖天映畫">
+<title lang="zh">黑鴉事務所：最強之戰</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814070000 +0800" stop="20250814084000 +0800" channel="靖天映畫">
+<title lang="zh">福岡</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814084000 +0800" stop="20250814103500 +0800" channel="靖天映畫">
+<title lang="zh">男孩與駿馬</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814103500 +0800" stop="20250814124000 +0800" channel="靖天映畫">
+<title lang="zh">青春全壘打</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814124000 +0800" stop="20250814145500 +0800" channel="靖天映畫">
+<title lang="zh">我死去的那天</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814145500 +0800" stop="20250814171000 +0800" channel="靖天映畫">
+<title lang="zh">每天上班總是累得要死</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814171000 +0800" stop="20250814185500 +0800" channel="靖天映畫">
+<title lang="zh">LIP×LIP 享受這世界的方法</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814185500 +0800" stop="20250814210000 +0800" channel="靖天映畫">
+<title lang="zh">女力拳開</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814210000 +0800" stop="20250814231500 +0800" channel="靖天映畫">
+<title lang="zh">風中浮沉的花蕊</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814231500 +0800" stop="20250815011000 +0800" channel="靖天映畫">
+<title lang="zh">11時</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813003500 +0800" stop="20250813023000 +0800" channel="靖天電影台">
+<title lang="zh">亡命母侵</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813023000 +0800" stop="20250813041000 +0800" channel="靖天電影台">
+<title lang="zh">我從來不是幽默的女生</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813041000 +0800" stop="20250813055500 +0800" channel="靖天電影台">
+<title lang="zh">噴火龍</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813055500 +0800" stop="20250813072000 +0800" channel="靖天電影台">
+<title lang="zh">蜢蜢的奪寶奇謀</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813072000 +0800" stop="20250813085500 +0800" channel="靖天電影台">
+<title lang="zh">寒鴉情深</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813085500 +0800" stop="20250813112000 +0800" channel="靖天電影台">
+<title lang="zh">偷畫男孩</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813112000 +0800" stop="20250813130500 +0800" channel="靖天電影台">
+<title lang="zh">數字戰</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813130500 +0800" stop="20250813144500 +0800" channel="靖天電影台">
+<title lang="zh">回到未來</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813144500 +0800" stop="20250813164000 +0800" channel="靖天電影台">
+<title lang="zh">100%小狼人</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813164000 +0800" stop="20250813190000 +0800" channel="靖天電影台">
+<title lang="zh">星際失控</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813190000 +0800" stop="20250813205500 +0800" channel="靖天電影台">
+<title lang="zh">靈異穿梭</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813205500 +0800" stop="20250813224500 +0800" channel="靖天電影台">
+<title lang="zh">星際嗨客</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813224500 +0800" stop="20250814002500 +0800" channel="靖天電影台">
+<title lang="zh">網上情人夢</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814002500 +0800" stop="20250814022500 +0800" channel="靖天電影台">
+<title lang="zh">機惡戰場</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814022500 +0800" stop="20250814041500 +0800" channel="靖天電影台">
+<title lang="zh">NICO,地下絲絨之後</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814041500 +0800" stop="20250814060000 +0800" channel="靖天電影台">
+<title lang="zh">雪魔球</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814060000 +0800" stop="20250814081500 +0800" channel="靖天電影台">
+<title lang="zh">詐騙啟示錄</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814081500 +0800" stop="20250814101000 +0800" channel="靖天電影台">
+<title lang="zh">穿越時空賺大錢</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814101000 +0800" stop="20250814114500 +0800" channel="靖天電影台">
+<title lang="zh">時環效應</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814114500 +0800" stop="20250814135500 +0800" channel="靖天電影台">
+<title lang="zh">我們的跪族生活</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814135500 +0800" stop="20250814160000 +0800" channel="靖天電影台">
+<title lang="zh">小太陽的心願</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814160000 +0800" stop="20250814172500 +0800" channel="靖天電影台">
+<title lang="zh">冰之龍 : 藍色雛菊的傳說</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814172500 +0800" stop="20250814190500 +0800" channel="靖天電影台">
+<title lang="zh">浪浪回家路</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814190500 +0800" stop="20250814210000 +0800" channel="靖天電影台">
+<title lang="zh">死亡追緝令</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814210000 +0800" stop="20250814223000 +0800" channel="靖天電影台">
+<title lang="zh">布拉沃槍戰</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814223000 +0800" stop="20250815000500 +0800" channel="靖天電影台">
+<title lang="zh">虎膽救援</title>
+<desc lang="zh"> </desc>
+</programme>
+<channel id="龍華洋片台HAMI"><display-name lang="zh">龍華洋片台HAMI</display-name></channel>
+<channel id="龍華電影"><display-name lang="zh">龍華電影</display-name></channel>
+<programme start="20250812224500 +0800" stop="20250813005500 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">安娜(輔15)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813005500 +0800" stop="20250813024000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">致命救援(輔12)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813024000 +0800" stop="20250813043000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">緊急撤離(新)(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813043000 +0800" stop="20250813062000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">被遺忘的幸福(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813062000 +0800" stop="20250813083000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">天際英豪(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813083000 +0800" stop="20250813101500 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">極盜計畫(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813101500 +0800" stop="20250813121500 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">天崩颶裂(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813121500 +0800" stop="20250813140500 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">非法地帶(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813140500 +0800" stop="20250813155000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">催眠狙擊(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813155000 +0800" stop="20250813172000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">森林傳說：水之魔法石(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813172000 +0800" stop="20250813190000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">泳不放棄(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813190000 +0800" stop="20250813210000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">神鬼驚奇：古生物復活(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813210000 +0800" stop="20250813225000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">【星光首映場】緊急撤離(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813225000 +0800" stop="20250814005000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">叛諜檔案(輔15)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813225000 +0800" stop="20250814005000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">叛諜檔案(輔15)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814005000 +0800" stop="20250814025000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">私人戰爭(輔12)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814025000 +0800" stop="20250814044500 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">力挽狂瀾(輔12)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814044500 +0800" stop="20250814063500 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">說不出的告別(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814063500 +0800" stop="20250814083000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">藥頭大媽(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814083000 +0800" stop="20250814101000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">零下求生(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814101000 +0800" stop="20250814115000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">厄夜救援(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814115000 +0800" stop="20250814133000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">鎖命橫財(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814133000 +0800" stop="20250814155000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">孤狼特警(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814155000 +0800" stop="20250814173500 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">萌犬派崔克(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814173500 +0800" stop="20250814192000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">泰瑞的冒險王國(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814192000 +0800" stop="20250814210000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">極限遊戲(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814210000 +0800" stop="20250814233000 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">寂寞拍賣師(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814233000 +0800" stop="20250815011500 +0800" channel="龍華洋片台HAMI">
+<title lang="zh">搶救巴迪(輔15)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250812225500 +0800" stop="20250813005500 +0800" channel="龍華電影">
+<title lang="zh">洗黑錢(輔12)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813005500 +0800" stop="20250813025500 +0800" channel="龍華電影">
+<title lang="zh">現代應召女郎(輔15)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813025500 +0800" stop="20250813051000 +0800" channel="龍華電影">
+<title lang="zh">縱橫四海(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813051000 +0800" stop="20250813080000 +0800" channel="龍華電影">
+<title lang="zh">第一爐香(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813080000 +0800" stop="20250813100000 +0800" channel="龍華電影">
+<title lang="zh">神醫喜來樂(25,26)(首)(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813100000 +0800" stop="20250813123500 +0800" channel="龍華電影">
+<title lang="zh">悟空傳(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813123500 +0800" stop="20250813144500 +0800" channel="龍華電影">
+<title lang="zh">A計劃(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813144500 +0800" stop="20250813165000 +0800" channel="龍華電影">
+<title lang="zh">逃學威龍(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813165000 +0800" stop="20250813190500 +0800" channel="龍華電影">
+<title lang="zh">從你的全世界路過(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813190500 +0800" stop="20250813210000 +0800" channel="龍華電影">
+<title lang="zh">賭霸(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813210000 +0800" stop="20250813232000 +0800" channel="龍華電影">
+<title lang="zh">我的婆婆怎麼把OO搞丟了(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813232000 +0800" stop="20250814012500 +0800" channel="龍華電影">
+<title lang="zh">東京攻略(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250813232000 +0800" stop="20250814012500 +0800" channel="龍華電影">
+<title lang="zh">東京攻略(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814012500 +0800" stop="20250814041000 +0800" channel="龍華電影">
+<title lang="zh">神機箭(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814041000 +0800" stop="20250814060500 +0800" channel="龍華電影">
+<title lang="zh">大顯神威(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814060500 +0800" stop="20250814080000 +0800" channel="龍華電影">
+<title lang="zh">飛龍猛將(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814080000 +0800" stop="20250814100000 +0800" channel="龍華電影">
+<title lang="zh">神醫喜來樂(27,28)(首)(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814100000 +0800" stop="20250814124500 +0800" channel="龍華電影">
+<title lang="zh">邪不壓正(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814124500 +0800" stop="20250814145500 +0800" channel="龍華電影">
+<title lang="zh">師弟出馬(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814145500 +0800" stop="20250814171000 +0800" channel="龍華電影">
+<title lang="zh">你在我心上(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814171000 +0800" stop="20250814192500 +0800" channel="龍華電影">
+<title lang="zh">與龍共舞(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814192500 +0800" stop="20250814210000 +0800" channel="龍華電影">
+<title lang="zh">畫皮：情滅(護)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814210000 +0800" stop="20250814231000 +0800" channel="龍華電影">
+<title lang="zh">本日公休(普)</title>
+<desc lang="zh"> </desc>
+</programme>
+<programme start="20250814231000 +0800" stop="20250815012000 +0800" channel="龍華電影">
+<title lang="zh">龍虎風雲(輔12)</title>
+<desc lang="zh"> </desc>
+</programme>
+<channel id="龍華電影">
+    <display-name lang="zh">龍華電影</display-name>
+  </channel>
+  <programme start="20250812060000 +0800" stop="20250812070500 +0800" channel="龍華電影">
+    <title lang="zh">喜愛夜蒲粵普</title>
+    <desc lang="zh">蘭桂坊常客Steven遇上空姐Jennifer,二人發生一夜情但他們感覺今次真的戀愛了,可惜因為誤會令Jennifer心灰意冷下決定絕跡蘭桂坊事隔八個月,二人重遇,Steven更希望能夠與她發展,可惜… </desc>
+  </programme>
+  <programme start="20250812070500 +0800" stop="20250812084500 +0800" channel="龍華電影">
+    <title lang="zh">獨家試愛粵普</title>
+    <desc lang="zh">新婚的第一夜,林嘉華和鄺美寶像一般由初戀便結婚的小夫妻一樣,對婚姻總有一刻猶豫和回想華重遇中學補習老師Josephine,寶發現華一直都與Josephine祕密約會寶接受不到華的不忠而提出離婚…多年的感情就此完結還是會有轉機? </desc>
+  </programme>
+  <programme start="20250812084500 +0800" stop="20250812101500 +0800" channel="龍華電影">
+    <title lang="zh">榕樹頭講鬼粵普</title>
+    <desc lang="zh">出生豪門的施富貴,戀上名妓如花,無奈世俗難容,兩人被逼分開,施更被逐出家門,憤而投江自盡,化成冤鬼遊魂,四處找尋如花蹤影數十年後,施重遊舊地,纏上了明,濂,SUE,CAT四人,更要求她們幫忙尋找如花,在尋找過程中,人鬼建立了深厚的情誼… </desc>
+  </programme>
+  <programme start="20250812101500 +0800" stop="20250812123000 +0800" channel="龍華電影">
+    <title lang="zh">唐人街探案3普</title>
+    <desc lang="zh">繼曼谷和紐約之後,東京再出大案唐人街神探唐仁,秦風受偵探野田昊的邀請前往破案CRIMASTER世界偵探排行榜中的偵探們聞訊後也齊聚東京,加入挑戰,而排名第一Q的現身,讓這個大案更加撲朔迷離,亞洲最強神探之間的較量則將展開… </desc>
+  </programme>
+  <programme start="20250812123000 +0800" stop="20250812143000 +0800" channel="龍華電影">
+    <title lang="zh">拆彈專家粵</title>
+    <desc lang="zh">章在山是洪繼鵬犯罪集團內善於製作炸彈的臥底警察,一次包括在山、繼鵬和其胞弟洪繼標在內的六名成員在夜間乘坐兩輛車持槍搶劫香港香島銀行金庫,打死多名銀行保安並搶走大量現金。在受到警察追擊逃跑的路上,匪徒利用預先設置在逃跑路上的三輛的士汽車炸彈對警察造成較大的傷亡。由於在山的阻撓,同搭一輛車的繼標和另一名 </desc>
+  </programme>
+  <programme start="20250812143000 +0800" stop="20250812160500 +0800" channel="龍華電影">
+    <title lang="zh">超級無敵追女仔粵普</title>
+    <desc lang="zh">康對貪財的MONEY展開大話攻勢,西則與FELIX互揭真面目,華則以劉德華的型態出現討好CINDY,波與蘇娜大玩刺激戰爭,富家公子哥兒們亦以詭計重重阻礙情場殺手團,真誠能否感動眾美女? </desc>
+  </programme>
+  <programme start="20250812160500 +0800" stop="20250812175000 +0800" channel="龍華電影">
+    <title lang="zh">千機變II 花都大戰粵普</title>
+    <desc lang="zh">傳說,兩生花開,帝王星現;乾坤倒轉,天下大亂女帝為此寢食不安,親信尉繚四遣玄機使,與綽號(卧虎藏龍)的叛軍首領,爭奪預言中的(帝皇星),雙方明爭暗鬥炭頭與柴頭,自小隨義父黑木爺賣藝為生… </desc>
+  </programme>
+  <programme start="20250812175000 +0800" stop="20250812192500 +0800" channel="龍華電影">
+    <title lang="zh">拳神粵普</title>
+    <desc lang="zh">未來世界的科學家, 為了釋放人類大腦深層的力量, 研製了Power Glove (PG) 警隊精英可以率先進行測試 最後, 只有Dark( 鄭伊健 ), 戰廿一(張耀揚)… </desc>
+  </programme>
+  <programme start="20250812192500 +0800" stop="20250812210000 +0800" channel="龍華電影">
+    <title lang="zh">救殭清道夫粵</title>
+    <desc lang="zh">香港開埠以來,一直有殭屍出沒。城市隱藏著一個捉殭屍的秘密組織—食環署特別行動組,簡稱VCD。半夜掃街的清道夫其實是殭屍獵人,巨大的垃圾桶裡藏著剛收伏的殭屍,旁人避而遠之的垃圾房…正正就是他們秘密基地!善心宅男張春天(蔡瀚億飾)偶然被VCD打救,組織領頭(吳耀漢飾)發現他的血能抗屍毒,認定其潛力無限, </desc>
+  </programme>
+  <programme start="20250812210000 +0800" stop="20250812230000 +0800" channel="龍華電影">
+    <title lang="zh">竊聽風雲2粵普</title>
+    <desc lang="zh">香港知名證券商總裁羅敏生,在一宗為逃避跟蹤而引起的車禍受傷。保安科總督察何智強到場調查,發現了羅的汽車裏被裝上的軍用竊聽器。幾經追查,何找出了身份神秘的竊聽者司馬念祖,繼而查出了在香港股市呼風喚雨的神秘組織「地主會」。  隨着何智強一步一步地邁向真相,羅敏生、司馬念祖和「地主會」的角力不斷升級,駭人 </desc>
+  </programme>
+  <programme start="20250812230000 +0800" stop="20250813002500 +0800" channel="龍華電影">
+    <title lang="zh">驚天大賊王粵普</title>
+    <desc lang="zh">膽色過人,極度聰明的賊王張子豪,是專業犯罪集團的首領他成功綁架地產大王之子,並獲巨額贖金張與頭號通緝犯葉世官結盟,再次綁架富豪得手,警方也束手無策豈料葉大意失手被捕,為了拯救他,張決定綁架政府高官以作交換人質… </desc>
+  </programme>
+  <programme start="20250813002500 +0800" stop="20250813020000 +0800" channel="龍華電影">
+    <title lang="zh">老虎田雞粵普</title>
+    <desc lang="zh">老虎受一老婦所托,要尋回並丈夫田雞。田雞正在賭場搏殺,不幸被女扒手插贓嫁禍,田雞在賭場大打出手,最後逃到扒手家。扒手誘他脫衣取回贓款更騙走他的鐵布衫。田雞被老婆鎖進柴房。老虎往救之,但取回寶衣後,利益三七分帳。就在此時,女扒手派殺手欲置田雞於死地… </desc>
+  </programme>
+  <programme start="20250813020000 +0800" stop="20250813033500 +0800" channel="龍華電影">
+    <title lang="zh">愈墮落愈英雄粵普</title>
+    <desc lang="zh">方中信和陳錦鴻是黑社會雇用的殺手,陳性格放蕩,喜結異性,並將已為人婦的周海媚搞上手方早已提醒他,不要死在女人手上果然,周投靠了黑社會大佬方平,將他倆出賣方,陳被仇家追殺,陳在逃亡時重傷至精神失常,只靠方獨力照顧正當二人從未如此親近過時,仇家臨門,兩兄弟再次同心合力,拼命殺出生路 </desc>
+  </programme>
+  <programme start="20250813033500 +0800" stop="20250813051500 +0800" channel="龍華電影">
+    <title lang="zh">碟仙詭譚普</title>
+    <desc lang="zh">在某公司任職的楊天樂,某天早晨接到老同學韓陽的電話,邀請大家到一處位於荒郊野嶺的老別墅聚會約定的當天,天樂乘坐蔣為平的車來到別墅,老同學們三三兩兩到來在這片幽靜的角落,他們有說有笑,好不吵鬧誰知當聚會正在高超之際,一場暴雨突然而至,攪擾了眾人的雅興… </desc>
+  </programme>
+  <programme start="20250813051500 +0800" stop="20250813060000 +0800" channel="龍華電影">
+    <title lang="zh">機器俠粵普</title>
+    <desc lang="zh">高科技研究中心出產了第一代人工智慧的機械人---K1林局長決定秘密把它送到一個小城中測試性能,而公安隊長徐大春就被選中負責監管K1K1以大春助理的身份出現於小鎮,它經常發揮機械人的長處… </desc>
+  </programme>
+  <programme start="20250813060000 +0800" stop="20250813070000 +0800" channel="龍華電影">
+    <title lang="zh">機器俠粵普</title>
+    <desc lang="zh">高科技研究中心出產了第一代人工智慧的機械人---K1林局長決定秘密把它送到一個小城中測試性能,而公安隊長徐大春就被選中負責監管K1K1以大春助理的身份出現於小鎮,它經常發揮機械人的長處… </desc>
+  </programme>
+  <programme start="20250813070000 +0800" stop="20250813083500 +0800" channel="龍華電影">
+    <title lang="zh">港督最後一個保鑣粵普</title>
+    <desc lang="zh">九七年香港回歸中國前一個月,英政府首相大選由一印巴藉人士當選新首相,為緩和中英緊張關係,決以一英藉華人大廚議員任劍輝(羅家英飾)出任香港最後一個港督,代替在任之肥彭… </desc>
+  </programme>
+  <programme start="20250813083500 +0800" stop="20250813105000 +0800" channel="龍華電影">
+    <title lang="zh">唐人街探案普</title>
+    <desc lang="zh">天賦異稟的結巴少年秦風,警校面試中被刷下來,姥姥送秦風到泰國曼谷遊玩,並要秦風的遠房表舅唐仁接待唐仁號稱唐人街第一神探,實則是個猥瑣大叔,唐仁在一夜的花天酒地後淪為離奇兇案嫌疑人警方懷疑唐仁搶了價值連城的黃金並殺死了一名佛像雕塑家頌帕,兩人不得不亡命天涯他們遇到了緊追不捨的刑警探長瘋狗黃蘭 </desc>
+  </programme>
+  <programme start="20250813105000 +0800" stop="20250813123000 +0800" channel="龍華電影">
+    <title lang="zh">公主復仇記粵普</title>
+    <desc lang="zh">貞(鍾欣桐)原是Ken(吳彥祖)的前度女友,卻在個多月前無故被Ken拋棄及後Ken竟將其裸照放上互聯網公諸同好,令學校辭退貞教職貞欲取回Ken手上照片,蘭(陶紅)為避免步貞後塵,決定 </desc>
+  </programme>
+  <programme start="20250813123000 +0800" stop="20250813141000 +0800" channel="龍華電影">
+    <title lang="zh">搶錢夫妻粵普</title>
+    <desc lang="zh">敘述新聞報道員蔣有為因患上絕症而引發一連串的家庭,事業,社會荒誕嘲諷 </desc>
+  </programme>
+  <programme start="20250813141000 +0800" stop="20250813155000 +0800" channel="龍華電影">
+    <title lang="zh">奪舍粵普</title>
+    <desc lang="zh">華女獨自走上天台,準備跳樓,她應承了黑貓準備讓自己的肉身借予黑貓使用,黑貓的靈魂是一個德行高深的智慧老人,得到年青華女的答應,進行奪舍,警方派出督察Laura及Alex說服華女,結果無功,然而華女卻跌不死… </desc>
+  </programme>
+  <programme start="20250813155000 +0800" stop="20250813175000 +0800" channel="龍華電影">
+    <title lang="zh">桃姐粵普</title>
+    <desc lang="zh">本片改編自真人真事,講述生長於大家庭梁家的少爺Roger與自幼照顧自己長大的家傭媽鍾春桃之間所發生的一段溫暖人心的主僕情故事:桃姐13歲就到梁家當媽姐,轉眼60年過去,她已伺候了梁家老少四代人梁家人有的去世,有的移民了,近十年間只剩下桃姐和梁家少爺Roger在一起生活,主僕兩人相處頗有默契但很少交 </desc>
+  </programme>
+  <programme start="20250813175000 +0800" stop="20250813192000 +0800" channel="龍華電影">
+    <title lang="zh">和平飯店粵普</title>
+    <desc lang="zh">1921年的上海,平殺了二百個綁匪大盜,並開設了一所名為和平飯店的逃亡者避難所丁滿不滿平的所作所為,藉女歌星邵小曼入住了和平飯店,欲毀滅其飯店小曼知道唯一的出路是令平愛上自己,然後依靠他逃往他方… </desc>
+  </programme>
+  <programme start="20250813192000 +0800" stop="20250813210000 +0800" channel="龍華電影">
+    <title lang="zh">新戀愛世紀粵普</title>
+    <desc lang="zh">LEON是事業有成的跨國企業總裁偶然間重逢了昔日的女友阿玲,往日的情感又再次浮現,他準備再度追求阿玲,但阿玲已準備結婚,而LEON身邊亦有一位影星女友雪兒於是LEON在朋友的輔助說明下周旋於兩個女人之間,而他的背後還有一個永遠支援他的女秘書小丙令他應接不暇… </desc>
+  </programme>
+  <programme start="20250813210000 +0800" stop="20250813231000 +0800" channel="龍華電影">
+    <title lang="zh">竊聽風雲3粵普</title>
+    <desc lang="zh">在香港,新界每個男性原居民可以向政府申請建一棟三層獨立屋免地稅。這計劃長期引起社會爭議。特區政府決定終止接受丁屋申請。地產公司準備將剩餘的丁權進行統一,興建多層式的「丁屋大廈」。新界鄉紳話事人陸瀚濤(曾江飾)打算獨吞整個地產項目,但各地產巨頭定要分一杯羹。新界大地主陸永遠(錢嘉樂飾)向誰靠攏,將影響 </desc>
+  </programme>
+  <programme start="20250813231000 +0800" stop="20250814004000 +0800" channel="龍華電影">
+    <title lang="zh">殺手蝴蝶夢粵普</title>
+    <desc lang="zh">馬列乃一殺手, 在一次暗殺污點證人時與舊情人張立重逢, 而立於六年前因救父而獻身黑道魔王神爺, 從此受制列與立愛火重燃, 導致神爺要殺列, 幸列為司機祥所救神爺繼續追殺三人… </desc>
+  </programme>
+  <programme start="20250814004000 +0800" stop="20250814024000 +0800" channel="龍華電影">
+    <title lang="zh">決戰江陵韓</title>
+    <desc lang="zh">韓國江陵市最大的犯罪集團老大計劃建造亞洲最大的度假村他最受信任的手下吉石過著舒適的生活,每天執行老大的任務,對他忠心耿耿敏錫是來自首爾的年輕黑幫老大,有頭腦和野心,決定跳槽從事度假事業,建立自己的勢力敏錫以各種暴力和詐欺手段獲得了度假村,導致吉石的幫派處於危險中,於是吉石決定展開復仇… </desc>
+  </programme>
+  <programme start="20250814024000 +0800" stop="20250814041000 +0800" channel="龍華電影">
+    <title lang="zh">囡囡粵普</title>
+    <desc lang="zh">約會,拖手,錫面,咀咀,過夜,囡囡的價錢服務一律面議在(中間人)Icy(詩雅飾)的引導下,Lin(林鈺軒飾)享受當援交少女,更喜歡性愛;富家女Ronnie(冼色麗飾)因寂寞空虛四出獵男,事後更… </desc>
+  </programme>
+  <programme start="20250814041000 +0800" stop="20250814055000 +0800" channel="龍華電影">
+    <title lang="zh">愛在娛樂圈的日子粵普</title>
+    <desc lang="zh">六個少女夢寐在娛樂圈闖出事業,成為萬千觀眾的超級偶像不同性格與際遇衍生不同的人生故事飽嘗風霜雨露之後,她們是否更能將有血有肉的親身體驗帶進演藝生涯的角色中去,還是受盡折磨打擊後沉淪下來,從此人間蒸發? </desc>
+  </programme>
+  <programme start="20250814055000 +0800" stop="20250814060000 +0800" channel="龍華電影">
+    <title lang="zh">東方不敗之風雲再起粵普</title>
+    <desc lang="zh">東方不敗死後,群雄借東方不敗之名自組勢力,天下大亂,當中竟有昔日愛侶--雪千尋,她痴愛東方不敗以至不能自拔,欲再興日月神教同時,錦衣衛顧長風亦受朝廷委派探尋東方不敗死亡之謎原來叱吒風雲的東方不敗並沒有死去… </desc>
+  </programme>
+  <programme start="20250814060000 +0800" stop="20250814073000 +0800" channel="龍華電影">
+    <title lang="zh">東方不敗之風雲再起粵普</title>
+    <desc lang="zh">東方不敗死後,群雄借東方不敗之名自組勢力,天下大亂,當中竟有昔日愛侶--雪千尋,她痴愛東方不敗以至不能自拔,欲再興日月神教同時,錦衣衛顧長風亦受朝廷委派探尋東方不敗死亡之謎原來叱吒風雲的東方不敗並沒有死去…</desc>
+  </programme>
+  <programme start="20250814073000 +0800" stop="20250814091000 +0800" channel="龍華電影">
+    <title lang="zh">殺手再培訓粵普</title>
+    <desc lang="zh">外地殺手入侵本地市場使得一班資深的本地殺手紛紛退隱以示不滿,殺手阿典乘時下定決心轉行和結婚,兩年後阿典仍未能找到合適的工作,但待產的妻子卻執意要在私立醫院生產,故阿典要找高薪厚職的壓力就更重了…</desc>
+  </programme>
+  <programme start="20250814091000 +0800" stop="20250814104500 +0800" channel="龍華電影">
+    <title lang="zh">神槍手與咖喱雞粵普</title>
+    <desc lang="zh">岑健昌與江理基是香港皇家警察中的兩名幹探,兩人因為身手了得,手法火爆,屢破奇案身手所以在警界,有棘手雙雄之稱故事的發生是因為有一幫會的龍頭大哥被人暗殺,警方估計將會有可能引起連串的江湖大火拼,所以派出在警界有槍王之稱的槍王英主持調查該案,而岑健昌與江理基則負責協助槍王英調查起初兩人不服槍王英的辦</desc>
+  </programme>
+  <programme start="20250814104500 +0800" stop="20250814122000 +0800" channel="龍華電影">
+    <title lang="zh">新半斤八兩粵普</title>
+    <desc lang="zh">老許是內幕周刊的總編輯,雜誌因內容過份正經而銷量不振,雜誌社面臨倒閉於拳館教拳的喪標剛被辭退,來到雜誌社應徵,提出應該轉型做娛樂周刊,以女星靈異經歷及緋聞為題,老許接納,二人連同雜誌社職員烏蠅一同出動,去捏造可用作頭條的八卦新聞三人鎖定了娛樂圈清純玉女珊珊嫁給珠寶大王兒子一事,打算跟蹤拍下她做隆</desc>
+  </programme>
+  <programme start="20250814122000 +0800" stop="20250814140500 +0800" channel="龍華電影">
+    <title lang="zh">俠骨仁心粵普</title>
+    <desc lang="zh">Paul 的女友Jackie 曾經自殺,腦部受創,昏迷未醒一日,Jackie 奇跡地醒來,她對過去的生活態度感到後悔,然而仍未能接受Paul 的感情Jackie 到Paul 的好友兼腦科醫生Lawrence 家暫住,兩人相處日久,不知不覺間有著一份難以言喻的感情…</desc>
+  </programme>
+  <programme start="20250814140500 +0800" stop="20250814154000 +0800" channel="龍華電影">
+    <title lang="zh">人皮燈籠 粵普</title>
+    <desc lang="zh">青年麥輝得古董錶引指,進入一破落的舊樓中,竟有舊地重臨之感,並帶出三十年前一段哀怨纏綿的絕世戀情 - 輝與蓉本為一對戀人,黑邦頭子雄爺對蓉唾涎,逼蓉獻身以供淫虐,輝拼命救蓉,反遭雄亂刀殺死…</desc>
+  </programme>
+  <programme start="20250814154000 +0800" stop="20250814174500 +0800" channel="龍華電影">
+    <title lang="zh">戰國普</title>
+    <desc lang="zh">戰國時期,七雄爭霸齊將田忌之女田夕率兵與魏軍交戰,原以為勝券在握,不料卻被半路殺出的孫臏用匪夷所思的計謀打敗,手下傷亡慘重田夕滿懷悲憤力擒孫臏,原本想殺了他為齊國將士報仇,誰知求賢若渴的齊王卻下令赦免闖下大禍的孫臏河洛大會上,孫臏親自上陣幫齊國賽馬,奇才初露之時,偶遇昔日的同門師兄龐涓…</desc>
+  </programme>
+  <programme start="20250814174500 +0800" stop="20250814192000 +0800" channel="龍華電影">
+    <title lang="zh">打工狂想曲粵普</title>
+    <desc lang="zh">Becky, Angie, Candy是典型白領儷人一日,Angie在公司發現一大袋金牛,後三人將錢運走原來該款是經理大維,貪污被人勒索的掩口費唐著令保安經理Albert查出真相,事情發展出人意表,結局又是另一驚訝意外…</desc>
+  </programme>
+  <programme start="20250814192000 +0800" stop="20250814210000 +0800" channel="龍華電影">
+    <title lang="zh">大武當粵普</title>
+    <desc lang="zh">初期,相傳武當山有稀世寶藏,百年輪回一次的武林盛會即將開戰,各路高手齊聚道教聖地武當山爭當天下第一 民國,神秘女子使絕招搶奪大會戰貼加入戰局,表面上以武會友,背裡卻為一樁家族使命,而考古教授帶著自幼習武的女兒,為傳說中的鎮山之寶混入武當</desc>
+  </programme>
+  <programme start="20250814210000 +0800" stop="20250814223000 +0800" channel="龍華電影">
+    <title lang="zh">PTU粵普</title>
+    <desc lang="zh">PTU警官展(任達華飾)與Kat(邵美琪飾)率領隊員在尖沙咀進行反黑巡邏時,發現沙展肥沙(林雪飾)在餐廳外受襲,失去警槍展受肥沙所託,於天亮前把配槍找回,卻引起PTU隊員意見分岐…</desc>
+  </programme>
+  <programme start="20250814223000 +0800" stop="20250815000000 +0800" channel="龍華電影">
+    <title lang="zh">黑白戰場粵普</title>
+    <desc lang="zh">米探長告訴四哥有人要暗殺他,因他雖然巳半退休,但仍掌管幫會的數億公家錢他的手下棺材,炸彈和辛尼各懷鬼胎,各自想吞併這筆巨款四哥立刻命自己幾年前在元朗由柴叔秘密培養的御林軍:發仔,花灑,大牛及二牛暗中保護自己忠心之士與叛徒之戰立即展開,棺材和炸彈逐一被殺,人人自危,陰謀滿佈…</desc>
+  </programme>
+  <programme start="20250815000000 +0800" stop="20250815015000 +0800" channel="龍華電影">
+    <title lang="zh">報告班長7:勇往直前普</title>
+    <desc lang="zh">本片以2009年八八風災時國軍救災行動為背景勇敢,就是帶著恐懼一步一步往前走真實的你,真實的我每個人都歷經成長,每個人都歷經挫折報告班長7勇往直前,描述一群年經人,如何面對成長中的挑戰</desc>
+  </programme>
+  <programme start="20250815015000 +0800" stop="20250815032000 +0800" channel="龍華電影">
+    <title lang="zh">朝花夕拾粵普</title>
+    <desc lang="zh">6262與丈夫吵架後,一怒之下飛車離家,不慎墮進時光隧道,回到五十年前的世界醒來之時,看見糖果廠老闆方中信後方知身在1987年她為免引起方的疑問,便說自己名叫陸宜,隨方回家暫住陸宜後告知其身世,方答應為她找科學家設法助她回去陸宜後來知悉自己可隨時回去,與方大吵,方才告知自己愛上了她,陸宜心動</desc>
+  </programme>
+  <programme start="20250815032000 +0800" stop="20250815045500 +0800" channel="龍華電影">
+    <title lang="zh">私人會所粵普</title>
+    <desc lang="zh">Balcony是香港最高級的會員制私人會所,以全陀地女生為賣點,吸引了一班城中名人,富二代及金融界大鱷光顧史提芬周是一名分析員,因為一次工作關係,在Balcony中認識了富二代Lucas,細價股莊家倫爺及第一天坐枱的女大學生Milo倫爺十分賞識史提芬周,於是招攬他為門生,教曉他金融圈的幕後操控</desc>
+  </programme>
+  <programme start="20250815045500 +0800" stop="20250815060000 +0800" channel="龍華電影">
+    <title lang="zh">青苔粵普</title>
+    <desc lang="zh">青苔是一個胸無大志的警察,他別出心裁選了專責放蛇捉妓女,既安全又有甜頭,但改變他的卻是北姑露露青苔曾經拘捕過她,但三個月再遇上說不上是愛,青苔卻喜歡與她一起那一天,露露遇上變態嫖客,慘遭折磨… </desc>
+  </programme>
+ </tv>

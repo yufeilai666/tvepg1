@@ -1,0 +1,110 @@
+name: 0 down epg pw trans
+
+on:
+  schedule:
+    # 每天UTC时间0点22分、11点22分、18点22分运行 (北京时间2点22分、8点22分、19点22分)
+    - cron: '22 0,11,18 * * *'
+  workflow_dispatch:  # 允许手动触发
+  # 当配置文件有更改时也触发
+  push:
+    paths:
+      - 'epg_title_info.json'
+      - 'epgTW_title_info.json'
+      
+
+jobs:
+  process-epg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    # 添加权限设置
+    permissions:
+      contents: write  # 允许工作流写入内容（推送更改）
+    
+    steps:
+    - name: Checkout repository (main branch)
+      uses: actions/checkout@v3
+      with:
+        ref: main
+        fetch-depth: 1
+        token: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 提供的 token
+
+    - name: Checkout epg_scripts branch
+      uses: actions/checkout@v3
+      with:
+        ref: epg_scripts
+        path: scripts
+        token: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 提供的 token
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests pytz tmdbv3api json5 demjson3
+
+    - name: Copy script from scripts branch
+      run: |
+        cp scripts/down_epg_pw_trans.py ./
+
+    - name: Run EPG processor
+      env:
+        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      run: python down_epg_pw_trans.py
+
+    - name: Configure Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Check for changes
+      id: check_changes
+      run: |
+        # 检查是否有文件变更
+        if git diff --name-only --exit-code; then
+          echo "没有文件变更"
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "检测到文件变更"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Add changed files
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        git add epgpw.xml epg*_title_info*.json
+        echo "已添加变更文件"
+
+    - name: Commit changes
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        git commit -m "Update epgpw.xml、epg_title_info.json: $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M')"
+        echo "已提交变更"
+
+    - name: Push changes
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        # 使用 GitHub 提供的 token 进行推送
+        # 注意：由于我们已经在 checkout 步骤使用了 token，这里不需要额外配置
+        # 尝试推送变更，最多重试3次
+        for i in {1..3}; do
+          if git push; then
+            echo "推送成功"
+            break
+          else
+            echo "推送失败，尝试 $i/3"
+            if [ $i -eq 3 ]; then
+              echo "推送失败，达到最大重试次数"
+              exit 1
+            fi
+            sleep 5
+          fi
+        done
+
+    - name: No changes message
+      if: steps.check_changes.outputs.has_changes == 'false'
+      run: |
+        echo "没有检测到文件变更，跳过提交和推送"

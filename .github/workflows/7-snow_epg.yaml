@@ -1,0 +1,191 @@
+name: 7 output snow_epg.xml, snow_epg.xml.gz, snow_epg.json
+
+on:
+  schedule:
+    # 每天UTC时间1点40分、5点40分、9点40分、13点40分、17点40分、21点40分执行一次(北京时间1点40分、5点40分、9点40分、13点40分、17点40分、21点40分)
+    - cron: '40 1,5,9,13,17,21 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate_and_upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 第一步：检出当前仓库（主分支）
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # 第二步：检出epg_scripts分支
+      - name: Checkout epg_scripts branch
+        uses: actions/checkout@v4
+        with:
+          ref: epg_scripts
+          path: epg_scripts
+
+      # 第三步：创建临时工作目录并复制所需文件
+      - name: Setup working directory
+        run: |
+          # 创建临时工作目录
+          mkdir -p temp_workdir
+          
+          # 从主分支复制输入文件
+          cp *.xml temp_workdir/
+          
+          # 从epg_scripts分支复制Python脚本
+          cp epg_scripts/snow_epg.py temp_workdir/
+          
+          echo "工作目录准备完成"
+          ls -la temp_workdir/
+
+      # 第四步：设置 Python 环境（自动安装指定版本）
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'  # 指定需要的 Python 版本
+
+      # 第五步：安装 Python 依赖
+      - name: Install dependencies
+        run: |
+          # 直接安装所需包（setup-python 已确保 pip 可用）
+          pip install lxml requests
+          
+          # 列出已安装包（用于调试）
+          pip list
+
+      # 第六步：生成 EPG 文件
+      - name: Generate EPG with Python
+        working-directory: temp_workdir
+        run: |
+          # 运行 Python 脚本
+          python snow_epg.py
+          
+          # 检查文件是否生成
+          if [ ! -f snow_epg.xml ]; then
+            echo "错误: snow_epg.xml 文件未生成"
+            exit 1
+          fi
+          
+          if [ ! -f snow_epg.xml.gz ]; then
+            echo "错误: snow_epg.xml.gz 文件未生成"
+            exit 1
+          fi
+          
+          if [ ! -f README.md ]; then
+            echo "错误: README.md 文件未生成"
+            exit 1
+          fi
+          
+          if [ ! -f snow_epg.json ]; then
+            echo "错误: snow_epg.json 文件未生成"
+            exit 1
+          fi
+          
+          echo "snow_epg.xml 文件大小: $(du -h snow_epg.xml | cut -f1)"
+          echo "snow_epg.xml.gz 文件大小: $(du -h snow_epg.xml.gz | cut -f1)"
+          echo "README.md 文件大小: $(du -h README.md | cut -f1)"
+          echo "snow_epg.json 文件大小: $(du -h snow_epg.json | cut -f1)"
+          
+          # 将生成的文件复制回工作区根目录
+          cp snow_epg.xml snow_epg.xml.gz README.md snow_epg.json ../
+          
+          echo "文件已复制到工作区根目录"
+          ls -lh ../snow_epg.* ../README.md
+
+      # 第七步：检出目标仓库
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: yufeilai666/tvepg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: tvepg
+          ref: main
+          fetch-depth: 1
+
+      # 第八步：更新目标文件
+      - name: Update target files
+        run: |
+          # 复制 XML 文件
+          cp -f snow_epg.xml tvepg/snow_epg.xml
+          
+          # 复制 GZ 文件
+          cp -f snow_epg.xml.gz tvepg/snow_epg.xml.gz
+          
+          # 复制 README.md 文件
+          cp -f README.md tvepg/README.md
+          
+          # 复制 JSON 文件
+          cp -f snow_epg.json tvepg/snow_epg.json
+          
+          echo "文件复制完成："
+          ls -lh tvepg/snow_epg.* tvepg/README.md
+          
+          # 检查 XML 文件是否更新
+          if diff snow_epg.xml tvepg/snow_epg.xml >/dev/null; then
+            echo "snow_epg.xml 文件成功更新"
+          else
+            echo "错误: snow_epg.xml 文件复制失败"
+            exit 1
+          fi
+          
+          # 检查 GZ 文件是否更新（使用文件大小作为简单检查）
+          original_size=$(du -b snow_epg.xml.gz | cut -f1)
+          copied_size=$(du -b tvepg/snow_epg.xml.gz | cut -f1)
+          
+          if [ "$original_size" -eq "$copied_size" ]; then
+            echo "snow_epg.xml.gz 文件成功更新"
+          else
+            echo "错误: snow_epg.xml.gz 文件复制失败（大小不一致）"
+            exit 1
+          fi
+          
+          # 检查 README 文件是否更新
+          if diff README.md tvepg/README.md >/dev/null; then
+            echo "README.md 文件成功更新"
+          else
+            echo "错误: README.md 文件复制失败"
+            exit 1
+          fi
+          
+          # 检查 JSON 文件是否更新
+          if diff snow_epg.json tvepg/snow_epg.json >/dev/null; then
+            echo "snow_epg.json 文件成功更新"
+          else
+            echo "错误: snow_epg.json 文件复制失败"
+            exit 1
+          fi
+
+      # 第九步：提交变更
+      - name: Commit and push
+        working-directory: tvepg
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 添加所有生成的文件
+          git add snow_epg.xml snow_epg.xml.gz README.md snow_epg.json
+          
+          # 检查是否有变更
+          if git diff-index --quiet HEAD -- snow_epg.xml snow_epg.xml.gz README.md snow_epg.json; then
+            echo "文件内容未变化，跳过提交"
+          else
+            # 获取变更信息
+            changes=$(git diff --shortstat HEAD -- snow_epg.xml snow_epg.xml.gz README.md snow_epg.json)
+            now_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+            commit_msg="snow_epg_xml自动更新: $now_time"
+            
+            [ -n "$changes" ] && commit_msg="$commit_msg ($changes)"
+            
+            # 提交并推送
+            git commit -m "$commit_msg"
+            git push origin main
+            echo "变更已提交: $commit_msg"
+            
+            # 输出文件大小信息
+            echo "snow_epg.xml 文件大小: $(du -h snow_epg.xml | cut -f1)"
+            echo "snow_epg.xml.gz 文件大小: $(du -h snow_epg.xml.gz | cut -f1)"
+            echo "README.md 文件大小: $(du -h README.md | cut -f1)"
+            echo "snow_epg.json 文件大小: $(du -h snow_epg.json | cut -f1)"
+          fi

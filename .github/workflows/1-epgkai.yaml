@@ -1,0 +1,120 @@
+name: 1 output epgkai.xml
+on:
+  schedule:
+    # 每天UTC时间3点30分、14点30分、19点30分执行一次 (北京时间3点30分、11点30分、22点30分)
+    - cron: '30 3,14,19 * * *'
+  workflow_dispatch:       # 允許手動觸發
+
+jobs:
+  generate_and_upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 1. 檢出主分支代碼
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      # 2. 設置 PHP 環境
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      # 3. 在臨時目錄中處理 epgkai.php
+      - name: Create temporary directory for script
+        run: |
+          mkdir -p /tmp/epg_scripts
+          echo "✓ 临时目录创建成功"
+
+      # 4. 從 epg_scripts 分支獲取 epgkai.php 到臨時目錄
+      - name: Get epgkai.php from epg_scripts branch to temp directory
+        run: |
+          echo "正在从 epg_scripts 分支获取 epgkai.php..."
+          git fetch origin epg_scripts
+          if git show origin/epg_scripts:epgkai.php > /tmp/epg_scripts/epgkai.php; then
+            echo "✓ 成功获取 epgkai.php"
+          else
+            echo "✗ 获取 epgkai.php 失败"
+            exit 1
+          fi
+
+      # 5. 在臨時目錄中生成 epgkai.xml
+      - name: Run epgkai.php in temp directory
+        run: |
+          echo "正在生成 epgkai.xml..."
+          cd /tmp/epg_scripts
+          if php epgkai.php; then
+            echo "✓ epgkai.php 执行成功"
+            # 檢查是否生成了 XML 文件
+            if [ -f epgkai.xml ]; then
+              echo "✓ epgkai.xml 生成成功"
+              # 將生成的 XML 移動回工作目錄
+              mv epgkai.xml $GITHUB_WORKSPACE/
+              echo "✓ 文件已移动到工作目录"
+            else
+              echo "✗ epgkai.xml 未生成"
+              exit 1
+            fi
+          else
+            echo "✗ epgkai.php 执行失败"
+            exit 1
+          fi
+
+      # 6. 提交 epgkai.xml 到主分支（僅此文件）
+      - name: Commit only epgkai.xml to main repository
+        id: commit-step
+        run: |
+          echo "正在准备提交 epgkai.xml..."
+          if [ -f epgkai.xml ]; then
+            git config --local user.name "github-actions[bot]"
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            
+            # 明確只添加 epgkai.xml，避免意外添加其他文件
+            git add epgkai.xml
+            
+            # 檢查是否有變更需要提交
+            if git diff --cached --quiet; then
+              echo "ℹ️ epgkai.xml 无变化，无需提交"
+              echo "HAS_CHANGES=false" >> $GITHUB_ENV
+            else
+              git commit -m "Update epgkai.xml: $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')"
+              if git push origin main; then
+                echo "✓ epgkai.xml 提交成功"
+                echo "HAS_CHANGES=true" >> $GITHUB_ENV
+              else
+                echo "✗ epgkai.xml 提交失败"
+                exit 1
+              fi
+            fi
+          else
+            echo "✗ epgkai.xml 不存在，无法提交"
+            exit 1
+          fi
+
+      # 7. 清理臨時文件（无论成功或失败都会执行）
+      - name: Clean up temporary files
+        if: always()  # 这个条件确保无论工作流成功或失败都会执行
+        run: |
+          echo "正在清理临时文件..."
+          rm -rf /tmp/epg_script
+          echo "✓ 临时文件清理完成"
+
+      # 8. 最终成功消息（仅在确实有更新时显示）
+      - name: Success message for updates
+        if: success() && env.HAS_CHANGES == 'true'
+        run: echo "🎉 工作流执行成功！EPG 文件已更新并提交到主分支"
+
+      # 9. 无变化消息
+      - name: No changes message
+        if: success() && env.HAS_CHANGES == 'false'
+        run: echo "ℹ️ 工作流执行完成，但 epgkai.xml 无变化，无需更新"
+
+      # 10. 失败处理
+      - name: Failure message
+        if: failure()
+        run: echo "❌ 工作流执行失败，请检查上述错误信息"

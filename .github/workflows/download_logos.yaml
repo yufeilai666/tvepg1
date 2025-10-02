@@ -1,0 +1,68 @@
+name: Update TVG Logos
+
+on:
+  workflow_dispatch:
+    inputs:
+      m3u_file:
+        description: 'playlist.m3u'
+        required: true
+        default: 'playlist.m3u'
+      logos_dir:
+        description: 'logo'
+        required: false
+        default: 'logo'
+  #schedule:
+    #- cron: '0 0 * * *'  # 每天UTC午夜运行
+
+jobs:
+  update-logos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 30
+      
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v4
+      with:
+        ref: main
+        fetch-depth: 0  # 获取全部历史
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Checkout epg_scripts branch
+      uses: actions/checkout@v4
+      with:
+        ref: epg_scripts
+        path: epg_scripts_temp
+        
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+        
+    - name: Run logo downloader
+      id: downloader
+      env:
+        INPUT_M3U_FILE: ${{ inputs.m3u_file || 'playlist.m3u' }}
+        INPUT_LOGOS_DIR: ${{ inputs.logos_dir || 'logo' }}
+        INPUT_MAX_WORKERS: '20'  # 增加并发数
+        INPUT_RETRY_COUNT: '5'   # 增加重试次数
+      run: python epg_scripts_temp/download_logos.py
+      
+    - name: Show results
+      run: |
+        echo "成功下载: ${{ steps.downloader.outputs.success }}"
+        echo "跳过: ${{ steps.downloader.outputs.skipped }}"
+        echo "失败: ${{ steps.downloader.outputs.failed }}"
+        
+    - name: Upload failed logos list
+      if: ${{ steps.downloader.outputs.failed > 0 }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: failed-logos
+        path: ${{ env.INPUT_LOGOS_DIR }}_errors.txt

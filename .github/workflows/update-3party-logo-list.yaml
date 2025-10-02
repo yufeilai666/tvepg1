@@ -1,0 +1,126 @@
+name: Update 3party Logo List
+
+on:
+  workflow_dispatch:  # 允许手动触发
+    inputs:
+      sort_method:
+        description: '排序方法 (name, ascii, size, time)'
+        required: false
+        default: 'name'
+  schedule:
+    - cron: '10 1 * * 6'  # 每周六午夜1点10分运行一次
+
+jobs:
+  update-3party-logo-list:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v3
+      with:
+        ref: main
+        fetch-depth: 0
+
+    - name: Checkout epg_scripts branch for script
+      uses: actions/checkout@v3
+      with:
+        ref: epg_scripts
+        path: epg_scripts
+        # 使用浅克隆，只获取最新的提交
+        fetch-depth: 1
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install pypinyin for Chinese sorting
+      run: pip install pypinyin
+      
+    - name: Install requests for HTTP requests
+      run: pip install requests
+
+    - name: Copy and run script to generate logo lists
+      run: |
+        # 创建临时目录并复制脚本
+        mkdir -p /tmp/script
+        cp epg_scripts/update_3party_logo_list.py /tmp/script/
+        
+        # 定义源列表
+        # 注意："|"左边为第三方logo文件夹路径，右边为输出文件
+        sources=(
+          "https://github.com/sparkssssssssss/epg/tree/main/logo/|logo_112114.md"
+          "https://github.com/fanmingming/live/tree/main/tv|logo_fanmingming.md"
+          "https://github.com/taksssss/tv/tree/main/icon|logo_taksssss.md"
+        )
+        
+        # 为每个源运行脚本
+        for source in "${sources[@]}"; do
+          IFS='|' read -r url output_file <<< "$source"
+          echo "处理源: $url, 输出文件: $output_file"
+          
+          # 运行脚本，传递GitHub令牌（如果有）
+          cd /tmp/script
+          if [ -n "$GITHUB_TOKEN" ]; then
+            python update_3party_logo_list.py --url "$url" --output "$output_file" --token "$GITHUB_TOKEN"
+          else
+            python update_3party_logo_list.py --url "$url" --output "$output_file"
+          fi
+        done
+        
+        # 将生成的文件从脚本目录复制到logo_list目录
+        mkdir -p /tmp/logo_list
+        cp /tmp/script/*.md /tmp/logo_list/ 2>/dev/null || true
+        cp /tmp/script/*.json /tmp/logo_list/ 2>/dev/null || true
+      env:
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_REF: ${{ github.ref }}
+        SORT_METHOD: ${{ github.event.inputs.sort_method || 'name' }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout logo_info branch or create if not exists
+      run: |
+        # 检查logo_info分支是否存在
+        if git ls-remote --exit-code --heads origin logo_info; then
+          echo "logo_info分支已存在，切换到该分支"
+          git fetch origin logo_info
+          git checkout logo_info
+        else
+          echo "创建新的logo_info孤立分支"
+          # 创建一个空的孤立分支
+          git checkout --orphan logo_info
+          # 清空工作区
+          git rm -rf --quiet .
+        fi
+
+    - name: Update .md and .json files in logo_info branch
+      run: |
+        # 从临时位置复制所有生成的 .md 和 .json 文件
+        cp /tmp/logo_list/*.md ./
+        cp /tmp/logo_list/*.json ./
+
+    - name: Commit and push to logo_info branch
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add *.md *.json
+        
+        # 检查是否有更改
+        if git diff --staged --quiet; then
+          echo "没有更改需要提交"
+        else
+          now_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+          git commit -m "Update 3party logo lists and JSON [skip ci]: $now_time"
+          git push origin logo_info
+        fi
+
+    - name: Clean up
+      run: |
+        # 清理临时文件
+        rm -rf /tmp/logo_list
+        rm -rf /tmp/script
+        echo "清理临时文件完成"
+        # 返回主分支
+        git checkout main

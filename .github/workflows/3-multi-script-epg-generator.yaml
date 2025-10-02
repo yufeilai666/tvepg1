@@ -1,0 +1,269 @@
+# 文件: .github/workflows/3-multi-script-epg-generator.yml
+# 功能: 弹性多脚本EPG生成器（支持PHP和Python）
+# 描述:
+#   此工作流每小时自动执行多个PHP和Python脚本生成和修复EPG XML文件
+#   主要特点:
+#     1. 支持定时触发和手动触发
+#     2. 高效处理PHP和Python脚本执行
+#     3. 精确记录失败脚本并显示在提交历史和日志中
+#     4. 智能提交机制：即使部分脚本失败，成功生成的文件也会被提交
+#     5. 完善的错误报告和重试机制
+#     6. 从epg_scripts分支获取脚本
+#     7. 在临时目录中直接执行脚本
+#     8. 将生成的XML文件复制回工作目录
+#     9. 支持Python环境配置和依赖安装
+#
+# 使用说明:
+#   1. 将本文件放在仓库的 .github/workflows/ 目录
+#   2. 在下面的脚本列表中添加/修改需要执行的PHP和Python文件
+#   3. 确保所有脚本输出.xml文件到临时目录
+#   4. 工作流将自动处理XML文件的提交和推送
+#   5. 脚本存储在epg_scripts分支的根目录
+
+name: 3 Resilient Multi-Script EPG Generator (PHP + Python)
+
+# 触发条件配置
+on:
+  schedule:  # 定时触发配置
+    # 每天UTC时间1点5分、5点5分、9点5分、13点5分、17点5分、21点5分执行一次(北京时间1点5分、5点5分、9点5分、13点5分、17点5分、21点5分)
+    - cron: '5 1,5,9,13,17,21 * * *'
+  workflow_dispatch:  # 支持手动触发
+
+# 作业定义
+jobs:
+  generate-epg:  # 作业ID
+    runs-on: ubuntu-latest  # 运行环境：最新版Ubuntu
+    timeout-minutes: 30
+    
+    # 环境变量配置
+    env:
+      TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+    
+    # 步骤定义
+    steps:
+    # 步骤1: 检出代码库
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    # 步骤2: 检出epg_scripts分支到临时目录
+    - name: Checkout epg_scripts branch
+      uses: actions/checkout@v4
+      with:
+        ref: epg_scripts
+        path: ./epg-scripts-temp
+
+    # 步骤3: 设置PHP环境
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: dom, xmlreader, zlib, curl, pcntl
+
+    # 步骤4: 设置Python环境
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    # 步骤5: 安装Python依赖
+    - name: Install Python dependencies
+      run: |
+        cd ./epg-scripts-temp
+        pip install requests beautifulsoup4 tmdbv3api
+        cd ..
+
+    # 步骤6: 在临时目录中生成XML文件（核心步骤）
+    - name: Generate XML Files in Temp Directory
+      id: generate-step
+      run: |
+        # 切换到临时目录
+        cd ./epg-scripts-temp
+        
+        # 定义要执行的脚本数组（PHP和Python）
+        scripts=(
+          "epg-generator.php"      # PHP EPG生成器脚本
+          "epg-fixer.php"          # PHP EPG修复器脚本
+          # "epgguangxi.php"         # PHP 广西EPG脚本
+          # "get_lstime_epg.py"      # Python 龙祥时代EPG脚本
+        )
+        
+        # 存储失败脚本的数组
+        failed_scripts=()
+        
+        # 循环执行所有脚本
+        for script in "${scripts[@]}"; do
+          echo "::group::执行 $script"
+          echo "=== 开始执行: $script ==="
+          
+          # 检查脚本文件是否存在
+          if [ ! -f "$script" ]; then
+            echo "❌ 脚本文件不存在: $script"
+            failed_scripts+=("$script")
+            echo "::endgroup::"
+            continue
+          fi
+          
+          # 根据文件扩展名选择执行方式
+          script_extension="${script##*.}"
+          
+          set +e  # 禁用错误退出
+          
+          if [ "$script_extension" = "php" ]; then
+            # 执行PHP脚本
+            output=$(php -f "$script" 2>&1)
+            exit_code=$?
+          elif [ "$script_extension" = "py" ]; then
+            # 执行Python脚本
+            output=$(python "$script" 2>&1)
+            exit_code=$?
+          else
+            echo "❌ 不支持的脚本类型: $script_extension"
+            failed_scripts+=("$script")
+            set -e
+            echo "::endgroup::"
+            continue
+          fi
+          
+          set -e  # 重新启用错误退出
+          
+          # 打印脚本输出
+          echo "$output"
+          echo "::endgroup::"
+          
+          # 失败判定条件
+          if [ $exit_code -ne 0 ]; then
+            echo "❌ $script 执行失败 (退出码: $exit_code)"
+            failed_scripts+=("$script")
+          elif echo "$output" | grep -q -E "(Fatal error|致命错误|Uncaught Exception|未捕获的异常|必需扩展未启用|无法加载XML内容|XML解析错误|下载失败|解压失败|保存失败|Traceback|Error|Exception)"; then
+            echo "❌ $script 输出中包含严重错误信息"
+            failed_scripts+=("$script")
+          elif echo "$output" | grep -q -E "(ERROR|错误:)" && echo "$output" | grep -q -E "(下载|解压|保存|处理|获取|连接)"; then
+            echo "❌ $script 输出中包含操作错误信息"
+            failed_scripts+=("$script")
+          else
+            echo "✅ $script 执行成功"
+          fi
+          
+          echo "============================="
+        done
+        
+        # 将生成的XML文件复制回工作目录
+        if ls *.xml 1> /dev/null 2>&1; then
+          echo "复制XML文件到工作目录..."
+          cp -v *.xml ../
+          echo "复制的文件:"
+          ls -la *.xml
+        else
+          echo "未找到XML文件"
+        fi
+        
+        # 返回工作目录
+        cd ..
+        
+        # 如果有失败脚本，转换为逗号分隔字符串
+        if [ ${#failed_scripts[@]} -gt 0 ]; then
+          failed_list=$(IFS=','; echo "${failed_scripts[*]}")
+          echo "失败脚本: $failed_list"
+          echo "failed_scripts=$failed_list" >> $GITHUB_OUTPUT
+        fi
+
+    # 步骤7: 列出变更的文件
+    - name: List changed files
+      run: |
+        echo "以下文件有变更:"
+        git status --porcelain
+        echo "当前目录的XML文件:"
+        ls -la *.xml 2>/dev/null || echo "无XML文件"
+
+    # 步骤8: 提交和推送变更
+    - name: Commit and Push Changes
+      if: always()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # 配置Git用户信息
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # 设置带认证的远程URL
+        git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
+        
+        # 添加所有XML文件变更
+        git add --all *.xml
+        
+        # 检查是否有实际变更
+        if git diff-index --quiet HEAD --; then
+          echo "没有检测到XML文件变更，跳过提交"
+          exit 0
+        fi
+        
+        # 获取失败脚本信息
+        failed_scripts="${{ steps.generate-step.outputs.failed_scripts }}"
+        
+        # 构造提交信息
+        now_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+        commit_msg="自动更新 EPG 文件: $now_time"
+        
+        # 如果有失败脚本，在提交信息中注明
+        if [ -n "$failed_scripts" ]; then
+          commit_msg+=" (部分失败: ${failed_scripts})"
+        fi
+        
+        # 提交变更
+        echo "提交信息: $commit_msg"
+        git commit -m "$commit_msg"
+        
+        # 推送重试机制
+        max_retries=3
+        retry_delay=5
+        
+        for ((i=1; i<=max_retries; i++)); do
+          echo "推送尝试 ($i/$max_retries)"
+          
+          # 先拉取最新变更避免冲突
+          git pull --rebase
+          
+          # 尝试推送
+          if git push origin HEAD:${GITHUB_REF#refs/heads/}; then
+            echo "推送成功"
+            
+            # 列出更新的文件
+            updated_files=$(git diff --name-only HEAD^ HEAD 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "无法获取文件变更列表")
+            echo "更新的文件:"
+            echo "$updated_files"
+            
+            break
+          fi
+          
+          if [ $i -eq $max_retries ]; then
+            echo "错误：推送失败，已达最大重试次数"
+            exit 1
+          fi
+          
+          echo "推送失败，${retry_delay}秒后重试..."
+          sleep $retry_delay
+        done
+
+    # 步骤9: 报告生成状态
+    - name: Report Generation Status
+      if: ${{ always() }}
+      run: |
+        failed_scripts="${{ steps.generate-step.outputs.failed_scripts }}"
+        
+        if [ -n "$failed_scripts" ]; then
+          IFS=',' read -ra failed_array <<< "$failed_scripts"
+          
+          echo "::group::❌ 失败脚本列表"
+          for script in "${failed_array[@]}"; do
+            echo "$script"
+          done
+          echo "::endgroup::"
+          
+          echo "::warning::有 ${#failed_array[@]} 个脚本执行失败"
+          exit 1
+        else
+          echo "✅ 所有脚本执行成功"
+        fi

@@ -1,0 +1,48 @@
+name: Fix Main Branch - Remove Scripts Submodule
+
+on:
+  workflow_dispatch:  # 只允许手动触发
+
+jobs:
+  remove-submodule:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v3
+      with:
+        ref: main
+        token: ${{ secrets.GITHUB_TOKEN }}
+        # 需要完整历史记录来正确处理子模块
+        fetch-depth: 0
+
+    - name: Configure Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Remove scripts submodule
+      run: |
+        # 从git索引中移除scripts子模块
+        git rm --cached scripts
+        
+        # 删除.gitmodules文件（如果存在）
+        if [ -f .gitmodules ]; then
+          git rm --cached .gitmodules
+        fi
+        
+        # 删除.git/modules/scripts目录（如果存在）
+        if [ -d .git/modules/scripts ]; then
+          rm -rf .git/modules/scripts
+        fi
+        
+        # 提交这个变更
+        git commit -m "Remove scripts submodule"
+
+    - name: Push fix
+      run: |
+        git push origin main
+        echo "已成功移除scripts子模块"

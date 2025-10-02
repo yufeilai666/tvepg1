@@ -1,0 +1,152 @@
+name: epg_test  # 工作流名称
+on:
+  #schedule:
+    # 定时触发：每4小时的第18分钟运行（北京时间）
+    #- cron: '18 */4 * * *'
+  workflow_dispatch:  # 支持手动触发按钮
+
+jobs:
+  generate_and_upload:  # 作业名称
+    runs-on: ubuntu-latest  # 使用最新版Ubuntu运行器
+    timeout-minutes: 30  # 整个作业超时时间（防止卡死）
+
+    steps:
+      # 步骤1：检出当前仓库主分支（获取输入文件）
+      - name: Checkout main branch for input file
+        uses: actions/checkout@v4
+        with:
+          ref: main  # 检出主分支以获取输入文件
+          path: main_repo  # 检出到main_repo子目录
+
+      # 步骤2：检出脚本分支（epg_scripts）
+      - name: Checkout scripts branch
+        uses: actions/checkout@v4
+        with:
+          ref: epg_scripts  # 检出脚本分支
+          path: scripts_repo  # 检出到scripts_repo子目录
+
+      # 步骤3：创建临时工作目录
+      - name: Create temporary workspace
+        run: |
+          mkdir -p temp_workspace
+          # 复制输入文件到临时目录
+          cp main_repo/epg_test_old.xml temp_workspace/
+          # 复制脚本文件到临时目录
+          cp scripts_repo/epg_test.py temp_workspace/
+
+      # 步骤4：设置Python环境
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'  # 指定Python 3.10版本
+
+      # 步骤5：安装Python依赖
+      - name: Install dependencies
+        run: |
+          pip install lxml  # 安装XML处理库
+          pip list  # 打印已安装包列表（调试用）
+
+      # 步骤6：生成EPG文件（在临时目录中）
+      - name: Generate EPG files
+        working-directory: temp_workspace  # 在临时目录执行
+        run: |
+          # 执行Python脚本生成文件
+          python epg_test.py
+          
+          # 文件存在性检查（确保生成三个关键文件）
+          for file in epg_test.xml epg_test.xml.gz README_TEST.md; do
+            if [ ! -f "$file" ]; then
+              echo "错误: $file 文件未生成"  # 文件缺失时报错退出
+              exit 1
+            fi
+            # 打印文件大小（调试信息）
+            echo "$file 文件大小: $(du -h "$file" | cut -f1)"
+          done
+          
+          # 将生成的文件复制回工作目录
+          cp epg_test.xml epg_test.xml.gz README_TEST.md ../
+
+      # 步骤7：检出目标仓库（yufeilai666/tvepg）
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: yufeilai666/tvepg  # 目标仓库地址
+          token: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub自动生成的令牌
+          path: tvepg  # 检出到tvepg子目录
+          ref: main  # 指定main分支
+          fetch-depth: 0  # 获取完整历史（避免后续git操作问题）
+
+      # 步骤8：比较XML文件内容
+      - name: Compare XML files
+        id: compare_xml
+        run: |
+          # 检查目标仓库中是否存在XML文件
+          if [ ! -f tvepg/epg_test.xml ]; then
+            echo "目标仓库无XML文件，需要更新"
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # 直接比较XML文件内容
+          if cmp -s epg_test.xml tvepg/epg_test.xml; then
+            echo "XML内容相同，无需更新"
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "XML内容不同，需要更新"
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 步骤9：更新目标仓库文件（仅在需要时）
+      - name: Update target files
+        if: steps.compare_xml.outputs.needs_update == 'true'
+        run: |
+          # 强制覆盖目标仓库中的文件
+          cp -f epg_test.xml tvepg/
+          cp -f epg_test.xml.gz tvepg/
+          cp -f README_TEST.md tvepg/
+          # 打印更新后文件信息
+          echo "文件已更新:"
+          ls -lh tvepg/epg_test.xml tvepg/epg_test.xml.gz tvepg/README_TEST.md
+
+      # 步骤10：提交变更（仅在需要时）
+      - name: Commit and push
+        if: steps.compare_xml.outputs.needs_update == 'true'
+        working-directory: tvepg  # 在目标仓库目录执行
+        run: |
+          # 配置Git用户信息（使用GitHub Actions默认机器人账号）
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 添加所有更改到暂存区
+          git add --all
+          
+          # 获取北京时间（用于提交信息）
+          now_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+          
+          # 拉取最新代码（避免冲突）
+          git pull origin main
+          
+          # 生成提交信息
+          commit_msg="epg_test.xml自动更新: $now_time"
+          
+          # 提交变更
+          git commit -m "$commit_msg"
+          
+          # 推送到目标仓库main分支
+          git push origin main
+          
+          # 打印成功信息
+          echo "成功提交: $commit_msg"
+          # 显示最终文件大小
+          for file in epg_test.xml epg_test.xml.gz README_TEST.md; do
+            echo "$file 文件大小: $(du -h "$file" | cut -f1)"
+          done
+
+      # 步骤11：输出结果
+      - name: Output result
+        run: |
+          if [ "${{ steps.compare_xml.outputs.needs_update }}" = "true" ]; then
+            echo "✅ XML内容已变化，已更新文件并推送到仓库"
+          else
+            echo "ℹ️ XML内容未变化，跳过更新"
+          fi

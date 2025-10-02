@@ -1,0 +1,289 @@
+# ===================================================
+# EPG UTC 时间转换自动化工作流
+# 功能说明：
+# 此工作流自动执行以下任务：
+# 1. 从epg_scripts分支获取convert_utc2target.py脚本
+# 2. 从主分支获取需要处理的源XML文件
+# 3. 将多个XML/XML.gz文件中的UTC时间转换为指定时区时间，或者直接替换时区而不转换时间
+# 4. 将转换后的文件推送到目标仓库
+#
+# 特点：
+# - 动态适应：自动解析Python脚本中的sources配置，无需手动修改YAML
+# - 多文件支持：支持同时处理多个输入输出文件
+# - 灵活触发：支持定时触发和手动触发
+# - 错误处理：完善的错误检查和日志输出
+# - 智能提交：仅在实际内容变化时提交，避免不必要的提交记录
+#
+# 使用说明：
+# 1. 在epg_scripts分支的convert_utc2target.py中配置sources列表
+# 2. 工作流会自动解析并处理所有配置的文件
+# 3. 处理后的文件会自动推送到指定仓库
+# ===================================================
+
+name: 4 EPG UTC Time Conversion
+
+on:
+  schedule:
+    # 每天UTC时间1点30分、5点30分、9点30分、13点30分、17点30分、21点30分执行一次(北京时间1点30分、5点30分、9点30分、13点30分、17点30分、21点30分)
+    - cron: '30 1,5,9,13,17,21 * * *'
+  workflow_dispatch:  # 允许手动触发工作流
+
+jobs:
+  generate_and_upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 第一步：检出epg_scripts分支获取脚本
+      # 功能：获取epg_scripts分支的代码，以便访问convert_utc2target.py脚本
+      - name: Checkout epg_scripts branch
+        uses: actions/checkout@v4
+        with:
+          ref: epg_scripts  # 指定检出epg_scripts分支
+          path: epg_scripts  # 将分支内容检出到epg_scripts目录
+
+      # 第二步：检出主分支获取源文件
+      # 功能：获取主分支的源XML文件，这些文件需要被处理
+      - name: Checkout main branch for source files
+        uses: actions/checkout@v4
+        with:
+          ref: main  # 检出主分支
+          path: source_files  # 将分支内容检出到source_files目录
+
+      # 第三步：设置 Python 环境
+      # 功能：配置Python环境，确保有合适版本的Python可用
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'  # 指定Python版本
+
+      # 第四步：安装 Python 依赖
+      # 功能：安装脚本运行所需的Python包（lxml）
+      - name: Install dependencies
+        run: |
+          pip install lxml  # 安装XML处理库
+          pip list  # 列出已安装包（用于调试）
+
+      # 第五步：设置工作目录并复制脚本和源文件
+      # 功能：创建临时工作目录并复制脚本和源文件到其中
+      - name: Setup working directory and copy files
+        run: |
+          mkdir -p temp_workspace
+          cp epg_scripts/convert_utc2target.py temp_workspace/
+          
+          # 动态获取源文件列表并复制
+          python -c "
+          import ast
+          import shutil
+          import os
+          
+          # 解析Python脚本获取源文件列表
+          with open('epg_scripts/convert_utc2target.py', 'r') as f:
+              content = f.read()
+          tree = ast.parse(content)
+          for node in ast.walk(tree):
+              if isinstance(node, ast.Assign):
+                  for target in node.targets:
+                      if hasattr(target, 'id') and target.id == 'sources':
+                          if isinstance(node.value, ast.List):
+                              for item in node.value.elts:
+                                  if isinstance(item, ast.Dict):
+                                      # 从字典中获取input_file
+                                      for key, value in zip(item.keys, item.values):
+                                          if isinstance(key, ast.Str) and key.s == 'input_file':
+                                              if isinstance(value, ast.Str):
+                                                  input_file = value.s
+                                                  source_path = f'source_files/{input_file}'
+                                                  dest_path = f'temp_workspace/{input_file}'
+                                                  if os.path.exists(source_path):
+                                                      shutil.copy2(source_path, dest_path)
+                                                      print(f'已复制源文件: {input_file}')
+                                                  else:
+                                                      print(f'警告: 源文件 {input_file} 不存在')
+                                                  break
+          "
+          echo "工作目录已设置，脚本和源文件已复制"
+
+      # 第六步：动态获取输出文件列表
+      # 功能：从Python脚本中提取sources列表，获取所有输出文件名
+      # 说明：此步骤使用Python的AST模块解析脚本，提取输出文件列表
+      # 这使得工作流能够自动适应sources列表的变化
+      - name: Extract output files from Python script
+        id: get-output-files  # 为此步骤设置ID，以便后续引用其输出
+        working-directory: temp_workspace  # 在工作目录中执行
+        run: |
+          # 使用Python解析脚本中的sources列表
+          python -c "
+          import ast
+          with open('convert_utc2target.py', 'r') as f:
+              content = f.read()
+          # 查找sources变量定义
+          tree = ast.parse(content)
+          for node in ast.walk(tree):
+              if isinstance(node, ast.Assign):
+                  for target in node.targets:
+                      if hasattr(target, 'id') and target.id == 'sources':
+                          # 提取sources列表中的输出文件
+                          if isinstance(node.value, ast.List):
+                              output_files = []
+                              for item in node.value.elts:
+                                  if isinstance(item, ast.Dict):
+                                      for key, value in zip(item.keys, item.values):
+                                          if isinstance(key, ast.Str) and key.s == 'output_file':
+                                              if isinstance(value, ast.Str):
+                                                  output_files.append(value.s)
+                                                  break
+                              print(' '.join(output_files))
+                              break
+          " > output_files.txt
+          
+          # 读取输出文件列表
+          output_files=$(cat output_files.txt)
+          echo "检测到的输出文件列表: $output_files"
+          # 将文件列表设置为步骤输出，供后续步骤使用
+          echo "files=$output_files" >> $GITHUB_OUTPUT
+
+      # 第七步：运行时间转换脚本处理多个文件
+      # 功能：执行Python脚本，将UTC时间转换为目标时区
+      # 说明：此步骤处理sources列表中定义的所有文件转换任务
+      - name: Convert UTC to target timezone for multiple files
+        working-directory: temp_workspace  # 在工作目录中执行
+        run: |
+          # 执行Python脚本进行时间转换
+          python convert_utc2target.py
+          
+          # 检查所有输出文件是否成功生成
+          IFS=' ' read -ra FILES <<< "${{ steps.get-output-files.outputs.files }}"
+          for file in "${FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "错误: 文件 $file 未生成"
+              exit 1  # 如果任何文件未生成，则退出并报错
+            fi
+            echo "生成文件 $file 大小: $(du -h "$file" | cut -f1)"
+          done
+
+      # 第八步：检出目标仓库
+      # 功能：检出目标仓库，准备将生成的文件推送过去
+      # 说明：此步骤使用GITHUB_TOKEN进行身份验证，确保有推送权限
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: yufeilai666/tvepg  # 目标仓库
+          token: ${{ secrets.GITHUB_TOKEN }}  # GitHub token用于身份验证
+          path: tvepg  # 将目标仓库检出到此目录
+          ref: main  # 目标分支
+
+      # 第九步：拉取远程仓库最新文件并准备提交
+      # 功能：在复制文件前先拉取最新文件，确保工作区干净
+      - name: Pull latest changes and prepare for commit
+        working-directory: tvepg
+        run: |
+          echo "配置Git用户信息..."
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          echo "拉取远程最新文件..."
+          git pull origin main
+          
+          echo "工作区状态:"
+          git status
+
+      # 第十步：更新所有目标文件
+      # 功能：将生成的所有文件从临时工作目录复制到目标仓库目录
+      # 说明：此步骤使用动态获取的文件列表，确保所有输出文件都被复制
+      - name: Update target files
+        run: |
+          # 复制所有输出文件到目标仓库
+          IFS=' ' read -ra FILES <<< "${{ steps.get-output-files.outputs.files }}"
+          for file in "${FILES[@]}"; do
+            cp -f "temp_workspace/$file" "tvepg/$file"  # 强制复制，覆盖现有文件
+            echo "已复制: $file"
+          done
+          echo "所有文件已更新"
+
+      # 第十一步：提交变更
+      # 功能：将变更提交到目标仓库
+      # 说明：此步骤检查文件是否有实际变更，只有存在变更时才提交
+      - name: Commit and push changes
+        working-directory: tvepg  # 在工作目录中执行命令
+        run: |
+          echo "开始提交变更步骤..."
+          echo "当前工作目录: $(pwd)"
+          echo "目录内容:"
+          ls -la
+          
+          # 显示Git状态
+          echo "Git状态:"
+          git status
+          
+          # 添加所有变更的文件到暂存区
+          IFS=' ' read -ra FILES <<< "${{ steps.get-output-files.outputs.files }}"
+          echo "要添加的文件: ${FILES[@]}"
+          for file in "${FILES[@]}"; do
+            if [ -f "$file" ]; then
+              git add "$file"
+              echo "已添加文件: $file"
+            else
+              echo "警告: 文件 $file 不存在，跳过添加"
+            fi
+          done
+          
+          # 检查是否有任何文件变更
+          echo "检查文件变更..."
+          if git diff-index --quiet HEAD --; then
+            echo "所有文件内容未变化，跳过提交"
+          else
+            # 获取变更的文件列表
+            changes=$(git diff --name-only HEAD)
+            echo "检测到文件变更: $changes"
+            
+            # 使用北京时间作为时间戳
+            now_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+            commit_msg="EPG文件自动更新: $now_time"
+            
+            # 提交变更
+            echo "提交变更: $commit_msg"
+            git commit -m "$commit_msg"
+            
+            # 显示提交结果
+            echo "提交结果:"
+            git log -1 --oneline
+            
+            # 推送变更（添加重试机制）
+            echo "推送变更到远程仓库..."
+            max_attempts=3
+            attempt=1
+            while [ $attempt -le $max_attempts ]; do
+              echo "尝试推送 (尝试 $attempt/$max_attempts)..."
+              if git push origin main; then
+                echo "变更已成功推送"
+                break
+              else
+                echo "推送失败，等待10秒后重试..."
+                sleep 10
+                attempt=$((attempt+1))
+              fi
+            done
+            
+            if [ $attempt -gt $max_attempts ]; then
+              echo "警告: 普通推送失败，已达到最大尝试次数"
+              echo "尝试强制推送..."
+              if git push --force origin main; then
+                echo "强制推送成功"
+              else
+                echo "错误: 强制推送也失败"
+                exit 1
+              fi
+            fi
+            
+            echo "变更的文件: $changes"
+          fi
+          echo "提交变更步骤完成"
+
+      # 第十二步：清理临时工作目录
+      # 功能：删除临时工作目录，释放空间
+      - name: Cleanup temporary workspace
+        run: |
+          rm -rf temp_workspace
+          rm -rf source_files
+          echo "临时工作目录已清理"

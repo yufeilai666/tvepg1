@@ -184,7 +184,23 @@ def parse_hollywood_schedule_html(html_content):
         # 检查是否为节目列表 (包含时间格式 XX:XX)
         if re.search(r'\d{1,2}:\d{2}', text_content) and not re.search(r'\d{1,2}/\d{1,2}\s+星期', text_content):
             # 获取所有文本内容，包括<br>分隔的节目
-            full_text = h6_tag.get_text()
+            # 使用更精确的方法提取文本，避免display:none的内容
+            spans = h6_tag.find_all('span')
+            full_text = ""
+            for span in spans:
+                # 检查是否有display:none样式
+                style = span.get('style', '')
+                if 'display:none' in style:
+                    continue
+                # 只提取没有display:none的span的文本
+                span_text = span.get_text()
+                # 清理文本，移除特殊字符
+                span_text = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', span_text)
+                full_text += span_text + "\n"
+            
+            # 如果没有提取到文本，回退到原始方法
+            if not full_text.strip():
+                full_text = h6_tag.get_text()
             
             # 按行分割节目
             lines = full_text.split('\n')
@@ -192,13 +208,18 @@ def parse_hollywood_schedule_html(html_content):
             # 解析节目列表
             programs = []
             for line in lines:
-                # 清理行，移除特殊字符
+                # 清理行，移除特殊字符和多余空格
                 line = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', line.strip())
+                # 移除HTML实体
+                line = re.sub(r'&nbsp;', ' ', line)
+                # 合并多个连续空格
+                line = re.sub(r'\s+', ' ', line)
+                
                 if not line:
                     continue
                     
                 # 匹配时间、标题和分级
-                match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
+                match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
                 if not match:
                     # 尝试其他可能的时间格式
                     match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)

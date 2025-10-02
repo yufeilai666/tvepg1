@@ -12,6 +12,7 @@
 #     7. 在临时目录中直接执行脚本
 #     8. 将生成的XML文件复制回工作目录
 #     9. 支持Python环境配置和依赖安装
+#     10. 支持环境变量配置传递
 #
 # 使用说明:
 #   1. 将本文件放在仓库的 .github/workflows/ 目录
@@ -35,9 +36,10 @@ jobs:
     runs-on: ubuntu-latest  # 运行环境：最新版Ubuntu
     timeout-minutes: 30
     
-    # 环境变量配置
+    # 环境变量配置（作业级别，所有步骤都会继承）
     env:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      EPG_CONFIG: ${{ secrets.EPG_CONFIG }}
     
     # 步骤定义
     steps:
@@ -85,7 +87,7 @@ jobs:
         # 定义要执行的脚本数组（PHP和Python）
         scripts=(
           "epg-generator.php"      # PHP EPG生成器脚本
-          "epg-fixer.php"          # PHP EPG修复器脚本
+          "epg-fixer.php"          # PHP EPG修复器脚本（从EPG_CONFIG读取配置）
           # "epgguangxi.php"         # PHP 广西EPG脚本
           # "get_lstime_epg.py"      # Python 龙祥时代EPG脚本
         )
@@ -112,11 +114,11 @@ jobs:
           set +e  # 禁用错误退出
           
           if [ "$script_extension" = "php" ]; then
-            # 执行PHP脚本
+            # 执行PHP脚本，自动继承作业级别的环境变量
             output=$(php -f "$script" 2>&1)
             exit_code=$?
           elif [ "$script_extension" = "py" ]; then
-            # 执行Python脚本
+            # 执行Python脚本，自动继承作业级别的环境变量
             output=$(python "$script" 2>&1)
             exit_code=$?
           else
@@ -133,10 +135,28 @@ jobs:
           echo "$output"
           echo "::endgroup::"
           
-          # 失败判定条件
+          # 失败判定条件（针对EPG修复脚本的特殊处理）
           if [ $exit_code -ne 0 ]; then
             echo "❌ $script 执行失败 (退出码: $exit_code)"
             failed_scripts+=("$script")
+          elif [ "$script" = "epg-fixer.php" ]; then
+            # 对EPG修复脚本的特殊错误检测
+            if echo "$output" | grep -q -E "(错误：EPG_CONFIG环境变量未设置|错误：无法解析EPG_CONFIG环境变量中的JSON数据|错误：EPG_CONFIG中未找到chuanliu.xml和cqunicom.xml配置|错误：未找到任何有效的EPG源配置|错误：必需扩展未启用)"; then
+              echo "❌ $script 环境变量配置错误"
+              failed_scripts+=("$script")
+            elif echo "$output" | grep -q -E "(Fatal error|致命错误|Uncaught Exception|未捕获的异常|无法加载XML内容|XML解析错误|下载失败|解压失败|保存失败)"; then
+              echo "❌ $script 执行过程中出现严重错误"
+              failed_scripts+=("$script")
+            elif echo "$output" | grep -q "处理状态: 完全失败"; then
+              echo "❌ $script 所有源处理失败"
+              failed_scripts+=("$script")
+            elif echo "$output" | grep -q "处理状态: 部分成功"; then
+              # 部分成功不算完全失败，但需要在提交信息中注明
+              echo "⚠️ $script 部分成功（有失败源）"
+              # 这里不加入failed_scripts，因为部分文件生成成功
+            else
+              echo "✅ $script 执行成功"
+            fi
           elif echo "$output" | grep -q -E "(Fatal error|致命错误|Uncaught Exception|未捕获的异常|必需扩展未启用|无法加载XML内容|XML解析错误|下载失败|解压失败|保存失败|Traceback|Error|Exception)"; then
             echo "❌ $script 输出中包含严重错误信息"
             failed_scripts+=("$script")
@@ -263,7 +283,15 @@ jobs:
           echo "::endgroup::"
           
           echo "::warning::有 ${#failed_array[@]} 个脚本执行失败"
-          exit 1
+          
+          # 检查是否至少有一个脚本成功生成了文件
+          if ls *.xml 1> /dev/null 2>&1; then
+            echo "ℹ️ 尽管有脚本失败，但成功生成了部分EPG文件"
+            exit 0  # 部分成功，不使工作流失败
+          else
+            echo "❌ 所有脚本均失败，无EPG文件生成"
+            exit 1  # 完全失败，使工作流失败
+          fi
         else
           echo "✅ 所有脚本执行成功"
         fi

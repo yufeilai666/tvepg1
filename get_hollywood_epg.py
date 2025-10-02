@@ -143,7 +143,7 @@ def search_tmdb_movie_direct(original_title):
 
 def parse_hollywood_schedule_html(html_content):
     """
-    从Hollywood频道HTML内容中解析节目信息 - 修复标题完整性
+    从Hollywood频道HTML内容中解析节目信息
     """
     soup = BeautifulSoup(html_content, 'html.parser')
     schedule_data = []
@@ -199,21 +199,23 @@ def parse_hollywood_schedule_html(html_content):
                 if not line:
                     continue
                     
-                # 匹配时间、标题和分级 - 使用改进的正则表达式
-                # 匹配格式: "时间&nbsp;&nbsp;标题(分级)(其他标记)"
-                match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+(?:\([^)]+\))*)', line)
+                # 匹配时间、标题和分级
+                match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
+                if not match:
+                    # 尝试其他可能的时间格式
+                    match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
+                
                 if match:
                     time_str = match.group(1)
-                    full_title = match.group(2).strip()
+                    title = match.group(2).strip()
+                    rating = match.group(3) if match.group(3) else ''
                     
-                    # 提取分级信息（如果有）
-                    rating_match = re.search(r'\((護|普|輔\d{1,2})\)', full_title)
-                    rating = rating_match.group(1) if rating_match else ''
+                    # 构建完整的原始标题（包含分级信息）
+                    original_title = f"{title}({rating})" if rating else title
                     
-                    # 直接使用完整的原始标题
                     programs.append({
                         'time': time_str,
-                        'title': full_title,  # 使用完整的原始标题
+                        'title': original_title,
                         'rating': rating,
                         'link': None
                     })

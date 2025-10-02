@@ -20,9 +20,15 @@ jobs:
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        # 设置 Git 正确处理中文文件名
+        git config --global core.quotepath false
 
     - name: Download and copy all files from source repo
       run: |
+        # 设置语言环境为 UTF-8，正确处理中文
+        export LANG=C.UTF-8
+        export LC_ALL=C.UTF-8
+        
         # 下载源仓库的完整zip文件
         wget https://github.com/yufeilai666/tvepg/archive/refs/heads/main.zip -O source.zip
         unzip -q source.zip
@@ -38,7 +44,7 @@ jobs:
         # 删除当前目录的所有文件（除了.git和.github）
         find . -maxdepth 1 ! -name '.git' ! -name '.' ! -name 'tvepg-main' ! -name 'source.zip' ! -name '.github' -exec rm -rf {} +
         
-        # 使用rsync复制所有文件（更可靠的方法）
+        # 使用rsync复制所有文件
         rsync -av --progress tvepg-main/ ./
         
         # 清理临时文件
@@ -49,6 +55,10 @@ jobs:
 
     - name: Commit and push changes
       run: |
+        # 设置语言环境为 UTF-8
+        export LANG=C.UTF-8
+        export LC_ALL=C.UTF-8
+        
         git add .
         if git diff --staged --quiet; then
           echo "No changes to commit"

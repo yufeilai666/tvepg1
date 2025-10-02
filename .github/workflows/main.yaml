@@ -13,49 +13,35 @@ jobs:
     - name: Checkout current repository
       uses: actions/checkout@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}
         fetch-depth: 0
 
-    - name: Set up Git
+    - name: Set up Git and Timezone
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        # 设置 Git 正确处理中文文件名
         git config --global core.quotepath false
+        # 设置时区为北京时间
+        sudo timedatectl set-timezone Asia/Shanghai
 
     - name: Download and copy all files from source repo
       run: |
-        # 设置语言环境为 UTF-8，正确处理中文
         export LANG=C.UTF-8
         export LC_ALL=C.UTF-8
         
-        # 下载源仓库的完整zip文件
         wget https://github.com/yufeilai666/tvepg/archive/refs/heads/main.zip -O source.zip
         unzip -q source.zip
         
-        # 查看解压后的目录结构
-        echo "解压后的目录内容:"
-        ls -la
-        
-        # 查看源目录内容
-        echo "源目录 tvepg-main 的内容:"
-        ls -la tvepg-main/
-        
-        # 删除当前目录的所有文件（除了.git和.github）
-        find . -maxdepth 1 ! -name '.git' ! -name '.' ! -name 'tvepg-main' ! -name 'source.zip' ! -name '.github' -exec rm -rf {} +
+        # 删除当前目录的所有文件（除了.git）
+        find . -maxdepth 1 ! -name '.git' ! -name '.' ! -name 'tvepg-main' ! -name 'source.zip' -exec rm -rf {} +
         
         # 使用rsync复制所有文件
         rsync -av --progress tvepg-main/ ./
         
-        # 清理临时文件
         rm -rf tvepg-main source.zip
-        
-        echo "文件同步完成，当前目录内容:"
-        ls -la
 
     - name: Commit and push changes
       run: |
-        # 设置语言环境为 UTF-8
         export LANG=C.UTF-8
         export LC_ALL=C.UTF-8
         
@@ -63,6 +49,8 @@ jobs:
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "chore: sync all files from TVEPG repository $(date +'%Y-%m-%d %H:%M:%S')"
+          # 使用北京时间生成提交信息
+          COMMIT_TIME=$(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S %Z')
+          git commit -m "chore: sync all files from TVEPG repository $COMMIT_TIME"
           git push origin main
         fi

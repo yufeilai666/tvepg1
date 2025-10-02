@@ -154,7 +154,6 @@ def parse_hollywood_schedule_html(html_content):
     # 收集所有日期和对应的节目列表
     date_program_map = {}
     all_dates = []
-    current_date = None
     
     # 第一步：收集所有日期
     for div in date_divs:
@@ -172,7 +171,7 @@ def parse_hollywood_schedule_html(html_content):
                 all_dates.append(date_str)
                 print(f"找到日期: {date_str}")
     
-    # 第二步：收集所有节目列表
+    # 第二步：收集所有节目列表，使用更精确的方法
     program_lists = []
     for div in date_divs:
         h6_tag = div.find('h6', class_='font_6')
@@ -183,19 +182,21 @@ def parse_hollywood_schedule_html(html_content):
         
         # 检查是否为节目列表 (包含时间格式 XX:XX)
         if re.search(r'\d{1,2}:\d{2}', text_content) and not re.search(r'\d{1,2}/\d{1,2}\s+星期', text_content):
-            # 通用方法：过滤掉所有display:none的元素
-            full_text = ""
-            for element in h6_tag.descendants:
-                if element.name and element.get('style'):
-                    # 跳过display:none的元素
-                    if 'display:none' in element.get('style', ''):
-                        continue
-                if isinstance(element, str):
-                    full_text += element
+            # 使用更精确的方法提取文本，直接处理HTML内容
+            # 获取原始的HTML内容
+            html_content = str(h6_tag)
             
-            # 如果没有提取到文本，回退到原始方法
-            if not full_text.strip():
-                full_text = h6_tag.get_text()
+            # 移除所有display:none的元素
+            clean_html = re.sub(r'<[^>]*style=[^>]*display:\s*none[^>]*>.*?</[^>]*>', '', html_content, flags=re.DOTALL)
+            
+            # 使用BeautifulSoup解析清理后的HTML
+            clean_soup = BeautifulSoup(clean_html, 'html.parser')
+            full_text = clean_soup.get_text()
+            
+            # 进一步清理文本
+            full_text = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', full_text)
+            full_text = re.sub(r'&nbsp;', ' ', full_text)
+            full_text = re.sub(r'\s+', ' ', full_text)
             
             # 按行分割节目
             lines = full_text.split('\n')
@@ -203,13 +204,12 @@ def parse_hollywood_schedule_html(html_content):
             # 解析节目列表
             programs = []
             for line in lines:
-                # 清理行，移除特殊字符
-                line = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', line.strip())
+                line = line.strip()
                 if not line:
                     continue
                     
                 # 匹配时间、标题和分级
-                match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
+                match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
                 if not match:
                     # 尝试其他可能的时间格式
                     match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
@@ -232,6 +232,10 @@ def parse_hollywood_schedule_html(html_content):
             if programs:
                 program_lists.append(programs)
                 print(f"找到节目列表，包含 {len(programs)} 个节目")
+                
+                # 如果这个列表包含"月球墜落"，打印调试信息
+                if any("月球墜落" in p['title'] for p in programs):
+                    print("成功找到包含'月球墜落'的节目列表")
     
     # 第三步：将日期和节目列表配对
     for i, date_str in enumerate(all_dates):

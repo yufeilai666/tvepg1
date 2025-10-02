@@ -98,7 +98,7 @@ jobs:
     - name: Add and commit changes
       if: steps.check_changes.outputs.has_changes == 'true'
       run: |
-        git add person.xml debug_*.xml
+        git add person.xml
         git commit -m "Update unified EPG: $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M')"
         echo "已提交变更"
 

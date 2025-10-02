@@ -143,7 +143,7 @@ def search_tmdb_movie_direct(original_title):
 
 def parse_hollywood_schedule_html(html_content):
     """
-    从Hollywood频道HTML内容中解析节目信息
+    从『好莱坞电影台』频道HTML内容中解析节目信息
     """
     soup = BeautifulSoup(html_content, 'html.parser')
     schedule_data = []
@@ -318,7 +318,7 @@ def generate_xmltv_epg(schedule_data):
     root.set('source-info-url', 'https://www.hollywood.com.tw')
     
     # 添加频道信息
-    channel_elem = SubElement(root, 'channel', id='HOLLYWOOD')
+    channel_elem = SubElement(root, 'channel', id='好莱坞电影台')
     display_name = SubElement(channel_elem, 'display-name')
     display_name.text = '好莱坞电影台'
     display_name.set('lang', 'zh')
@@ -399,7 +399,7 @@ def generate_xmltv_epg(schedule_data):
             programme_elem = SubElement(root, 'programme')
             programme_elem.set('start', start_time + ' +0800')  # 台北时区
             programme_elem.set('stop', end_time + ' +0800')
-            programme_elem.set('channel', 'HOLLYWOOD')
+            programme_elem.set('channel', '好莱坞电影台')
             
             # 添加标题 - 使用原始标题（包含分级信息）
             title_elem = SubElement(programme_elem, 'title')
@@ -458,7 +458,7 @@ def prettify_xml(elem):
 
 def main():
     """
-    主函数 - 从Hollywood网站获取数据并生成XMLTV EPG
+    主函数 - 从『好莱坞电影台』网站获取数据并生成XMLTV EPG
     """
     try:
         # 获取TMDB API Key
@@ -471,7 +471,7 @@ def main():
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
-        print("正在获取Hollywood节目表数据...")
+        print("正在获取『好莱坞电影台』节目表数据...")
         response = requests.get(url, headers=headers, timeout=10)
         response.encoding = 'utf-8'
         
@@ -490,7 +490,7 @@ def main():
                 with open('hollywood_epg.xml', 'wb') as f:
                     f.write(pretty_xml)
                 
-                print("Hollywood EPG文件已生成: hollywood_epg.xml")
+                print("『好莱坞电影台』EPG文件已生成: hollywood_epg.xml")
             else:
                 print("未解析到节目数据")
         else:

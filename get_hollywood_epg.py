@@ -143,17 +143,14 @@ def search_tmdb_movie_direct(original_title):
 
 def parse_hollywood_schedule_html(html_content):
     """
-    从Hollywood频道HTML内容中解析节目信息 - 直接方法
+    从Hollywood频道HTML内容中解析节目信息 - 处理结构差异
     """
     soup = BeautifulSoup(html_content, 'html.parser')
-    
-    # 首先，让我们找到所有包含节目信息的元素
-    schedule_data = []
     
     # 查找所有包含日期的div
     date_divs = soup.find_all('div', class_='wixui-rich-text')
     
-    # 用于存储当前日期
+    schedule_data = []
     current_date = None
     
     for div in date_divs:
@@ -161,23 +158,19 @@ def parse_hollywood_schedule_html(html_content):
         if not h6_tag:
             continue
             
-        # 获取完整的HTML内容
-        html_content = str(h6_tag)
-        
         # 检查是否是日期行
-        date_match = re.search(r'(\d{1,2}/\d{1,2})\s+星期[一二三四五六日]', html_content)
+        date_match = re.search(r'(\d{1,2}/\d{1,2})\s+星期[一二三四五六日]', str(h6_tag))
         if date_match:
             current_date = date_match.group(1)
             print(f"找到日期: {current_date}")
             continue
         
         # 检查是否是节目列表
-        if re.search(r'\d{1,2}:\d{2}', html_content) and current_date:
+        if re.search(r'\d{1,2}:\d{2}', str(h6_tag)) and current_date:
             print(f"找到节目列表，属于日期 {current_date}")
             
-            # 直接提取所有文本内容
-            full_text = h6_tag.get_text()
-            print(f"原始文本内容: {repr(full_text[:200])}")  # 打印前200个字符用于调试
+            # 创建一个通用的文本提取方法，处理所有情况
+            full_text = extract_program_text(h6_tag)
             
             # 按行分割
             lines = full_text.split('\n')
@@ -189,13 +182,8 @@ def parse_hollywood_schedule_html(html_content):
                 if not line:
                     continue
                     
-                # 尝试多种模式匹配
-                # 模式1: "05:00      變形金剛(護)"
+                # 匹配节目格式
                 match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
-                if not match:
-                    # 模式2: "05:00&nbsp; &nbsp; 變形金剛(護)"
-                    match = re.match(r'(\d{1,2}:\d{2})&nbsp;\s*&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
-                
                 if match:
                     time_str = match.group(1)
                     title = match.group(2).strip()
@@ -255,6 +243,45 @@ def parse_hollywood_schedule_html(html_content):
     reorganized_data = reorganize_schedule_by_date(schedule_data)
     
     return reorganized_data
+
+def extract_program_text(h6_tag):
+    """
+    从h6标签中提取节目文本，处理各种HTML结构差异
+    """
+    # 方法1: 直接获取文本，但先移除所有隐藏元素
+    h6_copy = BeautifulSoup(str(h6_tag), 'html.parser')
+    
+    # 移除所有display:none的元素
+    for hidden in h6_copy.find_all(style=re.compile(r'display:\s*none')):
+        hidden.decompose()
+    
+    # 获取清理后的文本
+    text = h6_copy.get_text()
+    
+    # 清理特殊字符
+    text = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', text)
+    text = re.sub(r'&nbsp;', ' ', text)
+    text = re.sub(r'\s+', ' ', text)
+    
+    # 如果清理后的文本为空或太短，尝试方法2
+    if len(text.strip()) < 10:
+        # 方法2: 遍历所有span元素，跳过隐藏的
+        text = ""
+        spans = h6_tag.find_all('span')
+        for span in spans:
+            # 检查是否隐藏
+            style = span.get('style', '')
+            if 'display:none' in style:
+                continue
+            
+            span_text = span.get_text()
+            # 检查是否有br标签
+            if span.find('br'):
+                text += span_text + '\n'
+            else:
+                text += span_text
+    
+    return text
 
 def reorganize_schedule_by_date(schedule_data):
     """

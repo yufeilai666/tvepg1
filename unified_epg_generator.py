@@ -23,7 +23,7 @@
 - requests, beautifulsoup4
 
 作者：yufeilai666
-版本：1.1
+版本：1.2
 """
 
 import os
@@ -32,7 +32,7 @@ import time
 import shutil
 import tempfile
 import subprocess
-from xml.etree.ElementTree import Element, SubElement, tostring, parse
+from xml.etree.ElementTree import Element, SubElement, tostring, fromstring
 from xml.dom import minidom
 from datetime import datetime
 
@@ -71,10 +71,7 @@ def run_epg_script_in_temp_dir(script_path, temp_dir):
             print(f"脚本 {script_name} 执行失败，返回码: {process.returncode}")
             if stderr:
                 stderr_text = stderr.decode('utf-8', errors='ignore')
-                # 限制错误信息长度，避免输出过多内容
-                if len(stderr_text) > 100:
-                    stderr_text = stderr_text[:100] + "..."
-                print(f"错误输出: {stderr_text}")
+                print(f"错误输出:\n{stderr_text}")
             return False
         
         print(f"✓ {script_name} 执行完成")
@@ -82,10 +79,7 @@ def run_epg_script_in_temp_dir(script_path, temp_dir):
         # 输出脚本的标准输出（如果有）
         if stdout:
             stdout_text = stdout.decode('utf-8', errors='ignore')
-            # 限制输出长度，避免显示过多内容
-            if len(stdout_text) > 100:
-                stdout_text = stdout_text[:100] + "..."
-            print(f"脚本输出: {stdout_text}")
+            print(f"脚本输出:\n{stdout_text}")
             
         return True
         
@@ -150,24 +144,21 @@ def merge_xml_contents(xml_contents):
     new_root.set('generator-info-name', 'unified-epg-generator')
     new_root.set('generator-info-url', 'https://github.com/yufeilai666/tvepg')
     new_root.set('source-info-name', 'multiple-sources')
+    new_root.set('created', datetime.now().strftime("%Y%m%d%H%M%S"))
     
     # 合并所有XML内容
     for i, xml_content in enumerate(xml_contents):
         if xml_content:
             try:
-                # 解析XML内容
-                root = parse(xml_content).getroot()
+                # 使用fromstring从字符串解析XML，而不是parse从文件解析
+                root = fromstring(xml_content)
                 
                 # 添加所有子元素到新的根元素
                 for child in root:
                     new_root.append(child)
                     
             except Exception as e:
-                # 限制错误信息长度，避免显示XML内容
-                error_msg = str(e)
-                if len(error_msg) > 100:
-                    error_msg = error_msg[:100] + "..."
-                print(f"解析第 {i+1} 个XML内容失败: {error_msg}")
+                print(f"解析第 {i+1} 个XML内容失败: {e}")
                 continue
     
     return new_root

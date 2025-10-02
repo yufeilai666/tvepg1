@@ -199,23 +199,21 @@ def parse_hollywood_schedule_html(html_content):
                 if not line:
                     continue
                     
-                # 匹配时间、标题和分级
-                match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
-                if not match:
-                    # 尝试其他可能的时间格式
-                    match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
-                
+                # 匹配时间、标题和分级 - 改进的正则表达式
+                # 匹配格式: "时间&nbsp;&nbsp;标题(分级)(其他标记)"
+                match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+(?:\([^)]+\))*)', line)
                 if match:
                     time_str = match.group(1)
-                    title = match.group(2).strip()
-                    rating = match.group(3) if match.group(3) else ''
+                    full_title = match.group(2).strip()
                     
-                    # 构建完整的原始标题（包含分级信息）
-                    original_title = f"{title}({rating})" if rating else title
+                    # 提取分级信息（如果有）
+                    rating_match = re.search(r'\((護|普|輔\d{1,2})\)', full_title)
+                    rating = rating_match.group(1) if rating_match else ''
                     
+                    # 直接使用完整的原始标题
                     programs.append({
                         'time': time_str,
-                        'title': original_title,
+                        'title': full_title,  # 使用完整的原始标题
                         'rating': rating,
                         'link': None
                     })

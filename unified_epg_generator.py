@@ -4,11 +4,10 @@
 统一EPG生成器 (Unified EPG Generator)
 
 功能描述：
-1. 自动发现当前目录中的所有EPG采集脚本（仅匹配 get_*_epg.py 格式）
-2. 在临时目录中依次运行这些脚本，避免污染工作目录
-3. 收集每个脚本生成的XML内容
-4. 将所有XML内容合并到统一的person.xml文件中
-5. 保留原始XML的结构和顺序，不做去重处理
+1. 为每个EPG脚本创建独立的临时目录运行
+2. 将各脚本生成的XML文件复制到总的临时目录
+3. 读取并合并所有XML内容到统一的person.xml文件中
+4. 保留原始XML的结构和顺序，不做去重处理
 
 使用说明：
 1. 将本脚本与各个EPG采集脚本放在同一目录下
@@ -23,7 +22,7 @@
 - requests, beautifulsoup4
 
 作者：GitHub Action
-版本：1.6
+版本：4.0
 """
 
 import os
@@ -37,7 +36,7 @@ from xml.dom import minidom
 from datetime import datetime
 
 
-def run_epg_script_in_temp_dir(script_path, temp_dir):
+def run_script_in_temp_dir(script_path, temp_dir):
     """
     在临时目录中运行单个EPG采集脚本
     
@@ -46,7 +45,7 @@ def run_epg_script_in_temp_dir(script_path, temp_dir):
         temp_dir (str): 临时目录路径
         
     返回:
-        bool: 脚本是否成功运行
+        list: 生成的XML文件列表，失败返回空列表
     """
     script_name = os.path.basename(script_path)
     print(f"正在在临时目录中运行 {script_name}...")
@@ -72,7 +71,7 @@ def run_epg_script_in_temp_dir(script_path, temp_dir):
             if stderr:
                 stderr_text = stderr.decode('utf-8', errors='ignore')
                 print(f"错误输出:\n{stderr_text}")
-            return False
+            return []
         
         print(f"✓ {script_name} 执行完成")
         
@@ -80,35 +79,24 @@ def run_epg_script_in_temp_dir(script_path, temp_dir):
         if stdout:
             stdout_text = stdout.decode('utf-8', errors='ignore')
             print(f"脚本输出:\n{stdout_text}")
-            
-        return True
         
+        # 查找临时目录中的所有XML文件
+        xml_files = []
+        for filename in os.listdir(temp_dir):
+            if filename.endswith('.xml'):
+                xml_files.append(os.path.join(temp_dir, filename))
+        
+        print(f"在临时目录中找到 {len(xml_files)} 个XML文件")
+        return xml_files
+            
     except subprocess.TimeoutExpired:
         print(f"脚本 {script_name} 执行超时")
         if 'process' in locals():
             process.kill()
-        return False
+        return []
     except Exception as e:
         print(f"运行脚本 {script_name} 时出错: {e}")
-        return False
-
-
-def find_xml_files_in_temp_dir(temp_dir):
-    """
-    在临时目录中查找XML文件
-    
-    参数:
-        temp_dir (str): 临时目录路径
-        
-    返回:
-        list: XML文件路径列表
-    """
-    xml_files = []
-    for filename in os.listdir(temp_dir):
-        if filename.endswith('.xml'):
-            xml_files.append(os.path.join(temp_dir, filename))
-    
-    return xml_files
+        return []
 
 
 def read_xml_content(xml_file):
@@ -157,16 +145,6 @@ def analyze_xml_content(xml_content, script_name):
             print(f"    - 频道ID: {channel_id}, 名称: {display_name}")
         
         print(f"  节目数量: {len(programmes)}")
-        
-        # 打印节目中的频道引用
-        programme_channels = set()
-        for programme in programmes:
-            channel_ref = programme.get('channel', '未知频道')
-            programme_channels.add(channel_ref)
-            if len(programme_channels) > 5:  # 限制输出数量
-                break
-        
-        print(f"  节目中引用的频道: {list(programme_channels)[:5]}...")
         
         return {
             'channels': channels,
@@ -296,30 +274,14 @@ def discover_epg_scripts():
     return epg_scripts
 
 
-def save_debug_xml(xml_content, filename):
-    """
-    保存XML内容到调试文件
-    
-    参数:
-        xml_content (str): XML内容
-        filename (str): 文件名
-    """
-    try:
-        with open(filename, 'w', encoding='utf-8') as f:
-            f.write(xml_content)
-        print(f"已保存调试文件: {filename}")
-    except Exception as e:
-        print(f"保存调试文件失败: {e}")
-
-
 def main():
     """
     主函数 - 协调整个EPG生成流程
     
     流程:
     1. 发现EPG脚本
-    2. 在临时目录中运行每个脚本
-    3. 收集生成的XML内容
+    2. 为每个脚本创建独立临时目录运行
+    3. 将生成的XML文件复制到主临时目录
     4. 合并所有XML内容
     5. 生成统一的person.xml文件
     """
@@ -348,9 +310,9 @@ def main():
     all_xml_contents = []
     all_script_names = []
     
-    # 为所有脚本创建一个临时目录
-    with tempfile.TemporaryDirectory() as temp_dir:
-        print(f"\n使用临时目录: {temp_dir}")
+    # 创建主临时目录用于收集所有XML文件
+    with tempfile.TemporaryDirectory() as main_temp_dir:
+        print(f"\n使用主临时目录: {main_temp_dir}")
         
         # 运行每个脚本
         for script in scripts:
@@ -358,31 +320,35 @@ def main():
             print(f"处理: {script}")
             print(f"{'='*50}")
             
-            # 在临时目录中运行脚本
-            if run_epg_script_in_temp_dir(script, temp_dir):
-                # 等待一下，确保文件已生成
-                time.sleep(2)
+            # 为每个脚本创建独立的临时目录
+            with tempfile.TemporaryDirectory() as script_temp_dir:
+                print(f"为 {script} 创建独立临时目录: {script_temp_dir}")
                 
-                # 查找临时目录中的XML文件
-                xml_files = find_xml_files_in_temp_dir(temp_dir)
+                # 在独立临时目录中运行脚本
+                xml_files = run_script_in_temp_dir(script, script_temp_dir)
                 if xml_files:
-                    # 读取第一个XML文件的内容
-                    xml_content = read_xml_content(xml_files[0])
-                    if xml_content:
-                        all_xml_contents.append(xml_content)
-                        all_script_names.append(script)
-                        print(f"✓ 成功从 {script} 获取XML内容")
+                    # 将XML文件复制到主临时目录
+                    for xml_file in xml_files:
+                        # 使用脚本名称和原文件名创建唯一文件名
+                        script_base = script.replace('.py', '')
+                        xml_filename = os.path.basename(xml_file)
+                        dest_filename = f"{script_base}_{xml_filename}"
+                        dest_path = os.path.join(main_temp_dir, dest_filename)
                         
-                        # 保存原始XML文件用于调试
-                        debug_filename = f"debug_{script.replace('.py', '')}.xml"
-                        save_debug_xml(xml_content, debug_filename)
-                    else:
-                        print(f"✗ 读取 {script} 生成的XML文件失败")
+                        shutil.copy2(xml_file, dest_path)
+                        print(f"✓ 已将 {xml_filename} 复制到主临时目录: {dest_filename}")
+                        
+                        # 读取XML内容
+                        xml_content = read_xml_content(dest_path)
+                        if xml_content:
+                            all_xml_contents.append(xml_content)
+                            all_script_names.append(script)
+                            print(f"✓ 成功从 {script} 获取XML内容")
+                        else:
+                            print(f"✗ 读取 {script} 生成的XML文件失败")
                 else:
-                    print(f"✗ 未找到 {script} 生成的XML文件")
-            else:
-                print(f"✗ 运行 {script} 失败")
-                print("注意: 单个脚本失败不会影响其他脚本执行")
+                    print(f"✗ 运行 {script} 失败或未生成XML文件")
+                    print("注意: 单个脚本失败不会影响其他脚本执行")
         
         if not all_xml_contents:
             print("错误: 未能获取任何XML内容")
@@ -415,20 +381,6 @@ def main():
             display_name_elem = channel.find('display-name')
             display_name = display_name_elem.text if display_name_elem is not None else '未知名称'
             print(f"  - 频道ID: {channel_id}, 名称: {display_name}")
-        
-        # 检查节目中的频道引用
-        programme_channels = set()
-        for programme in merged_xml.findall('programme'):
-            channel_ref = programme.get('channel', '未知频道')
-            programme_channels.add(channel_ref)
-        
-        print(f"\n节目中引用的所有频道ID: {list(programme_channels)}")
-        
-        # 检查是否有节目引用了不存在的频道
-        defined_channels = {channel.get('id') for channel in merged_xml.findall('channel')}
-        undefined_channels = programme_channels - defined_channels
-        if undefined_channels:
-            print(f"警告: 以下频道在节目中被引用但未定义: {list(undefined_channels)}")
         
         print("\n处理完成！")
 

@@ -151,16 +151,19 @@ def parse_hollywood_schedule_html(html_content):
     # 查找所有包含日期的div
     date_divs = soup.find_all('div', class_='wixui-rich-text')
     
+    print(f"找到 {len(date_divs)} 个可能的日期/节目div")
+    
     current_date = None
     current_date_obj = None
     current_programs = []
     
-    for div in date_divs:
+    for i, div in enumerate(date_divs):
         h6_tag = div.find('h6', class_='font_6')
         if not h6_tag:
             continue
             
         text_content = h6_tag.get_text(strip=True)
+        print(f"检查第 {i} 个div: {text_content[:50]}...")
         
         # 检查是否为日期行 (格式: MM/DD 星期X)
         date_match = re.search(r'(\d{1,2}/\d{1,2})\s+(星期[一二三四五六日])', text_content)
@@ -184,7 +187,9 @@ def parse_hollywood_schedule_html(html_content):
             continue
         
         # 检查是否为节目列表 (包含时间格式 XX:XX)
-        if re.search(r'\d{2}:\d{2}', text_content) and current_date:
+        # 使用更宽松的匹配，允许特殊字符
+        if re.search(r'\d{1,2}:\d{2}', text_content) and current_date:
+            print(f"找到节目列表，属于日期 {current_date}")
             # 获取所有文本内容，包括<br>分隔的节目
             full_text = h6_tag.get_text()
             
@@ -197,12 +202,17 @@ def parse_hollywood_schedule_html(html_content):
             
             # 遍历所有节目行
             for i, line in enumerate(lines):
-                line = line.strip()
+                # 清理行，移除特殊字符
+                line = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', line.strip())
                 if not line:
                     continue
                     
-                # 匹配时间、标题和分级
-                match = re.match(r'(\d{2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
+                # 匹配时间、标题和分级 - 使用更宽松的正则表达式
+                match = re.match(r'(\d{1,2}:\d{2})\s*\&nbsp;\s*\&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
+                if not match:
+                    # 尝试其他可能的时间格式
+                    match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
+                
                 if match:
                     time_str = match.group(1)
                     title = match.group(2).strip()
@@ -213,14 +223,26 @@ def parse_hollywood_schedule_html(html_content):
                     
                     # 检测是否跨天
                     if i > 0 and not has_crossed_midnight:
-                        prev_time = lines[i-1].strip().split()[0]  # 前一个节目的时间
-                        prev_hour = int(prev_time.split(':')[0])
-                        current_hour = int(time_str.split(':')[0])
-                        
-                        # 如果当前时间小于前一个时间，说明跨天了
-                        if current_hour < prev_hour:
-                            has_crossed_midnight = True
-                            current_program_date = current_date_obj + timedelta(days=1)
+                        # 找到前一个有效节目的时间
+                        for j in range(i-1, -1, -1):
+                            prev_line = re.sub(r'[\u200b\u200c\u200d\ufeff]', '', lines[j].strip())
+                            if not prev_line:
+                                continue
+                            prev_match = re.match(r'(\d{1,2}:\d{2})', prev_line)
+                            if prev_match:
+                                prev_time_str = prev_match.group(1)
+                                try:
+                                    prev_hour = int(prev_time_str.split(':')[0])
+                                    current_hour = int(time_str.split(':')[0])
+                                    
+                                    # 如果当前时间小于前一个时间，说明跨天了
+                                    if current_hour < prev_hour:
+                                        has_crossed_midnight = True
+                                        current_program_date = current_date_obj + timedelta(days=1)
+                                except ValueError:
+                                    # 如果时间解析失败，跳过跨天检测
+                                    pass
+                                break
                     
                     program_info = {
                         'time': time_str,

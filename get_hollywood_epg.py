@@ -143,56 +143,92 @@ def search_tmdb_movie_direct(original_title):
 
 def parse_hollywood_schedule_html(html_content):
     """
-    从Hollywood频道HTML内容中解析节目信息 - 全新方法
+    从Hollywood频道HTML内容中解析节目信息 - 直接方法
     """
     soup = BeautifulSoup(html_content, 'html.parser')
     
-    # 查找所有包含节目信息的h6标签
-    h6_tags = soup.find_all('h6', class_='font_6')
-    
-    # 收集所有日期和节目
+    # 首先，让我们找到所有包含节目信息的元素
     schedule_data = []
+    
+    # 查找所有包含日期的div
+    date_divs = soup.find_all('div', class_='wixui-rich-text')
+    
+    # 用于存储当前日期
     current_date = None
     
-    for h6 in h6_tags:
-        # 获取完整的HTML内容，而不是纯文本
-        html_str = str(h6)
+    for div in date_divs:
+        h6_tag = div.find('h6', class_='font_6')
+        if not h6_tag:
+            continue
+            
+        # 获取完整的HTML内容
+        html_content = str(h6_tag)
         
         # 检查是否是日期行
-        date_match = re.search(r'(\d{1,2}/\d{1,2})\s+星期[一二三四五六日]', html_str)
+        date_match = re.search(r'(\d{1,2}/\d{1,2})\s+星期[一二三四五六日]', html_content)
         if date_match:
             current_date = date_match.group(1)
             print(f"找到日期: {current_date}")
             continue
         
         # 检查是否是节目列表
-        if re.search(r'\d{1,2}:\d{2}', html_str) and current_date:
-            # 使用正则表达式直接从HTML中提取所有节目
-            # 匹配模式: 时间&nbsp;&nbsp;标题(分级)<br>
-            pattern = r'(\d{1,2}:\d{2})&nbsp;\s*&nbsp;\s*([^<]+?)(?:\(([^)]+)\))?(?:<br\s*/?>|</span>)'
-            matches = re.findall(pattern, html_str)
+        if re.search(r'\d{1,2}:\d{2}', html_content) and current_date:
+            print(f"找到节目列表，属于日期 {current_date}")
             
-            if matches:
+            # 直接提取所有文本内容
+            full_text = h6_tag.get_text()
+            print(f"原始文本内容: {repr(full_text[:200])}")  # 打印前200个字符用于调试
+            
+            # 按行分割
+            lines = full_text.split('\n')
+            
+            # 解析每一行
+            programs = []
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                    
+                # 尝试多种模式匹配
+                # 模式1: "05:00      變形金剛(護)"
+                match = re.match(r'(\d{1,2}:\d{2})\s+([^(]+)(?:\(([^)]+)\))?', line)
+                if not match:
+                    # 模式2: "05:00&nbsp; &nbsp; 變形金剛(護)"
+                    match = re.match(r'(\d{1,2}:\d{2})&nbsp;\s*&nbsp;\s*([^(]+)(?:\(([^)]+)\))?', line)
+                
+                if match:
+                    time_str = match.group(1)
+                    title = match.group(2).strip()
+                    rating = match.group(3) if match.group(3) else ''
+                    
+                    # 构建完整的原始标题
+                    original_title = f"{title}({rating})" if rating else title
+                    
+                    programs.append({
+                        'time': time_str,
+                        'title': original_title,
+                        'rating': rating,
+                        'link': None
+                    })
+                    print(f"  解析到节目: {time_str} - {original_title}")
+            
+            if programs:
                 # 创建日期对象
                 month, day = current_date.split('/')
                 current_year = datetime.now().year
                 date_obj = datetime(current_year, int(month), int(day))
                 
-                # 处理节目列表，处理跨天情况
+                # 处理跨天情况
                 programs_with_dates = []
                 current_program_date = date_obj
                 has_crossed_midnight = False
                 
-                for j, match in enumerate(matches):
-                    time_str, title, rating = match
-                    title = title.strip()
-                    
-                    # 构建完整的原始标题（包含分级信息）
-                    original_title = f"{title}({rating})" if rating else title
+                for j, program in enumerate(programs):
+                    time_str = program['time']
                     
                     # 确定节目日期
                     if j > 0 and not has_crossed_midnight:
-                        prev_time = matches[j-1][0]
+                        prev_time = programs[j-1]['time']
                         prev_hour = int(prev_time.split(':')[0])
                         current_hour = int(time_str.split(':')[0])
                         
@@ -201,17 +237,11 @@ def parse_hollywood_schedule_html(html_content):
                             has_crossed_midnight = True
                             current_program_date = date_obj + timedelta(days=1)
                     
-                    program_info = {
-                        'time': time_str,
-                        'title': original_title,
-                        'rating': rating,
-                        'link': None,
-                        'date_obj': current_program_date
-                    }
-                    programs_with_dates.append(program_info)
-                    print(f"  找到节目: {current_program_date.strftime('%m/%d')} {time_str} - {original_title}")
+                    program_with_date = program.copy()
+                    program_with_date['date_obj'] = current_program_date
+                    programs_with_dates.append(program_with_date)
+                    print(f"  确定节目日期: {current_program_date.strftime('%m/%d')} {time_str} - {program['title']}")
                 
-                # 添加到日程数据
                 schedule_data.append({
                     'date': current_date,
                     'date_obj': date_obj,

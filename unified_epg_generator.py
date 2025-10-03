@@ -21,7 +21,7 @@
 依赖包：
 - requests, beautifulsoup4
 
-作者：GitHub Action
+作者：yufeilai666
 版本：4.0
 """
 
@@ -33,7 +33,7 @@ import tempfile
 import subprocess
 from xml.etree.ElementTree import Element, SubElement, tostring, fromstring
 from xml.dom import minidom
-from datetime import datetime
+# from datetime import datetime
 
 
 def run_script_in_temp_dir(script_path, temp_dir):
@@ -63,14 +63,14 @@ def run_script_in_temp_dir(script_path, temp_dir):
             stderr=subprocess.PIPE
         )
         
-        # 设置超时时间为5分钟
-        stdout, stderr = process.communicate(timeout=300)
+        # 设置超时时间为30分钟
+        stdout, stderr = process.communicate(timeout=1800)
         
         if process.returncode != 0:
-            print(f"脚本 {script_name} 执行失败，返回码: {process.returncode}")
+            print(f"✗ 脚本 {script_name} 执行失败，返回码: {process.returncode}")
             if stderr:
                 stderr_text = stderr.decode('utf-8', errors='ignore')
-                print(f"错误输出:\n{stderr_text}")
+                print(f"✗ 错误输出:\n{stderr_text}")
             return []
         
         print(f"✓ {script_name} 执行完成")
@@ -90,12 +90,12 @@ def run_script_in_temp_dir(script_path, temp_dir):
         return xml_files
             
     except subprocess.TimeoutExpired:
-        print(f"脚本 {script_name} 执行超时")
+        print(f"✗ 脚本 {script_name} 执行超时")
         if 'process' in locals():
             process.kill()
         return []
     except Exception as e:
-        print(f"运行脚本 {script_name} 时出错: {e}")
+        print(f"✗ 运行脚本 {script_name} 时出错: {e}")
         return []
 
 
@@ -113,7 +113,7 @@ def read_xml_content(xml_file):
         with open(xml_file, 'r', encoding='utf-8') as f:
             return f.read()
     except Exception as e:
-        print(f"读取XML文件失败: {e}")
+        print(f"✗ 读取XML文件失败: {e}")
         return None
 
 
@@ -154,7 +154,7 @@ def analyze_xml_content(xml_content, script_name):
             'root': root
         }
     except Exception as e:
-        print(f"分析 {script_name} 的XML内容失败: {e}")
+        print(f"✗ 分析 {script_name} 的XML内容失败: {e}")
         return None
 
 
@@ -174,7 +174,6 @@ def merge_xml_contents(xml_contents, script_names):
     new_root.set('generator-info-name', 'unified-epg-generator')
     new_root.set('generator-info-url', 'https://github.com/yufeilai666/tvepg')
     new_root.set('source-info-name', 'multiple-sources')
-    new_root.set('created', datetime.now().strftime("%Y%m%d%H%M%S"))
     
     # 合并所有XML内容
     total_channels = 0
@@ -193,10 +192,10 @@ def merge_xml_contents(xml_contents, script_names):
                     for child in analysis['root']:
                         new_root.append(child)
                 else:
-                    print(f"警告: 无法分析 {script_name} 的XML内容")
+                    print(f"❗❗❗警告: 无法分析 {script_name} 的XML内容")
                     
             except Exception as e:
-                print(f"解析第 {i+1} 个XML内容失败: {e}")
+                print(f"✗ 解析第 {i+1} 个XML内容失败: {e}")
                 continue
     
     print(f"\n合并统计:")
@@ -293,7 +292,7 @@ def main():
     scripts = discover_epg_scripts()
     
     if not scripts:
-        print("未发现任何EPG脚本")
+        print("⚠️未发现任何EPG脚本")
         print("请确保脚本命名符合以下模式：get_*_epg.py")
         return
     
@@ -304,7 +303,7 @@ def main():
     # 检查TMDB API Key
     TMDB_API_KEY = os.environ.get('TMDB_API_KEY')
     if not TMDB_API_KEY:
-        print("警告: 未找到TMDB_API_KEY环境变量")
+        print("❗❗❗警告: 未找到TMDB_API_KEY环境变量")
         print("部分脚本可能无法获取电影描述信息")
     
     all_xml_contents = []
@@ -317,7 +316,7 @@ def main():
         # 运行每个脚本
         for script in scripts:
             print(f"\n{'='*50}")
-            print(f"处理: {script}")
+            print(f"🌺🌺🌺 处理: {script} 🌺🌺🌺")
             print(f"{'='*50}")
             
             # 为每个脚本创建独立的临时目录
@@ -351,12 +350,12 @@ def main():
                     print("注意: 单个脚本失败不会影响其他脚本执行")
         
         if not all_xml_contents:
-            print("错误: 未能获取任何XML内容")
+            print("✗ 错误: 未能获取任何XML内容")
             print("请检查各个EPG脚本是否正确运行")
             return
         
         # 合并所有XML内容
-        print(f"\n正在合并 {len(all_xml_contents)} 个XML内容...")
+        print(f"\n\n正在合并 {len(all_xml_contents)} 个XML内容...")
         merged_xml = merge_xml_contents(all_xml_contents, all_script_names)
         
         # 保存到统一的XML文件
@@ -382,7 +381,7 @@ def main():
             display_name = display_name_elem.text if display_name_elem is not None else '未知名称'
             print(f"  - 频道ID: {channel_id}, 名称: {display_name}")
         
-        print("\n处理完成！")
+        print("\n🎉🎉🎉 处理完成！🎉🎉🎉")
 
 
 if __name__ == "__main__":

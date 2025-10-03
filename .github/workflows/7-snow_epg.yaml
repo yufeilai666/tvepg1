@@ -37,7 +37,7 @@ jobs:
           # 从epg_scripts分支复制Python脚本
           cp epg_scripts/snow_epg.py temp_workdir/
           
-          echo "工作目录准备完成"
+          echo "✅ 工作目录准备完成"
           ls -la temp_workdir/
 
       # 第四步：设置 Python 环境（自动安装指定版本）
@@ -64,22 +64,22 @@ jobs:
           
           # 检查文件是否生成
           if [ ! -f snow_epg.xml ]; then
-            echo "错误: snow_epg.xml 文件未生成"
+            echo "❌ 错误: snow_epg.xml 文件未生成"
             exit 1
           fi
           
           if [ ! -f snow_epg.xml.gz ]; then
-            echo "错误: snow_epg.xml.gz 文件未生成"
+            echo "❌ 错误: snow_epg.xml.gz 文件未生成"
             exit 1
           fi
           
           if [ ! -f README.md ]; then
-            echo "错误: README.md 文件未生成"
+            echo "❌ 错误: README.md 文件未生成"
             exit 1
           fi
           
           if [ ! -f snow_epg.json ]; then
-            echo "错误: snow_epg.json 文件未生成"
+            echo "❌ 错误: snow_epg.json 文件未生成"
             exit 1
           fi
           
@@ -91,7 +91,7 @@ jobs:
           # 将生成的文件复制回工作区根目录
           cp snow_epg.xml snow_epg.xml.gz README.md snow_epg.json ../
           
-          echo "文件已复制到工作区根目录"
+          echo "✅ 文件已复制到工作区根目录"
           ls -lh ../snow_epg.* ../README.md
 
       # 第七步：检出目标仓库
@@ -119,14 +119,14 @@ jobs:
           # 复制 JSON 文件
           cp -f snow_epg.json tvepg/snow_epg.json
           
-          echo "文件复制完成："
+          echo "✅ 文件复制完成："
           ls -lh tvepg/snow_epg.* tvepg/README.md
           
           # 检查 XML 文件是否更新
           if diff snow_epg.xml tvepg/snow_epg.xml >/dev/null; then
-            echo "snow_epg.xml 文件成功更新"
+            echo "✅ snow_epg.xml 文件成功更新"
           else
-            echo "错误: snow_epg.xml 文件复制失败"
+            echo "❌ 错误: snow_epg.xml 文件复制失败"
             exit 1
           fi
           
@@ -135,25 +135,25 @@ jobs:
           copied_size=$(du -b tvepg/snow_epg.xml.gz | cut -f1)
           
           if [ "$original_size" -eq "$copied_size" ]; then
-            echo "snow_epg.xml.gz 文件成功更新"
+            echo "✅ snow_epg.xml.gz 文件成功更新"
           else
-            echo "错误: snow_epg.xml.gz 文件复制失败（大小不一致）"
+            echo "❌ 错误: snow_epg.xml.gz 文件复制失败（大小不一致）"
             exit 1
           fi
           
           # 检查 README 文件是否更新
           if diff README.md tvepg/README.md >/dev/null; then
-            echo "README.md 文件成功更新"
+            echo "✅ README.md 文件成功更新"
           else
-            echo "错误: README.md 文件复制失败"
+            echo "❌ 错误: README.md 文件复制失败"
             exit 1
           fi
           
           # 检查 JSON 文件是否更新
           if diff snow_epg.json tvepg/snow_epg.json >/dev/null; then
-            echo "snow_epg.json 文件成功更新"
+            echo "✅ snow_epg.json 文件成功更新"
           else
-            echo "错误: snow_epg.json 文件复制失败"
+            echo "❌ 错误: snow_epg.json 文件复制失败"
             exit 1
           fi
 
@@ -169,7 +169,7 @@ jobs:
           
           # 检查是否有变更
           if git diff-index --quiet HEAD -- snow_epg.xml snow_epg.xml.gz README.md snow_epg.json; then
-            echo "文件内容未变化，跳过提交"
+            echo "ℹ️ 文件内容未变化，跳过提交"
           else
             # 获取变更信息
             changes=$(git diff --shortstat HEAD -- snow_epg.xml snow_epg.xml.gz README.md snow_epg.json)
@@ -181,7 +181,7 @@ jobs:
             # 提交并推送
             git commit -m "$commit_msg"
             git push origin main
-            echo "变更已提交: $commit_msg"
+            echo "✅ 变更已提交: $commit_msg"
             
             # 输出文件大小信息
             echo "snow_epg.xml 文件大小: $(du -h snow_epg.xml | cut -f1)"

@@ -46,12 +46,33 @@ jobs:
           cd temp_workspace
           python -c "
           import json
+          import sys
+          import os
+          
+          # 动态导入脚本中的 target_epg
+          sys.path.append('scripts')
+          from multi_source_epg_processor import target_epg
+          
           with open('config/epg_config.json', 'r') as f:
             config = json.load(f)
-          print(f'配置加载成功，共 {len(config)} 个EPG源')
-          print('输出文件列表:')
-          for output_file in config.keys():
-            print(f'  {output_file}')
+          
+          # 过滤配置，只显示实际会处理的文件
+          filtered_config = {}
+          for output_file in target_epg:
+              if output_file in config:
+                  filtered_config[output_file] = config[output_file]
+              else:
+                  print(f'警告: 配置中未找到目标文件 {output_file}')
+          
+          print(f'配置加载成功，共 {len(filtered_config)}/{len(target_epg)} 个EPG源将被处理')
+          print('实际处理的文件列表:')
+          for output_file in filtered_config.keys():
+              print(f'  {output_file}')
+          
+          # 检查是否有文件缺失
+          missing_files = [f for f in target_epg if f not in config]
+          if missing_files:
+              print(f'警告: 以下目标文件在配置中缺失: {missing_files}')
           "
 
       # 第六步：运行多源 EPG 处理器

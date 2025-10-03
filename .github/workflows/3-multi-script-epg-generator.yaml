@@ -267,7 +267,7 @@ jobs:
           sleep $retry_delay
         done
 
-    # 步骤9: 报告生成状态
+    # 步骤9: 报告生成状态（修改后版本 - 有失败脚本时工作流失败）
     - name: Report Generation Status
       if: ${{ always() }}
       run: |
@@ -282,16 +282,18 @@ jobs:
           done
           echo "::endgroup::"
           
-          echo "::warning::有 ${#failed_array[@]} 个脚本执行失败"
+          echo "::error::有 ${#failed_array[@]} 个脚本执行失败"
           
           # 检查是否至少有一个脚本成功生成了文件
           if ls *.xml 1> /dev/null 2>&1; then
             echo "ℹ️ 尽管有脚本失败，但成功生成了部分EPG文件"
-            exit 0  # 部分成功，不使工作流失败
+            echo "ℹ️ 但因为有脚本失败，工作流标记为失败"
           else
             echo "❌ 所有脚本均失败，无EPG文件生成"
-            exit 1  # 完全失败，使工作流失败
           fi
+          
+          # 关键修改：只要有脚本失败，工作流就失败
+          exit 1
         else
           echo "✅ 所有脚本执行成功"
         fi

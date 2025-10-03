@@ -7,8 +7,8 @@ on:
         description: '排序方法 (name, ascii, size, time)'
         required: false
         default: 'name'
-  schedule:
-    - cron: '10 1 * * 6'  # 每周六午夜1点10分运行一次
+  # schedule:
+    # - cron: '10 1 * * 6'  # 每周六午夜1点10分运行一次
 
 jobs:
   update-3party-logo-list:

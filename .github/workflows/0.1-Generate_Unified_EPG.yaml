@@ -52,7 +52,7 @@ jobs:
         TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       run: |
         # 即使统一脚本中有错误，也继续执行后续步骤
-        python unified_epg_generator.py || echo "统一EPG生成器执行过程中出现错误，但继续执行后续步骤"
+        python unified_epg_generator.py || echo "ℹ️ 统一EPG生成器执行过程中出现错误，但继续执行后续步骤"
 
     - name: Check if unified file was generated
       id: file_check

@@ -1,5 +1,3 @@
-[file name]: epg-generator.php
-[file content begin]
 <?php
 /**
  * EPG 源处理器
@@ -420,4 +418,3 @@ try {
     log_message("未处理的异常: " . $e->getMessage(), true);
     exit(1);
 }
-[file content end]

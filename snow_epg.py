@@ -369,8 +369,9 @@ def process_epg_file(input_file, output_file):
     time_str = beijing_time.strftime("%Y-%m-%d %H:%M:%S")
     root.set("generator-info-time", f"{time_str}")
     root.set("generator-info-name", "yufeilai666")
+    root.set("generator-info-url", "https://github.com/yufeilai666")
     root.set("source-info-name", "秋哥综合、epg.pw、51zmt、AqFad2811、deny")
-    root.set("source-info-url", "https://epg.pw、http://epg.51zmt.top:8000、https://github.com/AqFad2811/epg、https://epg.deny.vip")
+    # root.set("source-info-url", "https://epg.pw、http://epg.51zmt.top:8000、https://github.com/AqFad2811/epg、https://epg.deny.vip")
     
     # 分离频道和节目元素
     channels = []
@@ -454,8 +455,8 @@ def process_epg_file(input_file, output_file):
     readme_content = f"""# EPG-电子节目单
 
 ## 订阅信息
-- **XML订阅**: <https://raw.githubusercontent.com/yufeilai666/tvepg/main/{os.path.basename(output_file)}>
-- **GZ压缩包订阅**: <https://raw.githubusercontent.com/yufeilai666/tvepg/main/{os.path.basename(output_file)}.gz>
+- **XML订阅**: <https://raw.githubusercontent.com/yufeilai666/myepg/main/{os.path.basename(output_file)}>
+- **GZ压缩包订阅**: <https://raw.githubusercontent.com/yufeilai666/myepg/main/{os.path.basename(output_file)}.gz>
 
 ## 更新信息
 - **节目单名称**: {os.path.basename(output_file)}

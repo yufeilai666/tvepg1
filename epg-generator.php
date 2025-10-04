@@ -77,10 +77,10 @@ file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] EPG处理任务开始
  */
 function log_message($message, $isError = false) {
     global $logFile;
-    $prefix = $isError ? "错误: " : "信息: ";
+    $prefix = $isError ? "✅ 错误: " : "ℹ️ 信息: ";
     $logEntry = "[" . date('Y-m-d H:i:s') . "] " . $prefix . $message . "\n";
     file_put_contents($logFile, $logEntry, FILE_APPEND);
-    echo $isError ? "错误: $message\n" : "$message\n";
+    echo $isError ? "✗ 错误: $message\n" : "$message\n";
 }
 
 // 立即检查环境
@@ -222,7 +222,7 @@ function download_file($url, $remoteFilename) {
     curl_setopt_array($ch, [
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 120,
+        CURLOPT_TIMEOUT => 60,
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_USERAGENT => 'AptvPlayer/1.3.2',
@@ -249,7 +249,7 @@ function download_file($url, $remoteFilename) {
         return false;
     }
     
-    log_message("下载成功 [$remoteFilename]: " . strlen($response) . " 字节");
+    log_message("✓ 下载成功 [$remoteFilename]: " . strlen($response) . " 字节");
     return $response;
 }
 
@@ -304,7 +304,7 @@ function process_source($outputFilename, $source) {
             log_message("gzip解压失败 [$remoteFilename]", true);
             return false;
         }
-        log_message("解压成功 [$remoteFilename]: " . strlen($xmlContent) . " 字节");
+        log_message("✓ 解压成功 [$remoteFilename]: " . strlen($xmlContent) . " 字节");
     }
     
     // 验证XML格式
@@ -336,7 +336,7 @@ function process_source($outputFilename, $source) {
         return false;
     }
     
-    log_message("保存成功 [$remoteFilename => $outputFilename]: " . number_format($bytesWritten) . " 字节");
+    log_message("✓ 保存成功 [$remoteFilename => $outputFilename]: " . number_format($bytesWritten) . " 字节");
     return true;
 }
 
@@ -372,7 +372,7 @@ function main() {
         } else {
             $failedFiles[] = $outputFilename;
             $remoteFilename = get_filename_from_url($source['url']);
-            log_message("✗ 处理失败: $remoteFilename => $outputFilename", true);
+            log_message("处理失败: $remoteFilename => $outputFilename", true);
         }
         
         log_message("----------------------------------------");
@@ -401,7 +401,7 @@ function main() {
         log_message("失败文件列表:");
         foreach ($failedFiles as $file) {
             $remoteFile = get_filename_from_url($sources[$file]['url']);
-            log_message("  ✗ $remoteFile => $file", true);
+            log_message("  ✗ $remoteFile => $file");
         }
     }
     

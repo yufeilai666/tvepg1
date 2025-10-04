@@ -383,26 +383,41 @@ class EnhancedDebugEPGProcessor {
      * @param string $url 下载URL
      * @return string|false 下载内容或false
      */
+    /**
+     * 下载EPG数据
+     * @param string $url 下载URL
+     * @return string|false 下载内容或false
+     */
     private function downloadEpgData($url) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_USERAGENT, 'AptvPlayer/1.4.2');
-        
+    
+        // 添加 GitHub Token 认证（优先使用PAT_TOKEN，然后使用GITHUB_TOKEN）
+        $githubToken = getenv('PAT_TOKEN') ?: getenv('GITHUB_TOKEN');
+        if ($githubToken && strpos($url, 'raw.githubusercontent.com') !== false) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: token ' . $githubToken,
+                'Accept: application/vnd.github.v3.raw',
+                'User-Agent: GitHub-Actions-EPG-Processor'
+            ]);
+        }
+    
         $content = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
         curl_close($ch);
-        
+    
         if ($httpCode !== 200 || $content === false) {
             $errorMsg = "下载失败 - HTTP代码: {$httpCode}";
             if ($error) $errorMsg .= " - 错误: {$error}";
             $this->logError($errorMsg);
             return false;
         }
-        
+    
         // 如果是gzip文件则解压
         $unzipped = false;
         if (substr($url, -3) === '.gz' || $this->isGzipped($content)) {
@@ -416,7 +431,7 @@ class EnhancedDebugEPGProcessor {
                 return false;
             }
         }
-        
+    
         return $content;
     }
     

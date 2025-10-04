@@ -47,7 +47,6 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
             
             # 生成raw.githubusercontent.com的绝对路径，保留中文字符
             # 使用相对于仓库根目录的路径
-            # 注意：logo_dir是绝对路径，我们需要提取相对于仓库根目录的部分
             rel_path = os.path.relpath(image_path, start=os.path.dirname(logo_dir))
             rel_path = rel_path.replace('\\', '/')  # 确保使用正斜杠
             
@@ -187,7 +186,16 @@ def main():
     # 从环境变量获取参数，如果没有则使用默认值
     username = os.environ.get('GITHUB_ACTOR', 'yufeilai666')
     repo_name = os.environ.get('GITHUB_REPOSITORY', 'yufeilai666/tvepg').split('/')[-1]
-    branch = os.environ.get('GITHUB_REF', 'refs/heads/logo_info').split('/')[-1]
+    
+    # 正确获取分支名称
+    # GITHUB_REF 格式为 refs/heads/branch_name
+    github_ref = os.environ.get('GITHUB_REF', '')
+    if github_ref.startswith('refs/heads/'):
+        branch = github_ref.replace('refs/heads/', '')
+    else:
+        # 如果无法从环境变量获取，使用默认值
+        branch = os.environ.get('GITHUB_REF', 'refs/heads/logo_info').split('/')[-1]
+    
     sort_method = os.environ.get('SORT_METHOD', 'name')  # 排序方法
     
     # 获取logo目录路径，优先使用环境变量
@@ -198,7 +206,7 @@ def main():
         logo_dir=logo_dir,
         username=username,
         repo_name=repo_name,
-        branch=branch
+        branch=branch  # 使用正确获取的分支名称
     )
     
     # 根据指定的排序方法排序
@@ -223,6 +231,7 @@ def main():
     
     print(f"处理完成，共找到 {len(logo_info)} 个Logo文件")
     print(f"使用的排序方法: {sort_method}")
+    print(f"使用的分支: {branch}")
     print(f"Markdown文件已生成到: {output_md_file}")
     print(f"JSON文件已生成到: {output_json_file}")
 

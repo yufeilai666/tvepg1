@@ -211,6 +211,7 @@ def main():
     print(f"排序方法: {sort_method}")
     print(f"Logo目录: {logo_dir}")
     print(f"当前工作目录: {os.getcwd()}")
+    print("="*40)
     
     # 获取logo信息
     logo_info = get_logo_info(
@@ -240,6 +241,7 @@ def main():
     # 写入JSON文件到临时位置
     write_to_file(json_content, output_json_file)
     
+    print("="*40)
     print(f"处理完成，共找到 {len(logo_info)} 个Logo文件")
     print(f"使用的排序方法: {sort_method}")
     print(f"使用的目标分支: {target_branch}")

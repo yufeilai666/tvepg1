@@ -45,12 +45,30 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
             file_name = os.path.splitext(os.path.basename(image_path))[0]
             
             # 生成raw.githubusercontent.com的绝对路径，保留中文字符
-            # 使用相对于仓库根目录的路径
-            rel_path = os.path.relpath(image_path, start=os.environ.get('GITHUB_WORKSPACE', '.'))
-            rel_path = rel_path.replace('\\', '/')  # 确保使用正斜杠
+            # 修复路径计算：确保使用相对于仓库根目录的正确路径
+            # 先获取logo目录相对于当前工作目录的路径
+            logo_dir_abs = os.path.abspath(logo_dir)
+            image_path_abs = os.path.abspath(image_path)
+            
+            # 计算图片相对于logo目录的路径
+            rel_to_logo_dir = os.path.relpath(image_path_abs, logo_dir_abs)
+            
+            # 构建完整的相对路径（logo_dir_name + 图片相对于logo目录的路径）
+            logo_dir_name = os.path.basename(logo_dir.rstrip('/'))
+            rel_path = f"{logo_dir_name}/{rel_to_logo_dir}".replace('\\', '/')  # 确保使用正斜杠
+            
+            # 调试信息：打印路径计算过程
+            print(f"处理文件: {image_path}")
+            print(f"logo目录绝对路径: {logo_dir_abs}")
+            print(f"图片绝对路径: {image_path_abs}")
+            print(f"相对于logo目录的路径: {rel_to_logo_dir}")
+            print(f"计算的完整相对路径: {rel_path}")
             
             # 使用<>包裹链接，保留中文字符
             file_link = f"<https://raw.githubusercontent.com/{username}/{repo_name}/{branch}/{rel_path}>"
+            
+            # 调试信息：打印生成的链接
+            print(f"生成的链接: {file_link}")
             
             logo_info.append({
                 "name": file_name,

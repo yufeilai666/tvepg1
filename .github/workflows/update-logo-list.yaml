@@ -79,6 +79,7 @@ jobs:
         # 从临时位置复制生成的README.md和logo.json
         cp /tmp/logo_list/README.md ./
         cp /tmp/logo_list/logo.json ./
+        echo "README.md 和 logo.json 复制成功"
 
     - name: Commit and push to logo_info branch
       run: |

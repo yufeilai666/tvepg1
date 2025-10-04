@@ -1,119 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tv generator-info-name="unified-epg-generator" generator-info-url="https://github.com/yufeilai666/tvepg" source-info-name="multiple-sources" created="20251003031405">
+<tv generator-info-name="unified-epg-generator" generator-info-url="https://github.com/yufeilai666/tvepg" source-info-name="multiple-sources">
   <channel id="LS TIME 龙祥时代">
     <display-name lang="zh">龙祥时代</display-name>
   </channel>
-  <programme start="20251003011500 +0800" stop="20251003031500 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">紙盒藏屍之公審</title>
-    <desc lang="zh">　　依據香港跑馬地紙盒藏屍案此一真實犯罪案件所改編之電影。事件背景發生於1974年，一間獸醫診所的職員胡永康發現門外行人路旁放著一個紙盒，內藏死者赤裸的屍體。而死者陳屍在一個日立牌S67B型的電視機紙箱內。經過警方調查，嫌疑犯為歐陽炳強，而案情雖疑點頗多，嫌犯仍舊被判刑入獄。
-　　本片為一部無法確定真相的電影，對於這個至今仍舊疑點重重的案子，最終仍沒給出一個公眾想要的「正確答案」，究竟是員警屈打成招，亦或是嫌犯隱瞞事實，至今始終無人得知。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>輔12</value>
-    </rating>
-  </programme>
-  <programme start="20251003031500 +0800" stop="20251003054500 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">新古惑仔之少年激鬥篇</title>
-    <desc lang="zh">　　少年浩南與鄰居包皮、巢皮兩兄弟，是死黨也是同學，閒時在球場玩，卻被靚坤欺負，幸得大佬B出手相助，大佬B對他們說，若要做好仔，便回去讀書，若要在球場玩，便要找他。
-　　浩南學業成績一般，沉迷夾band，在校內歌唱比賽，打算自彈自唱將一首歌送予他暗戀的同校女生YUMMY，但在比賽中途，校長中斷比賽，並將出言頂撞的浩南趕出校。
-　　浩南甫出校門，又給YUMMY的追求者豬兜襲擊，而他的大佬正是靚坤，常糾黨搗亂，橫行霸道，結果校長報警，他眼中一眾壞分子被抓返警局。
-　　浩南另一好友山雞亦一早跟隨大佬B，大佬B保釋浩南，浩南雖未成為古惑仔，但在其他人眼中早已認定他是其中一份子...</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251003054500 +0800" stop="20251003074500 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">女黑俠黃鶯</title>
-    <desc lang="zh">　　遊敏（張敏）代表美國的華青幫來港調查幫會黑吃黑事件， 合併圖冊(3張) 而和樂堂首領葉利恩先發製人派雷豹槍殺敏，結果在敏前姦殺其助手黃鶯。敏誓死頑抗，負傷乘快艇在海面飄浮，幸被過氣媽媽生——生婆（葉德嫻）及其女兒阿貞（邱淑貞）所救。敏醒來失憶，神婆以為她是富家女而故意收留，望能獲意外報酬。因神婆曾在歡場打滾，故常教訓女兒不要被男人佔便宜，惟貞暗地裡與遊樂場技工啞巴亞傑（張學友）十分要好，經常向他傾吐心事，互生愛意。
-　　敏雖記不起自己身份，但腦海常湧現自己曾被強奸的情景，誓要偵查出自己的身世，另外，神婆屢被惡人欺凌，敏均能運用槍擊技巧將之打退，使神婆更懷疑敏的來歷。另一方面，一直追殺敏的和樂堂兩個抓牙獸性難控，不斷姦殺無辜，專向舞小姐埋手。敏陪貞上班，客串舞女，遇上雷豹，豹欲欺凌貞與敏，碰上傑，傑被激怒，洩露本來身份，原是江湖高手，出獄後隱姓埋名，追求平淡生活，但雷豹咄咄逼人，傑遂重整實力，夥同和樂堂其他兄弟部署反擊，然而，雷豹先發製人，派人追殺至神婆家。阿敏重遇雷豹的手下，赫然恢復記憶，仇人見面，份外眼紅，展開拼搏廝殺，最後神婆竟落入他們手中，成為人質。敏與傑會合，陪同兄長游楊，相約與雷豹決一死戰........</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251003074500 +0800" stop="20251003103500 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">賭神（雙語）</title>
-    <desc lang="zh">　　高進乃世界聞名的賭神，他接受了日本黑幫名人上山的邀請，和新加坡有賭王之稱的陳金城在牌桌上決戰，決戰前他無意中踏入一個陷阱跌下山坡變成失憶。高進失憶後住在小流氓刀仔家裡，刀仔女友阿珍對他很是照顧。刀仔從失憶的高進的賭術中得過好處亦吃過苦頭。高進堂弟高義醉酒闖進高進的女友Janet的房間，對其有非分之想卻失手誤殺Janet，燒毀了錄音帶，還派人殺害高進，幸得上山的保鏢龍五救了他。在脫險時他被汽車撞傷又恢復了記憶。高進和陳金城決戰的時間終於來臨，他比陳技高一籌，利用陳在撲克上的記號，將計就計地戰勝了陳。同時也靠燒毀的錄音帶的殘骸揭穿了高義的醜惡面目，在龍五的幫助下，戰勝了反派，替上山報了世仇，最後便和刀仔周遊世界博彩去了。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251003103500 +0800" stop="20251003124000 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">小蝦米對大鯨魚（雙語）</title>
-    <desc lang="zh">　　故事講述女高級督察吳洛(楊紫瓊飾)和來自蘇格蘭外藉女警Carrie(《富貴列車》羅芙洛飾)調查外國人的死因。扒手集團因偷去外國人的財物，被黑幫要脅交出微型菲林。後來，扒手集團的成員使立消(岑建勳飾)、散利痛(孟海飾)和脫苦海(徐克飾)與警方聯手，粉碎犯罪集團的陰謀…</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251003124000 +0800" stop="20251003144000 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">特警屠龍</title>
-    <desc lang="zh">　　王SIR(任達華)、雪玲(鄭裕玲)、龍哥(梁家仁)、阿友(張學友)、達叔(吳孟達)、阿丹(甄子丹)都是反毒組的警察，他們之間關係很好像兄弟一般，在一次行動中他們並肩作戰，一舉摧毀了一個毒品窩點，可遺憾的是讓毒犯頭子跑掉了。正當他們慶祝勝利的時候，毒犯頭子找到了他們並且殺死了龍哥。為了給龍哥報仇，找到毒犯頭子，大家採取了各種手段，終於找到了毒犯頭子，並擊斃了他。在一次意外中，阿友拍到了達叔和毒犯交易的過程，他便告訴阿丹和王SIR，王SIR知道後為了保全自己於是殺了阿丹滅口，又栽贓阿友，使他被停職，然而這一舉動引起阿友的懷疑。一天，阿友的女朋友阿美(溫碧霞)在家發現了這盤錄像帶，並知道了王SIR與達叔也是同夥，但為了救阿友她還是把錄像帶交給了王SIR，從而導致了殺身之禍。這時阿友與雪玲終於明白了一切，於是…</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251003144000 +0800" stop="20251003165000 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">工人皇帝</title>
-    <desc lang="zh">　　麵包廠的阿忍（許冠傑飾）和拖車廠的阿神（徐克飾）、阿慶（泰迪羅賓飾）因一場小車禍雙雙丟掉工作。阿忍面對撫養自己長大母親只得謊言應付，阿慶則跟隨好友阿神回家，暫時住在同一屋簷下。
-　　所謂不打不相識，三人因此事件卻成為了好朋友，最終進入皇帝面廠工作，但上班第一天便遇到了麻煩。車間主任（吳孟達飾）和廠長任人唯親，顛倒黑白，為包庇一個犯錯的女人企圖開除三人頂包。多虧董事長女兒阿美（王祖賢飾）幫助才保住工作。自此，三個好朋友連同阿美與腐敗的廠長一夥展開了笑料百出的鬥智賽…</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251003165000 +0800" stop="20251003190000 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">非常愛情</title>
-    <desc lang="zh">　　田力（柳云龍）與舒心（袁立）在南京念高中時便互相傾心，只是礙於學業均沒將愛意說出。高考後，田力來到北京唸書，舒心留在南京上了醫科大學，封封書信往來中，兩人均暗將對方視作未來伴侶。
-　　大學畢業田力又考取研究生，某次在外考察時他匆匆趕回南京向舒心求婚，舒心自是心甜如蜜，兩人結婚。後來，田力為救一支金絲猴摔成重傷變作植物人。當家人、朋友都勸舒心另做打算時，她卻堅信田力會好起來，懷著悲痛開始以巨大的愛心和耐力將他貼心照料。 [1]
-　　舒心和田力兩個年輕人相識相戀，後田力考入北京大學生物系，舒心考入了省醫學院。畢業後，兩人都有了各自的事業，並準備結婚，但不幸的事情突然降臨......</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251003190000 +0800" stop="20251003210000 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">長短腳之戀</title>
-    <desc lang="zh">　　阿美（王祖賢飾）是個美麗的女孩子，可是天生腳就有殘疾。她的父親（黃霑飾）因被堂叔欺騙買下了一間破舊不堪的超級市場，花掉了畢生積蓄的父親變得瘋瘋癲癲的。阿美既要照顧父親，又要幫忙打理超級市場，生活的重擔落在了她的身上。在一次交通意外中，司機梁少祖（周潤髮飾）以為自己把阿美撞至殘疾，十分內疚，便決定要幫助阿美經營超級市場。阿美一開始並不信任梁少祖，到後來他聯合朋友來幫助自己的超級市場度過難關，心裡滿是感動，兩人更墜入了愛河。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251003210000 +0800" stop="20251003230500 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">大搜查之女（雙語）</title>
-    <desc lang="zh">　　經營非法紅油的黑道油王霍青松（陳奕迅飾）因一次油車爆炸意外成為香港警方及國內公安眼中釘，此時要面對獨生子被綁架的他顯得心焦如焚。
-　　高級督察司徒慕蓮（鄭秀文飾）是警隊明日之星，以精明幹練見稱警界，她接手偵查霍青松之子綁架案的任務，帶總動員進駐霍家，逼他與警方合作救出兒子。
-　　綁架案動員全港警員以至內地公安。當中包括有份參與圍捕紅油集團且目睹油車爆炸的公安隊長趙天河（董勇飾），他與意外中死者的丈夫徐半山（張國立飾）結成知交，卻對青松恨之入骨。
-　　黑白兩道首次攜手合作，雙方卻衝突連連，偵查行動寸步難移，慕蓮發現自己懷了身孕，陷於情感危機；青松救子心切又要保住幫派，左右做人難。經過種種難關，慕蓮與青松最終會否化敵為友？綁匪幕後主腦又到底是誰？真相耐人尋味，案中有案之離奇綁架，墜入曲折離奇之大搜查。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251003230500 +0800" stop="20251004013000 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">英倫對決</title>
-    <desc lang="zh">　　關玉明（成龍 飾）在倫敦經營一間小餐館，當他僅存的親人，年輕的女兒——関凡（梁佩詩 飾），在恐怖攻擊中遇害，他誓言要找出兇徒，而在復仇的過程中，多年來他刻意隱瞞的過去也逐步顯現。
-　　在追查爆炸案的相關人物之時，關玉明尋求北愛爾蘭副部長漢尼斯（皮爾斯·布洛斯南 飾）的幫助。漢尼斯雖已成為英國政府官員，但一直被自己複雜的過去扯後腿。關玉明與漢尼斯展開貓捉老鼠的政治遊戲，為了找出躲藏在背後的真兇，兩人都需要面對自己的過去。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
   <programme start="20251004013000 +0800" stop="20251004032500 +0800" channel="LS TIME 龙祥时代">
     <title lang="zh">頭號通緝犯</title>
     <desc lang="zh">　　1991年，悍匪葉歡一夥打劫多家金店，其火力兇猛，警方始終不能將其繩之以法。三年後，臥底警察黑貓（劉青雲飾）與葉歡手下沙皮（林保怡飾）一同出獄，黑貓靠做代客泊車度日，不久黑貓因出色的駕駛技術被沙皮引薦給葉歡，受邀在他們下一次的搶劫中擔任司機。雖然黑貓將葉歡的犯罪計劃通知警方，不料在行劫過程中，黑貓被警方擊傷，但幸運躲過了葉歡的懷疑。因黑貓的上司在追捕中身亡，他失去了警方的信任，為了挽回局面，黑貓孤注一擲抓捕沙皮，卻將他誤殺。警方由此將黑貓列為通緝犯，面對警方和葉歡兩方的懷疑，黑貓舉步維艱證明自己的清白……</desc>
@@ -325,12 +214,8 @@
     </rating>
   </programme>
   <programme start="20251005233000 +0800" stop="20251006015000 +0800" channel="LS TIME 龙祥时代">
-    <title lang="zh">時空叛逃者（雙語）</title>
-    <desc lang="zh">　　1983年1月1日。高中老師智煥（曹政奭 飾）向同校教書的女友允珍（林秀晶 飾）求婚，但沒過多久，他就被強盜刺傷，與死神搏鬥。
-　　2015年1月1日。警探建宇（李真旭 飾）遭一名嫌犯槍擊成重傷。
-　　時空相隔32年的兩個男人，於同一天在同一間醫院奮力求生。當他們從死亡邊緣撿回一命，兩人開始在夢境中，透過對方的眼睛看到彼此的生活。
-　　這兩個男人逐漸瞭解到，對方是生活在不同時代的真實人物。活在2015年的建宇，在夢境中看到智煥的未婚妻允珍，而現實中他所愛的素恩（林秀晶 飾），竟長得和允珍一模一樣，建宇因感受到冥冥中與素恩的命運羈絆，決定查個水落石出，當他調閱到一樁1980年代懸案檔案，發現允珍竟是慘遭謀殺致死後，便開始抽絲剝繭調查這樁未偵破的案件。
-　　另一廂活在1983年的智煥，透過建宇的眼睛得知他未婚妻允珍日後的命運。於是，這兩個男人都展開一場穿越時空的艱難任務，決定攜手力挽狂瀾，無論如何也要改變允珍的命運。</desc>
+    <title lang="zh">三少爺的劍</title>
+    <desc lang="zh">　　「劍氣縱橫三萬里，一劍光寒十九洲」，神劍山莊三少爺謝曉峰（林更新飾）驚才絕艷，十年來歷經上千大戰未嚐一敗，被天下人尊為“劍神”。傳奇劍客燕十三（何潤東 飾）一直以謝曉峰為目標，苦修劍道，終於在生死邊緣悟出驚天地泣鬼神的“絕命十三劍”。一時之間，江湖沸騰，然而，就在燕十三趕到神劍山莊下戰書的時候，迎接他的，卻是三少爺謝曉峰的靈柩。燕十三因痛失對手大感失望，此時神秘女子慕容秋荻（江一燕飾）出現並告知燕十三，謝曉峰並沒有死，要想找到他決戰，燕十三就必須要替她殺一個人……</desc>
     <category lang="zh">电影</category>
     <rating>
       <system>TW</system>
@@ -794,199 +679,106 @@
       <value>護</value>
     </rating>
   </programme>
-  <channel id="好莱坞电影台">
-    <display-name lang="zh">好莱坞电影台</display-name>
-  </channel>
-  <programme start="20251001050000 +0800" stop="20251001080000 +0800" channel="好莱坞电影台">
-    <title lang="zh">變形金剛(護)</title>
-    <desc lang="zh">　　講述柯博文與密卡登那段鮮為人知的起源故事。 這兩位曾經是情同手足的朋友，最終卻成為改變賽博坦星命運的宿敵。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251001080000 +0800" stop="20251001110000 +0800" channel="好莱坞电影台">
-    <title lang="zh">紅雀(護)</title>
-    <desc lang="zh"/>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251001110000 +0800" stop="20251001120000 +0800" channel="好莱坞电影台">
-    <title lang="zh">樂活新觀點(普)</title>
-    <desc lang="zh"/>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251001120000 +0800" stop="20251001141500 +0800" channel="好莱坞电影台">
-    <title lang="zh">命運交錯(護)</title>
-    <desc lang="zh">　　在決定命運的一天之中，墮落腐敗的企業家及其名流妻子爭分奪秒解救二人的女兒，防止她遭臭名昭著的黑幫老大傷害。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251001141500 +0800" stop="20251001170000 +0800" channel="好莱坞电影台">
-    <title lang="zh">印第安納瓊斯：水晶骷髏王國(普)</title>
-    <desc lang="zh">　　時間來到1957年冷戰高峰期，電影一開始偉大的冒險家印第安納瓊斯（哈里遜福特飾），與助手麥克（雷溫斯頓飾）在美國西南荒野沙漠一個偏僻的機場，正與蘇聯間諜展開一場邀烈的追逐。  千鈞一髮逃離蘇聯特務的魔掌的瓊斯教授，好不容易全身而退回到校園，他的摯友及大學院長（《納尼亞傳奇》吉姆布洛班特飾）告訴他，他最近的活動已經引起各路人馬的疑心，政府正施壓要求學校開除瓊斯。  接著，瓊斯在路上遇見了年輕人馬特（薩拉比夫飾），這個身穿時髦服裝騎著重型機車的小子，雖然他對印第安納瓊斯有莫名的仇視，但也向瓊斯教授提出請求，一同前往尋找考古的大發現－傳說中的”阿卡特水晶骷髏”（The Crystal Skull Of Akator）。  他們一同來到秘魯森林的古代墓地，尋找傳說中的黃金城，但很快的就發現還有別人尾隨在後，原來蘇聯特務也想取得水晶骷髏。由冰山女間諜艾琳娜史波可（凱特布蘭特飾）領軍的蘇聯精銳部隊，為了得到寶物讓蘇聯帝國統治全世界，不計手段的追逐著他們...。  為了阻止神秘古物落入蘇聯手中，瓊斯與馬特必須突破各種阻礙，展開他們的冒險旅程，在這條前往古墓的山路上，處處是危機，到處都是各懷鬼胎的好人或壞人，他們必須設法保護威力強大的水晶骷髏。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251001170000 +0800" stop="20251001191500 +0800" channel="好莱坞电影台">
-    <title lang="zh">衝出封鎖線(普)</title>
-    <desc lang="zh">　　歐文威爾森飾演的飛行上尉在一次例行的高空偵察任務中，意外拍攝到敵軍不為人知的祕密，不料，敵軍將他乘坐的戰機打了下來，歐文威爾森雖然僥倖生還，卻必須面臨敵軍殘酷無情的追殺，唯一的希望就是他的長官金哈克曼，然而上級為了避免挑起國際戰火，竟然下令金哈克曼不准出兵救援。  歐文威爾森完全孤立無援，只得獨自在敵陣中逃命，他完全沒想到，向來謹守上級命令的金哈克曼，竟賭上自己的軍旅前途，祕密展開軍事救援任務．．．</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251001191500 +0800" stop="20251001213000 +0800" channel="好莱坞电影台">
-    <title lang="zh">非戰之罪(護)</title>
-    <desc lang="zh"/>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251001213000 +0800" stop="20251002000000 +0800" channel="好莱坞电影台">
-    <title lang="zh">天堂公路(護)</title>
-    <desc lang="zh">　　卡車司機莎莉為幫助弟弟丹尼斯遠離監獄惡霸，被迫走私非法貨物；某天，莎莉和接頭人克萊兒碰面，卻發現要強制運送少女莉拉到州界，但抵達後莉拉反抗射殺人蛇而使兩人逃亡。同時聯邦探員葛瑞克和芬利堪驗人蛇命案後追緝莎莉，而克萊兒也派員尋找兩人下落，不久丹尼斯出獄後和莎莉會合，卻和克萊兒合作誘騙莉拉交易，最後莎莉制止丹尼斯任其被捕。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251002000000 +0800" stop="20251002020000 +0800" channel="好莱坞电影台">
-    <title lang="zh">致命彈片(護)</title>
-    <desc lang="zh">　　前海軍陸戰隊員與他的老戰友槓上墨西哥販毒集團，試圖找出失蹤女兒的下落，一場轟天掀地的營救任務全面展開！！</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251002020000 +0800" stop="20251002050000 +0800" channel="好莱坞电影台">
-    <title lang="zh">變形金剛(普)</title>
-    <desc lang="zh">　　講述柯博文與密卡登那段鮮為人知的起源故事。 這兩位曾經是情同手足的朋友，最終卻成為改變賽博坦星命運的宿敵。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251002050000 +0800" stop="20251002070000 +0800" channel="好莱坞电影台">
-    <title lang="zh">鯊魚沒有假期(護)</title>
-    <desc lang="zh">　　三個原本興致高昂，搭乘遊艇出海遊玩的旅客意外被困在離岸三里之外的淺礁上，而一條無情的大白鯊潛伏於附近的海中，伺機而動。隨著海潮的上升，三人所剩的時間越來越少，迫使他們重回危機四伏的海水之中，並在回到岸上之前，與嗜血的鯊魚決一勝負…</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251002070000 +0800" stop="20251002090000 +0800" channel="好莱坞电影台">
-    <title lang="zh">命運交錯(護)</title>
-    <desc lang="zh">　　在決定命運的一天之中，墮落腐敗的企業家及其名流妻子爭分奪秒解救二人的女兒，防止她遭臭名昭著的黑幫老大傷害。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251002090000 +0800" stop="20251002110000 +0800" channel="好莱坞电影台">
-    <title lang="zh">決戰天際線(護)</title>
-    <desc lang="zh">　　決戰天際線闡述了勇敢的特種部隊少校蘇坦伊貝爾和才華橫溢的飛行員貝茲卡伊貝爾兩人之間的故事。 兩兄弟儘管意見分歧，但當國家遭到外敵的威脅時，兄弟倆仍齊心協力拯救平民寶貴的生命。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251002110000 +0800" stop="20251002120000 +0800" channel="好莱坞电影台">
-    <title lang="zh">樂活新觀點(普)</title>
-    <desc lang="zh"/>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251002120000 +0800" stop="20251002143000 +0800" channel="好莱坞电影台">
-    <title lang="zh">天堂公路(護)</title>
-    <desc lang="zh">　　卡車司機莎莉為幫助弟弟丹尼斯遠離監獄惡霸，被迫走私非法貨物；某天，莎莉和接頭人克萊兒碰面，卻發現要強制運送少女莉拉到州界，但抵達後莉拉反抗射殺人蛇而使兩人逃亡。同時聯邦探員葛瑞克和芬利堪驗人蛇命案後追緝莎莉，而克萊兒也派員尋找兩人下落，不久丹尼斯出獄後和莎莉會合，卻和克萊兒合作誘騙莉拉交易，最後莎莉制止丹尼斯任其被捕。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251002143000 +0800" stop="20251002170000 +0800" channel="好莱坞电影台">
-    <title lang="zh">中國推銷員(普)</title>
-    <desc lang="zh">　　這是一個令人拍案驚奇的真實故事。中國DH移動通訊公司的推銷員嚴鍵（李東學飾）來到了南北長期分裂、衝突不斷的北非某國開拓業務。一次突發事件讓他捲入了當地的戰亂之中，一個更大的陰謀正在降臨……一名推銷員能否擔負起挽救國家分裂的重任？能否順利完成中華民族品牌打進國際市場的重托？那個神秘的DH公司到底是誰？  隨著國際巨星邁克·泰森、史蒂文·西格爾等先後登場，勁爆的動作、戰爭場面，驚心動魄的跨國商戰，在廣袤非洲的異域風情中，演繹出了一場“勇者無敵，旗開德勝”，蕩氣迴腸的傳奇故事。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251002170000 +0800" stop="20251002190000 +0800" channel="好莱坞电影台">
-    <title lang="zh">危牆狙擊(普)</title>
-    <desc lang="zh">　　兩名美國狙擊兵受困於中東戰場上，與伊拉克的狙擊手生死對峙、進退維谷，唯一的掩體是一堵殘破的牆。在烈日當頭，必須設法防止自身脫水；入夜驟寒，還得提防惡狼襲擊，兩名狙擊兵是否能平安脫離險境…</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251002190000 +0800" stop="20251002213000 +0800" channel="好莱坞电影台">
-    <title lang="zh">神鬼至尊(普)</title>
-    <desc lang="zh">　　賽門.坦普勒 是一名孤兒，從小被聖依納爵孤兒院收留，依該孤兒院的傳統以天主教聖人的名字命名為約翰·羅西（John Rossi），但是他不喜歡這個名字，並自行以聖殿騎士的賽門（Simon Templar）為名。 長大後的他離開孤兒院成為一名技術高超的竊賊，擁有高強的易容術以及神出鬼沒的手法。當他接受委託去行竊時習慣以取自天主教的聖人名稱來當作自己的化名。由於一次偷竊晶片的行動使他和富懷野心的俄羅斯政治家崔維耶結上梁子，對方假裝不知道他的真實身分並委託他去偷取女科學家艾瑪·羅歇爾博士（Dr. Emma Russell）正在研究的冷核融合技術。於是他化名為多默·摩爾（英國亨利八世朝的大臣，因反對亨利八世的宗教政策而被處刑。）與艾瑪接觸以偷取技術。
-　　可是 賽門 卻在與艾瑪的接觸當中動了真感情，但是崔維耶卻以艾瑪的安危威脅他，因此 賽門 只好把他從艾瑪身上偷來的方程式提供給崔維耶。但是因為方程式未完成，於是 賽門 成為崔維耶的追殺對象，另一方面艾瑪從國際刑警那邊獲得有關 賽門 的情報，並發現他慣用聖人名稱作化名，並循線發現他化名為 文森·費耶爾（Vincent Ferrer）坐飛機到俄羅斯，於是親自到俄羅斯去找他，兩人因此同時受到崔維耶的手下追捕。最後兩人靠著合作與運氣阻止了崔維耶的野心。</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>普</value>
-    </rating>
-  </programme>
-  <programme start="20251002213000 +0800" stop="20251003000000 +0800" channel="好莱坞电影台">
-    <title lang="zh">寒冬戰士(護)</title>
-    <desc lang="zh">　　密科拉是個和平主義者，希望可以對人類有所貢獻。當戰爭在他所居住的烏克蘭頓巴斯爆發，激進分子殺了他懷孕的老婆，將房子夷為平地時，他的世界瞬間崩塌。 密科拉從悲憤平復後，他決定入伍參加狙擊連。當他遇見殺害妻子的兇手時，密科拉按捺不住心中的憤怒，想要殲滅敵軍…</desc>
-    <category lang="zh">电影</category>
-    <rating>
-      <system>TW</system>
-      <value>護</value>
-    </rating>
-  </programme>
-  <programme start="20251003000000 +0800" stop="20251003020000 +0800" channel="好莱坞电影台">
-    <title lang="zh">萬聖劫(輔12)</title>
-    <desc lang="zh">　　過去的高中朋友贏得在新樂園萬聖節搶先玩活動，讓這群年輕人可以在樂園獨享歡樂夜晚。樂園的管理員–費歐娜，必須在過程中看顧著他們。棉花糖、雲霄飛車、爆米花和旋轉木馬炫目繽紛，但當他們意識到樂園裡還有其他東西存在時，樂趣氣氛很快變得驚悚恐怖。這群年輕人被迫面對過去所犯下的罪行，以求在這個夜晚能存活下來！</desc>
+  <programme start="20251010011000 +0800" stop="20251010035500 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">魔宮魅影</title>
+    <desc lang="zh">　　戲裡戲外 孰真?孰假? 越入戲越是致命…
+　　1930年代上海十里洋場，在一座曾遭祝融毀棄的電影院，某天突然發生了恐怖異常的神祕命案，各種鬧鬼傳聞四起，民眾陷入驚懼中！卻有名旅法回國的青年導演顧維邦（楊祐寧飾）聞訊趕來，並說服具有阮玲玉接班人之稱的一代紅星孟思凡（林心如飾）於此地拍攝驚悚的人鬼愛情片。已有女友的維邦在不知不覺深受思凡天生具有的美貌與神祕感而吸引，兩人之間逐漸滋生的曖昧情愫卻也讓整體拍攝工作陷入危機。
+　　拍攝期間，各種猛鬼異象、神秘的死亡意外接連不斷地發生，鬼魅橫行的傳說更因電影經歷換角、停拍等事件後，倍受矚目。就在電影終於完成並準備在此戲院舉辦盛大首映之夜的同時，維邦的父親，一代軍事強人顧鳴山（任達華飾）也應邀出席，希望藉此能彌補父子多年來的嫌隙。電影開演之際，顧鳴山的出現竟讓傳說中的鬼魅與一段灰飛煙滅的往事，一一浮出駭人聽聞的真相。</desc>
     <category lang="zh">电影</category>
     <rating>
       <system>TW</system>
       <value>輔12</value>
     </rating>
   </programme>
-  <programme start="20251003020000 +0800" stop="20251003050000 +0800" channel="好莱坞电影台">
-    <title lang="zh">決戰３８度線(普)</title>
-    <desc lang="zh">　　真實故事同名暢銷小說改編，描述韓戰期間，美國非裔戰鬥機飛行員傑西 奉命加入突擊戰鬥機中隊，認識了同為戰鬥機駕駛的托馬斯。在美國種族隔離制度之下，兩人發展出血濃於水的兄弟情感、一起執行超過20次戰鬥任務。一次行動中，傑西駕駛的僚機被擊落，一場驚險的救援行動即將展開•••。</desc>
+  <programme start="20251010035500 +0800" stop="20251010061500 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">家有囍事</title>
+    <desc lang="zh">　　常家三兄弟與父母同住在祖產大屋中。老大常滿（黃百鳴 飾）有事業有成，太太程氏（吳君如 飾）因多年來穩定的婚姻生活而變得不修邊幅，常滿在外找了美麗情婦Sheila。因一次約會後酒醉，Sheila送常滿回家時被程氏發現，一怒之下出走。  老二常騷（張國榮 飾）是女性化的花美男，總是與男性化的表姑媽梁無雙（毛舜筠 飾）鬥氣，打牌、工作都能爭吵不休，鬧出不少笑話。老三常歡（周星馳 飾）為一電台DJ，他只著重視肉體，從來不明白什麼叫真愛。一天，電影狂聽友何里玉（張曼玉 飾）致電到他主持的節目，常歡好奇約她相見，沒想到，何里玉覺得常歡本人和自己心目中的模樣有很大差距，失望而回，但此舉卻激起常歡更想得到她的肉體的慾望。  故事一路發展下去，鬧出了不少笑話，一整家子的紛紛亂亂要如何大團圓局呢？</desc>
     <category lang="zh">电影</category>
     <rating>
       <system>TW</system>
       <value>普</value>
     </rating>
   </programme>
+  <programme start="20251010061500 +0800" stop="20251010084500 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">天下無賊（雙語）</title>
+    <desc lang="zh">　　以偷竊及詐騙為生的扒手情侶王薄(劉德華)和王麗(劉若英)，因王麗厭倦此種生活意欲隱退，兩人因此反目。在火車上兩人巧遇贛直農民傻根(王寶強)，帶著六萬元儲蓄回鄉。其淳樸性格打動王麗，決意沿途保護他，力阻王薄覬覦傻根儲蓄。豈料火車上剛好另一偷竊集團，為首的彪叔(葛優)決意率眾染指這筆鉅款，王麗為了不讓傻根得悉真相，唯有見招拆招；王薄不甘認輸，亦為了王麗而毅然接受挑戰。在貪念與純真之間，雙方在狹窄的車廂中展開一幕幕的暗戰。然而車中竟然臥虎藏龍，火車到站一刻仍未能分出高下…</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251010084500 +0800" stop="20251010105500 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">賭聖2之街頭賭聖</title>
+    <desc lang="zh">　　賭聖阿星在賭王大賽過後，從此神隱。黑仔達為了尋找賭聖接班人，而遠赴有許多特異功能人士的天神村。黑面蔡見識到阿葛把錢變大的功能，於是就帶領他回到香港特訓，讓他成為參加第二次國際賭王大賽的選手。而在香港特訓的過程中，黑面蔡被討債集團追殺；阿葛使出了特異功能，把漫畫《蛇珠》的所有漫畫人物的武打招式全部記憶，輕而易舉地打敗討債集團，怎知他們…</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251010105500 +0800" stop="20251010135000 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">新少林寺</title>
+    <desc lang="zh">　　★揭開中國武術起源奧秘。
+　　驍勇善戰、欺壓平民的軍閥少帥侯杰（劉德華 飾），被視如親弟手足的副官曹蠻（謝霆鋒 飾）出賣，導致女兒身亡、愛妻（范冰冰 飾）離去。仇恨讓侯杰痛不欲生，但他認識了久居少林廚房、目不識丁卻對佛學領悟甚高的煮飯僧－悟道。悟道啟發侯杰參透襌理，並化解他與少林寺少僧淨能（吳京 飾）等三人之間的成見，使他們化敵為友。歷經一番大徹大悟後，侯杰決心皈依佛門出家為僧，並帶領僧人對付曹蠻，誓死保護戰火中的災民及少林寺。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251010135000 +0800" stop="20251010161000 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">人妖打排球2鐵娘子（雙語）</title>
+    <desc lang="zh">　　祖兒同柏芝自贏了大賽後因爭仔而決裂，柏芝及冬、陰、功又因為水晶晶隊的領隊楊生一句說話，加入有3T及軍婆坐鎮的水晶晶隊，當柏芝加入後，便與軍婆組成Twins，連番挫敗祖兒的水蜜蜜；祖兒及隊長伊健為救球隊，決定千里昭昭到中國南部邀請正在巡迴演出的隆婆歸隊．
+　　後來，村長決定派水晶晶隊代表清邁縣出賽，楊生決定加入新血。楊生話棒得柏芝與軍婆做Twins，柏芝與祖兒亦言好，與冬、陰、功一同回歸水蜜蜜隊，迎戰水晶晶隊，展開一輪龍爭虎鬥…</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251010161000 +0800" stop="20251010184000 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">黃飛鴻2男兒當自強（雙語）</title>
+    <desc lang="zh">　　黃飛鴻應國際醫學會的邀請，與梁寬、少筠前往廣州，因緣際會結識孫文和陸皓東。白蓮教利用神佛之說，宣揚神功刀槍不入，扶清滅洋，火燒西洋學校，黃飛鴻不滿白蓮教殘害無辜出手相救，更替學生四處奔走，後來得到陸皓東的幫助，寄居英國領事館。滿清提督納蘭元述為了對付裡頭窩藏的革命黨人，不惜協助白蓮教圍攻領事館，孫文早已先行脫逃，黃飛鴻與喬裝弟子的陸皓東以阻止白蓮教教徒肆虐為由、脫離納蘭元述掌握，直搗朝天觀擊敗九宮真人，揭破神功秘密。在護送陸皓東回頭取革命黨員名冊時，遇上納蘭元述的追捕，陸皓東傷重不治，黃飛鴻遂與其展開生死戰…</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251010184000 +0800" stop="20251010210000 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">黃埔軍魂</title>
+    <desc lang="zh">　　一群陸軍官校新生逐漸成長為獨當一面的軍人的故事。
+　　鳳山的黃埔陸軍軍官學校。連長教官江支森不求名、不求利，認真地以“鐵的紀律、愛的教育”訓練學生，上課時對學生嚴格要求，下課後將學生視如子弟。學生們都愛他又怕他。他的妻子繡春亦熱愛他的事業，照顧著他的每個學生，經常請學生到家中作客。三十多年間，江支森的官階只從中尉升到中校。他雖沒有子女，卻受到學生的敬愛。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251010210000 +0800" stop="20251010233500 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">新宿事件</title>
+    <desc lang="zh">　　故事發生在1990年代，成龍飾演的苦力勞工─鐵頭，冒著生命危險偷渡到日本為了找尋到日本留學的青梅竹馬女友─秀秀（徐靜蕾飾演）。鐵頭在日本投靠同村好友阿傑（吳彥祖飾演），與其他的偷渡一起窩在一處大雜院，成為日本社會中最低層的人。他們辛勤工作但是生活、物價的壓力卻壓得他們喘不過氣。  正當鐵頭想要放棄尋找秀秀的念頭，赫然發現她已經成為日本黑幫「三和會」副會長的妻子，並且育有一女。鐵頭斷了念，決定在日本落地生根好好過日子，此時他也在夜店裡認識了媽媽桑─麗麗（范冰冰飾演）。因為偷渡客在當地無法從事正當職業，為了生存，鐵頭說服阿傑一起開始搞起不法勾當，他們一群人的勢力也慢慢的茁壯。  沒想到某天阿傑卻被其他幫派的人欺負，之後他性格大變，不再受鐵頭控制；此時鐵頭也因為獲得幫助得到日本身分而決定改邪歸正好好做人，問題是鐵頭前面的那段歲月卻不肯放過他。陰錯陽差的許多事情搞到黑道大火拼的可能越來越近，鐵頭要如何全身而退，還能拉兄弟阿傑一把？</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>輔12</value>
+    </rating>
+  </programme>
+  <programme start="20251010233500 +0800" stop="20251011020500 +0800" channel="LS TIME 龙祥时代">
+    <title lang="zh">勝者為王</title>
+    <desc lang="zh">　　在三聯幫有傑出表現的山雞（陳小春飾）即將迎娶日本幫派山田組的頭目草刈一雄（千葉真一飾）的女兒菜菜子（安雅飾）。身為好友的陳浩南（鄭伊健飾）及一眾香港的黑幫頭目也到日本出席了山雞的婚禮。
+　　三聯幫幫主的兒子雷复轟是個有能之士，對父親的幫派事業毫無興趣。山雞成了他心中繼承位置的最佳人選，卻遭到了同是幫內頭目的忠勇伯的反對，他決意要與山雞爭取幫主的地位。兩人明爭暗鬥，忠勇伯這時被襲擊了，他認定山雞指使了人攻擊他。倆人再次因為有關政府的方案而互相對立，幫派內訌。
+　　山雞除了事業上的不如意，妻子菜菜子更被父親手下強奸了。山雞正處在水深火熱之中，陳浩南前往台灣助山雞一臂之力，雷复轟卻為了幫內團結要把讓忠勇伯當幫主。忠勇伯竟在這個時候被殺了，山雞再次被嫌疑…</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <channel id="好莱坞电影台">
+    <display-name lang="zh">好莱坞电影台</display-name>
+  </channel>
   <programme start="20251003050000 +0800" stop="20251003070000 +0800" channel="好莱坞电影台">
     <title lang="zh">毀滅者(護)</title>
     <desc lang="zh">　　凡妮莎威廉絲飾演某高科技公司的主管，由於她並不知道公司的高級主管與國安局串通計畫發展強大的武器，因此當她向國安局揭發自己公司私下生產非法的危險武器時，反而遭到公司與國安局雙方人馬追殺她的厄運，國安局將凡妮莎過去的資料在電腦中一筆勾消，使得她頓時成為不存在的幽靈人口。阿諾是國安局的保安官，他也在不知情的狀況下保護向他求助的凡妮莎，阿諾能憑他的智慧洞悉這一切的陰謀，並且讓凡妮莎回復她的身份嗎？</desc>
@@ -1089,7 +881,7 @@
   </programme>
   <programme start="20251004050000 +0800" stop="20251004070000 +0800" channel="好莱坞电影台">
     <title lang="zh">屍控水族館(護)</title>
-    <desc lang="zh">　　一个巨大的不幸降临在游览水族馆的毫无戒心的人类身上，他们被迫为自己的生命而战，因为一个反常的科学事故导致水生生物变成了嗜血的丧尸。</desc>
+    <desc lang="zh">　　一場不幸的科學意外，導致水族館內的所有海洋生物全都成了半死不活的活屍生物。受困於水族館內的倖存者一邊對抗這群飢腸轆轆的嗜血生物，一邊想辦法逃出生天……</desc>
     <category lang="zh">电影</category>
     <rating>
       <system>TW</system>
@@ -1467,6 +1259,204 @@
     <rating>
       <system>TW</system>
       <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008004500 +0800" stop="20251008023000 +0800" channel="好莱坞电影台">
+    <title lang="zh">絕命帶原者(護)</title>
+    <desc lang="zh">　　致命變種病毒席捲全球，感染者無一倖免，除了病發死亡的大量人口外，還有一群看不出症狀的病毒帶原者，隨時威脅著倖存的人類…！  四個美國青年包括丹尼（盧泰勒普奇飾）、他的哥哥布萊恩（克里斯潘　飾）、丹尼的女友芭比（琵琶佩拉玻飾）、以及他性感美麗的同學凱特（艾蜜莉凡康　飾），決定駕車橫跨西部沙漠公路，前往傳說中的淨土～墨西哥的邊陲海灘，在那裡等待重生的奇蹟發生…。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008023000 +0800" stop="20251008050000 +0800" channel="好莱坞电影台">
+    <title lang="zh">特種部隊：蛇眼之戰(普)</title>
+    <desc lang="zh">　　一個充滿決心毅力的獨行俠，在拯救了一個古老日本忍者家族---嵐影氏族的指定接班人之後，被納入這個家族。他在前往日本之後，嵐影氏族就開始教導蛇眼成為忍者戰士的各種技能，同時也給了一個他從小就一直渴望的東西：一個家。但是當關於他過去的秘密漸漸揭露之後，蛇眼的榮譽感和忠誠度將受到嚴苛的考驗－即便那可能代表他會失去與他最親密的人的信任。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251008050000 +0800" stop="20251008064500 +0800" channel="好莱坞电影台">
+    <title lang="zh">絕命帶原者(護)</title>
+    <desc lang="zh">　　致命變種病毒席捲全球，感染者無一倖免，除了病發死亡的大量人口外，還有一群看不出症狀的病毒帶原者，隨時威脅著倖存的人類…！  四個美國青年包括丹尼（盧泰勒普奇飾）、他的哥哥布萊恩（克里斯潘　飾）、丹尼的女友芭比（琵琶佩拉玻飾）、以及他性感美麗的同學凱特（艾蜜莉凡康　飾），決定駕車橫跨西部沙漠公路，前往傳說中的淨土～墨西哥的邊陲海灘，在那裡等待重生的奇蹟發生…。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008064500 +0800" stop="20251008084500 +0800" channel="好莱坞电影台">
+    <title lang="zh">風暴剋星(護)</title>
+    <desc lang="zh">　　亚历克斯（亚历克斯·帕蒂弗 Alex Pettyfer 饰）自幼失去了父母，他的整个童年时代都是和叔叔伊恩（伊万·麦克格雷格 Ewan McGregor 饰）一起度过的，不幸的是，伊恩叔叔也因为一场可疑的意外离开了亚历克斯。  布朗特先生（比尔·奈伊 Bill Nighy 饰）和琼斯夫人（苏菲·奥康内多 Sophie Okonedo 饰）出现在了亚历克斯的面前，他们向他传达了一个惊人的消息。原来，表面平凡的伊恩一直以来都过着双重生活，背地里，他是一名为英国情报组织MI6工作的间谍。就这样，亚历克斯被迫成为了叔叔的接班人，等待着他的，不仅是十分艰苦的训练，还有异常危险的任务，从小就接受了严苛训练的亚历克斯能够胜任吗？</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008084500 +0800" stop="20251008110000 +0800" channel="好莱坞电影台">
+    <title lang="zh">異底洞(護)</title>
+    <desc lang="zh"/>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008110000 +0800" stop="20251008120000 +0800" channel="好莱坞电影台">
+    <title lang="zh">樂活新觀點(普)</title>
+    <desc lang="zh"/>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251008120000 +0800" stop="20251008141500 +0800" channel="好莱坞电影台">
+    <title lang="zh">探戈與金錢(護)</title>
+    <desc lang="zh">　　放蕩不羈的探戈與氣派非凡的金錢，是洛城警局的兩大英雄人物，破案屢建奇功，大毒梟昆先生視其為眼中釘，設計使二人入獄，以從事大規模非法交易。  探戈與金錢被判從輕發落，昆先生買通警察將二人關入警衛森嚴之監獄，二人藝高膽大分別越獄。探戈依約去找金錢之妹凱瑟琳，凱瑟琳卻被昆手下擄為人質。最後探戈與金錢詐降，換回凱瑟琳並將壞人繩之以法。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008141500 +0800" stop="20251008170000 +0800" channel="好莱坞电影台">
+    <title lang="zh">聖戰奇兵(普)</title>
+    <desc lang="zh">　　故事背景設於1938年印弟安那瓊斯與父親依據筆記上的記載，尋找傳說耶穌於最後晚餐所用的聖杯。由於傳說中的聖杯有治癒任何傷口的神奇功效，引起了德國納綷的覬覦，特別派出了美豔女間諜艾莎薛尼德博士，利用美色與苦肉計迫使瓊斯交出筆記。  瓊斯父子發現艾莎的企圖後，費盡心思將筆記奪回，前往聖殿取聖杯，不料納綷尾隨在後，並槍傷瓊斯的父親，一番苦戰之後才逃離納綷的糾纏。原以為無事的瓊斯急忙以聖杯舀水治癒父親，卻沒想到艾莎出現面前要搶奪聖杯…….</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251008170000 +0800" stop="20251008190000 +0800" channel="好莱坞电影台">
+    <title lang="zh">戰無不勝(普)</title>
+    <desc lang="zh">　　黑社會洪興社的屯門區話事人恐龍被東星社的耀揚殺害後，龍頭蔣天養（萬梓良）決定從山雞（陳小春）和生蕃中選出一個填補該空缺，銅鑼灣的話事人浩南（鄭伊健）深知該職的壓力，力勸山雞放棄與人爭權奪位，但苦勸無效。生蕃為打壓山雞，勾結耀揚設下詭計，令山雞好友大天二死於非命。另一方面，屯門區某中學教師欣欣（李嘉欣）一向反感黑社會，但在結識浩南後，對黑社會的以往印象有所改變，更在短短時間內對浩南產生傾慕之情，兩人發生一夜情。然而因為生活於兩個完全不同的世界，加上浩南始終無法對前女友（黎姿）忘情，他們的感情注定只能是無疾而終。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251008190000 +0800" stop="20251008214500 +0800" channel="好莱坞电影台">
+    <title lang="zh">獵殺戰場(護)</title>
+    <desc lang="zh">　　為了拿下一項軍事標案，一家AI機器人製造商買通一名中央情報局探員，進行了一場未授權的非法武裝軍事行動。他們將四個AI機器人原型放進亞洲金三角地區進行測試，這場非法軍事行動原為測試AI機器人穩定性，但卻系統失控導致無辜居民遭到殺害。原先為人道任務來到這裡的六名醫生，除了見證了殘酷的殺戮，自己也淪為了武裝機器人的獵殺目標，在這邊境叢林中淪為人類與機器的戰場，這群居民該如何在絕境中求得一線生機！？</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251008214500 +0800" stop="20251009003000 +0800" channel="好莱坞电影台">
+    <title lang="zh">怒火邊界２：毒刑者(護)</title>
+    <desc lang="zh">　　聲東擊西 橫掃毒梟美墨邊界的毒品交易日益嚴重，販毒集團愈發囂張，不僅非法走私毒品，甚至偷渡恐怖分子進入美國。聯邦探員麥特（喬許布洛林 飾）決定再次聯手神秘的前特工人員亞歷山卓（班尼西歐戴托羅 飾），一起對抗毒窟軍團，更不惜引起一場戰爭！</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251009003000 +0800" stop="20251009024500 +0800" channel="好莱坞电影台">
+    <title lang="zh">熱血高手(普)</title>
+    <desc lang="zh"/>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251009024500 +0800" stop="20251009050000 +0800" channel="好莱坞电影台">
+    <title lang="zh">探戈與金錢(護)</title>
+    <desc lang="zh">　　放蕩不羈的探戈與氣派非凡的金錢，是洛城警局的兩大英雄人物，破案屢建奇功，大毒梟昆先生視其為眼中釘，設計使二人入獄，以從事大規模非法交易。  探戈與金錢被判從輕發落，昆先生買通警察將二人關入警衛森嚴之監獄，二人藝高膽大分別越獄。探戈依約去找金錢之妹凱瑟琳，凱瑟琳卻被昆手下擄為人質。最後探戈與金錢詐降，換回凱瑟琳並將壞人繩之以法。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251009050000 +0800" stop="20251009070000 +0800" channel="好莱坞电影台">
+    <title lang="zh">無路可退之撲火人生(護)</title>
+    <desc lang="zh"/>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251009070000 +0800" stop="20251009090000 +0800" channel="好莱坞电影台">
+    <title lang="zh">泰城勇士(護)</title>
+    <desc lang="zh"/>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251009090000 +0800" stop="20251009110000 +0800" channel="好莱坞电影台">
+    <title lang="zh">殺戮部隊(護)</title>
+    <desc lang="zh">　　亞歷山大史柯斯嘉主演，真人真事改編，美軍駐阿富汗的駭人聽聞。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251009110000 +0800" stop="20251009120000 +0800" channel="好莱坞电影台">
+    <title lang="zh">樂活新觀點(普)</title>
+    <desc lang="zh"/>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251009120000 +0800" stop="20251009140000 +0800" channel="好莱坞电影台">
+    <title lang="zh">狙擊獵殺：救援行動(護)</title>
+    <desc lang="zh">　　北非索馬利亞境內發生21名法國孩童與美國老師 ，在上學途中被恐怖份子劫持，引發兩方對峙。法國反恐小組的隊長安德烈必須帶領5名狙擊手，找到最迅速方式，將人質平安救出，過程中各方協調發生許多問題，而恐怖份子耐性逐漸磨掉，時間也不夠了…</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251009140000 +0800" stop="20251009170000 +0800" channel="好莱坞电影台">
+    <title lang="zh">決戰３８度線(普)</title>
+    <desc lang="zh">　　真實故事同名暢銷小說改編，描述韓戰期間，美國非裔戰鬥機飛行員傑西 奉命加入突擊戰鬥機中隊，認識了同為戰鬥機駕駛的托馬斯。在美國種族隔離制度之下，兩人發展出血濃於水的兄弟情感、一起執行超過20次戰鬥任務。一次行動中，傑西駕駛的僚機被擊落，一場驚險的救援行動即將展開•••。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251009170000 +0800" stop="20251009191500 +0800" channel="好莱坞电影台">
+    <title lang="zh">熱血高手(普)</title>
+    <desc lang="zh"/>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
+    </rating>
+  </programme>
+  <programme start="20251009191500 +0800" stop="20251009220000 +0800" channel="好莱坞电影台">
+    <title lang="zh">失控特工(護)</title>
+    <desc lang="zh">　　安德烈和瑪麗亞是「青春」計畫的成員，兩人15年前接受特工訓練，爾後前往歐洲待命，但他們從未收到任何任務。某天特種部隊突然來襲，並視他們為威脅而要逮捕兩人。安德烈和瑪麗亞要用盡全身的本事，才能在這場間諜大戰中生存。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>護</value>
+    </rating>
+  </programme>
+  <programme start="20251009220000 +0800" stop="20251010010000 +0800" channel="好莱坞电影台">
+    <title lang="zh">獵風行動(普)</title>
+    <desc lang="zh">　　太平洋戰爭期間，美軍利用納瓦霍語難以學習及瞭解的特性，以該語言為基準設立了一套通信術語系統，但由於這套系統對納瓦霍語使用者而言仍需經過特殊訓練才能運用自如，因此大量招募多位納瓦霍人投入海軍陸戰隊受訓，以在戰場上利用新密碼降低美軍通信被日本軍破解的可能性。來自同個納瓦霍人部落的班·亞吉和多年摯友查理·白馬便在志願參軍、經過培訓後成為了海軍陸戰隊譯碼員。</desc>
+    <category lang="zh">电影</category>
+    <rating>
+      <system>TW</system>
+      <value>普</value>
     </rating>
   </programme>
 </tv>

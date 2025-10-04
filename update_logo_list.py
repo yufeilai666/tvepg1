@@ -27,6 +27,7 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
     if not os.path.exists(logo_dir):
         print(f"错误: 目录 '{logo_dir}' 不存在")
         print(f"当前工作目录: {os.getcwd()}")
+        print(f"尝试列出当前目录: {os.listdir('.')}")
         return logo_info
     
     # 查找所有图片文件
@@ -46,12 +47,19 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
             file_name = os.path.splitext(os.path.basename(image_path))[0]
             
             # 生成raw.githubusercontent.com的绝对路径，保留中文字符
-            # 使用相对于仓库根目录的路径
-            rel_path = os.path.relpath(image_path, start=os.path.dirname(logo_dir))
-            rel_path = rel_path.replace('\\', '/')  # 确保使用正斜杠
+            # 修复路径计算：直接构建相对于仓库根目录的路径
+            # 假设logo目录就在仓库根目录下
+            logo_dir_name = os.path.basename(logo_dir.rstrip('/'))
+            file_name_in_logo = os.path.basename(image_path)
+            rel_path = f"{logo_dir_name}/{file_name_in_logo}"
+            
+            print(f"处理文件: {file_name_in_logo}")
+            print(f"相对路径: {rel_path}")
             
             # 使用<>包裹链接，保留中文字符
             file_link = f"<https://raw.githubusercontent.com/{username}/{repo_name}/{branch}/{rel_path}>"
+            
+            print(f"生成的链接: {file_link}")
             
             logo_info.append({
                 "name": file_name,
@@ -190,6 +198,8 @@ def main():
     # 正确获取分支名称
     # GITHUB_REF 格式为 refs/heads/branch_name
     github_ref = os.environ.get('GITHUB_REF', '')
+    print(f"GITHUB_REF: {github_ref}")
+    
     if github_ref.startswith('refs/heads/'):
         branch = github_ref.replace('refs/heads/', '')
     else:
@@ -200,6 +210,13 @@ def main():
     
     # 获取logo目录路径，优先使用环境变量
     logo_dir = os.environ.get('LOGO_DIR', 'logo')
+    
+    print(f"用户名: {username}")
+    print(f"仓库名: {repo_name}")
+    print(f"分支: {branch}")
+    print(f"排序方法: {sort_method}")
+    print(f"Logo目录: {logo_dir}")
+    print(f"当前工作目录: {os.getcwd()}")
     
     # 获取logo信息
     logo_info = get_logo_info(

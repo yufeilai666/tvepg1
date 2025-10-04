@@ -11,8 +11,8 @@ on:
         description: '排序方法 (name, ascii, size, time)'
         required: false
         default: 'name'
-  schedule:
-    - cron: '0 1 * * 0'  # 每周日午夜1点运行一次
+  # schedule:
+  #  - cron: '0 1 * * 0'  # 每周日午夜1点运行一次
 
 jobs:
   update-logo-list:

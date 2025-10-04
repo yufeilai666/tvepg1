@@ -1,0 +1,40 @@
+name: Sync Logo Folder
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'logo/**' ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  sync-logo:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Sync logo folder to logo_info branch
+      run: |
+        # 配置Git用户
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # 切换到logo_info分支
+        git checkout logo_info || git checkout -b logo_info
+        
+        # 从main分支复制logo文件夹
+        git checkout main -- logo/
+        
+        # 提交更改
+        git add logo/
+        if ! git diff --staged --quiet; then
+          git commit -m "chore: sync logo folder from main branch"
+          git push origin logo_info
+          echo "✅ Logo文件夹同步完成"
+        else
+          echo "⚠️ 没有检测到更改"
+        fi

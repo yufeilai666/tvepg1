@@ -5,7 +5,7 @@ import sys
 import tempfile
 import json  # 添加json模块
 
-def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", branch="main"):
+def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", branch="logo_info"):
     """
     获取logo目录下所有图片文件的信息
     
@@ -13,7 +13,7 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
         logo_dir (str): logo目录路径，默认为'logo'
         username (str): GitHub用户名
         repo_name (str): 仓库名称
-        branch (str): 分支名称，默认为'main'
+        branch (str): 分支名称，默认为'logo_info'
     
     Returns:
         list: 包含图片名称和链接的字典列表
@@ -27,7 +27,6 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
     if not os.path.exists(logo_dir):
         print(f"错误: 目录 '{logo_dir}' 不存在")
         print(f"当前工作目录: {os.getcwd()}")
-        print(f"尝试列出当前目录: {os.listdir('.')}")
         return logo_info
     
     # 查找所有图片文件
@@ -53,13 +52,8 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
             file_name_in_logo = os.path.basename(image_path)
             rel_path = f"{logo_dir_name}/{file_name_in_logo}"
             
-            print(f"处理文件: {file_name_in_logo}")
-            print(f"相对路径: {rel_path}")
-            
             # 使用<>包裹链接，保留中文字符
             file_link = f"<https://raw.githubusercontent.com/{username}/{repo_name}/{branch}/{rel_path}>"
-            
-            print(f"生成的链接: {file_link}")
             
             logo_info.append({
                 "name": file_name,
@@ -195,16 +189,16 @@ def main():
     username = os.environ.get('GITHUB_ACTOR', 'yufeilai666')
     repo_name = os.environ.get('GITHUB_REPOSITORY', 'yufeilai666/tvepg').split('/')[-1]
     
-    # 正确获取分支名称
-    # GITHUB_REF 格式为 refs/heads/branch_name
-    github_ref = os.environ.get('GITHUB_REF', '')
-    print(f"GITHUB_REF: {github_ref}")
-    
-    if github_ref.startswith('refs/heads/'):
-        branch = github_ref.replace('refs/heads/', '')
-    else:
-        # 如果无法从环境变量获取，使用默认值
-        branch = os.environ.get('GITHUB_REF', 'refs/heads/logo_info').split('/')[-1]
+    # 优先使用通过工作流输入传递的分支名称
+    target_branch = os.environ.get('TARGET_BRANCH')
+    if not target_branch:
+        # 如果没有通过输入传递，尝试从GITHUB_REF获取
+        github_ref = os.environ.get('GITHUB_REF', '')
+        if github_ref.startswith('refs/heads/'):
+            target_branch = github_ref.replace('refs/heads/', '')
+        else:
+            # 如果都无法获取，使用默认值
+            target_branch = 'logo_info'
     
     sort_method = os.environ.get('SORT_METHOD', 'name')  # 排序方法
     
@@ -213,7 +207,7 @@ def main():
     
     print(f"用户名: {username}")
     print(f"仓库名: {repo_name}")
-    print(f"分支: {branch}")
+    print(f"目标分支: {target_branch}")
     print(f"排序方法: {sort_method}")
     print(f"Logo目录: {logo_dir}")
     print(f"当前工作目录: {os.getcwd()}")
@@ -223,7 +217,7 @@ def main():
         logo_dir=logo_dir,
         username=username,
         repo_name=repo_name,
-        branch=branch  # 使用正确获取的分支名称
+        branch=target_branch  # 使用目标分支
     )
     
     # 根据指定的排序方法排序
@@ -248,7 +242,7 @@ def main():
     
     print(f"处理完成，共找到 {len(logo_info)} 个Logo文件")
     print(f"使用的排序方法: {sort_method}")
-    print(f"使用的分支: {branch}")
+    print(f"使用的目标分支: {target_branch}")
     print(f"Markdown文件已生成到: {output_md_file}")
     print(f"JSON文件已生成到: {output_json_file}")
 

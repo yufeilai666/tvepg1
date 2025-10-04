@@ -57,7 +57,7 @@ jobs:
         GITHUB_REPOSITORY: ${{ github.repository }}
         GITHUB_REF: ${{ github.ref }}
         SORT_METHOD: ${{ github.event.inputs.sort_method || 'name' }}
-        LOGO_DIR: ${{ github.workspace }}/logo  # 传递logo目录的绝对路径
+        # LOGO_DIR: ${{ github.workspace }}/logo  # 传递logo目录的绝对路径
 
     - name: Update README.md and logo.json in logo_info branch
       run: |

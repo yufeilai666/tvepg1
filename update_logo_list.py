@@ -26,6 +26,7 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
     # 检查logo目录是否存在
     if not os.path.exists(logo_dir):
         print(f"错误: 目录 '{logo_dir}' 不存在")
+        print(f"当前工作目录: {os.getcwd()}")
         return logo_info
     
     # 查找所有图片文件
@@ -45,21 +46,13 @@ def get_logo_info(logo_dir="logo", username="yufeilai666", repo_name="tvepg", br
             file_name = os.path.splitext(os.path.basename(image_path))[0]
             
             # 生成raw.githubusercontent.com的绝对路径，保留中文字符
-            # 修复路径计算：直接构建相对于仓库根目录的路径
-            # 假设logo目录就在仓库根目录下，避免复杂的相对路径计算
-            logo_dir_name = os.path.basename(logo_dir.rstrip('/'))
-            file_name_in_logo = os.path.basename(image_path)
-            rel_path = f"{logo_dir_name}/{file_name_in_logo}"
-            
-            # 调试信息：打印路径计算过程
-            print(f"处理文件: {image_path}")
-            print(f"计算的相对路径: {rel_path}")
+            # 使用相对于仓库根目录的路径
+            # 注意：logo_dir是绝对路径，我们需要提取相对于仓库根目录的部分
+            rel_path = os.path.relpath(image_path, start=os.path.dirname(logo_dir))
+            rel_path = rel_path.replace('\\', '/')  # 确保使用正斜杠
             
             # 使用<>包裹链接，保留中文字符
             file_link = f"<https://raw.githubusercontent.com/{username}/{repo_name}/{branch}/{rel_path}>"
-            
-            # 调试信息：打印生成的链接
-            print(f"生成的链接: {file_link}")
             
             logo_info.append({
                 "name": file_name,

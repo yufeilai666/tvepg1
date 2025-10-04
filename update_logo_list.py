@@ -219,6 +219,7 @@ def main():
     # 写入JSON文件到临时位置
     write_to_file(json_content, output_json_file)
     
+    print("="*40)
     print(f"处理完成，共找到 {len(logo_info)} 个Logo文件")
     print(f"使用的排序方法: {sort_method}")
     print(f"使用的目标分支: {branch}")

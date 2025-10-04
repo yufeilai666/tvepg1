@@ -1,4 +1,4 @@
-name: Sync Logo Folder
+name: sync-main_logo2logo_info
 
 on:
   push:
@@ -43,37 +43,44 @@ jobs:
           git pull origin logo_info || echo "首次拉取可能失败，继续..."
         fi
         
-        # 从main分支复制整个logo文件夹（包含中文文件名）
-        echo "从main分支复制logo文件夹..."
-        git checkout main -- logo/
-        
-        # 检查是否有文件被更改
-        if git status --porcelain | grep -q 'logo/'; then
-          echo "检测到logo文件夹有更改，准备提交..."
+        # 检查main分支是否存在logo文件夹
+        if git ls-tree -r main --name-only | grep -q '^logo/'; then
+          echo "main分支存在logo文件夹，开始同步..."
           
-          # 添加所有logo文件
-          git add logo/
+          # 从main分支复制整个logo文件夹（包含中文文件名）
+          git checkout main -- logo/
           
-          # 提交更改（使用北京时间）
-          git commit -m "chore: sync logo folder from main branch
-          
-          - 同步logo资源文件
-          - 包含中文文件名处理
-          - 自动同步时间: $BEIJING_TIME (UTC+8)"
-          
-          # 推送到远程分支
-          echo "推送到远程logo_info分支..."
-          git push origin logo_info
-          
-          echo "✅ Logo文件夹同步完成！"
-          echo "📅 同步时间: $BEIJING_TIME (UTC+8)"
+          # 检查是否有文件被更改
+          if git status --porcelain | grep -q 'logo/'; then
+            echo "检测到logo文件夹有更改，准备提交..."
+            
+            # 添加所有logo文件
+            git add logo/
+            
+            # 提交更改（使用北京时间）
+            git commit -m "chore: sync logo folder from main branch
+            
+            - 同步logo资源文件
+            - 包含中文文件名处理
+            - 自动同步时间: $BEIJING_TIME (UTC+8)"
+            
+            # 推送到远程分支
+            echo "推送到远程logo_info分支..."
+            git push origin logo_info
+            
+            echo "✅ Logo文件夹同步完成！"
+            echo "📅 同步时间: $BEIJING_TIME (UTC+8)"
+          else
+            echo "⚠️ 没有检测到logo文件夹的更改"
+          fi
         else
-          echo "⚠️ 没有检测到logo文件夹的更改"
+          echo "⚠️ main分支不存在logo文件夹，跳过同步"
+          echo "如果需要删除logo_info分支中的logo文件夹，请手动操作"
         fi
 
     - name: Show sync result
       run: |
         echo "同步完成，检查logo文件列表："
-        ls -la logo/ || echo "logo文件夹不存在"
+        ls -la logo/ 2>/dev/null || echo "logo文件夹不存在"
         echo "最近一次提交信息："
-        git log -1 --oneline
+        git log -1 --oneline || echo "暂无提交记录"

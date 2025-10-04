@@ -3,8 +3,7 @@ name: Update Logo List
 on:
   push:
     paths:
-      - 'logo/**'
-    branches: [ logo_info ]  # 监视 logo_info 分支
+      - 'logo/**'  # 监视所有分支的logo目录变化
   workflow_dispatch:  # 允许手动触发
     inputs:
       sort_method:
@@ -18,15 +17,23 @@ on:
 
 jobs:
   update-logo-list:
+    # 只有当推送事件来自logo_info分支时才运行
+    if: github.ref == 'refs/heads/logo_info' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     
     steps:
+    - name: Debug - Print event info
+      run: |
+        echo "事件名称: ${{ github.event_name }}"
+        echo "触发分支: ${{ github.ref }}"
+        echo "工作流SHA: ${{ github.sha }}"
+        echo "触发者: ${{ github.actor }}"
+        
     - name: Checkout logo_info branch
       uses: actions/checkout@v3
       with:
         ref: logo_info
-        # 使用浅克隆，只获取最新的提交
         fetch-depth: 1
 
     - name: Checkout epg_scripts branch for script
@@ -34,7 +41,6 @@ jobs:
       with:
         ref: epg_scripts
         path: epg_scripts
-        # 使用浅克隆，只获取最新的提交
         fetch-depth: 1
 
     - name: Set up Python
@@ -47,11 +53,9 @@ jobs:
 
     - name: Copy and run script to generate logo list
       run: |
-        # 创建临时目录并复制脚本
         mkdir -p /tmp/script
         cp epg_scripts/update_logo_list.py /tmp/script/
         
-        # 运行脚本
         cd /tmp/script
         python update_logo_list.py
       env:
@@ -59,12 +63,11 @@ jobs:
         GITHUB_REPOSITORY: ${{ github.repository }}
         GITHUB_REF: ${{ github.ref }}
         SORT_METHOD: ${{ github.event.inputs.sort_method || 'name' }}
-        TARGET_BRANCH: ${{ github.event.inputs.target_branch || 'logo_info' }}  # 目标分支
-        LOGO_DIR: ${{ github.workspace }}/logo  # 传递logo目录的绝对路径
+        TARGET_BRANCH: ${{ github.event.inputs.target_branch || 'logo_info' }}
+        LOGO_DIR: ${{ github.workspace }}/logo
 
     - name: Update README.md and logo.json in logo_info branch
       run: |
-        # 从临时位置复制生成的README.md和logo.json
         cp /tmp/logo_list/README.md ./
         cp /tmp/logo_list/logo.json ./
 
@@ -74,7 +77,6 @@ jobs:
         git config --local user.name "GitHub Action"
         git add README.md logo.json
         
-        # 检查是否有更改
         if git diff --staged --quiet; then
           echo "没有更改需要提交"
         else
@@ -85,7 +87,6 @@ jobs:
 
     - name: Clean up
       run: |
-        # 清理临时文件
         rm -rf /tmp/logo_list
         rm -rf /tmp/script
         echo "清理临时文件完成"

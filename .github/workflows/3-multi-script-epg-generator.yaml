@@ -40,22 +40,24 @@ jobs:
     env:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       EPG_CONFIG: ${{ secrets.EPG_CONFIG }}
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}  # 使用PAT_TOKEN访问私有仓库
     
     # 步骤定义
     steps:
-    # 步骤1: 检出代码库
+    # 步骤1: 检出代码库（使用PAT_TOKEN）
     - name: Checkout code
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}  # 使用PAT_TOKEN检出代码
 
-    # 步骤2: 检出epg_scripts分支到临时目录
+    # 步骤2: 检出epg_scripts分支到临时目录（使用PAT_TOKEN）
     - name: Checkout epg_scripts branch
       uses: actions/checkout@v4
       with:
         ref: epg_scripts
         path: ./epg-scripts-temp
+        token: ${{ secrets.PAT_TOKEN }}  # 使用PAT_TOKEN检出epg_scripts分支
 
     # 步骤3: 设置PHP环境
     - name: Setup PHP
@@ -80,6 +82,9 @@ jobs:
     # 步骤6: 在临时目录中生成XML文件（核心步骤）
     - name: Generate XML Files in Temp Directory
       id: generate-step
+      env:
+        # 确保脚本能访问到PAT_TOKEN
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
         # 切换到临时目录
         cd ./epg-scripts-temp
@@ -198,18 +203,18 @@ jobs:
         echo "当前目录的XML文件:"
         ls -la *.xml 2>/dev/null || echo "无XML文件"
 
-    # 步骤8: 提交和推送变更
+    # 步骤8: 提交和推送变更（使用PAT_TOKEN）
     - name: Commit and Push Changes
       if: always()
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
         # 配置Git用户信息
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
         
-        # 设置带认证的远程URL
-        git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
+        # 设置带认证的远程URL（使用PAT_TOKEN）
+        git remote set-url origin https://x-access-token:$PAT_TOKEN@github.com/$GITHUB_REPOSITORY.git
         
         # 添加所有XML文件变更
         git add --all *.xml
@@ -244,7 +249,7 @@ jobs:
           echo "推送尝试 ($i/$max_retries)"
           
           # 先拉取最新变更避免冲突
-          git pull --rebase
+          git pull --rebase origin ${GITHUB_REF#refs/heads/}
           
           # 尝试推送
           if git push origin HEAD:${GITHUB_REF#refs/heads/}; then

@@ -185,7 +185,7 @@ def main():
     # 从环境变量获取参数，如果没有则使用默认值
     username = os.environ.get('GITHUB_ACTOR', 'yufeilai666')
     repo_name = os.environ.get('GITHUB_REPOSITORY', 'yufeilai666/tvepg').split('/')[-1]
-    branch = os.environ.get('GITHUB_REF', 'refs/heads/main').split('/')[-1]
+    branch = os.environ.get('GITHUB_REF', 'refs/heads/logo_info').split('/')[-1]
     sort_method = os.environ.get('SORT_METHOD', 'name')  # 排序方法
     
     # 获取logo目录路径，优先使用环境变量

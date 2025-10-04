@@ -1,10 +1,10 @@
 name: Update Logo List
 
 on:
-  # push:
-    # paths:
-    #   - 'logo/**'
-    # branches: [ main ]
+  push:
+    paths:
+      - 'logo/**'
+    branches: [ logo_info ]  # 监视 logo_info 分支
   workflow_dispatch:  # 允许手动触发
     inputs:
       sort_method:
@@ -20,10 +20,10 @@ jobs:
     timeout-minutes: 30
     
     steps:
-    - name: Checkout main branch
+    - name: Checkout logo_info branch
       uses: actions/checkout@v3
       with:
-        ref: main
+        ref: logo_info
         # 使用浅克隆，只获取最新的提交
         fetch-depth: 1
 
@@ -59,21 +59,6 @@ jobs:
         SORT_METHOD: ${{ github.event.inputs.sort_method || 'name' }}
         LOGO_DIR: ${{ github.workspace }}/logo  # 传递logo目录的绝对路径
 
-    - name: Checkout logo_info branch or create if not exists
-      run: |
-        # 检查logo_info分支是否存在
-        if git ls-remote --exit-code --heads origin logo_info; then
-          echo "logo_info分支已存在，切换到该分支"
-          git fetch origin logo_info
-          git checkout logo_info
-        else
-          echo "创建新的logo_info孤立分支"
-          # 创建一个空的孤立分支
-          git checkout --orphan logo_info
-          # 清空工作区
-          git rm -rf --quiet .
-        fi
-
     - name: Update README.md and logo.json in logo_info branch
       run: |
         # 从临时位置复制生成的README.md和logo.json
@@ -101,5 +86,3 @@ jobs:
         rm -rf /tmp/logo_list
         rm -rf /tmp/script
         echo "清理临时文件完成"
-        # 返回主分支
-        git checkout main
